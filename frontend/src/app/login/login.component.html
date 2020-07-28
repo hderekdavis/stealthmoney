@@ -1,0 +1,46 @@
+<div *ngIf="!showForgotPassword" style="width:400px;margin:80px auto;padding:20px;line-height:32px;background:#fff;text-align:center;border-radius:5px">
+    <h1>Login</h1>
+    <form [formGroup]="form">
+      <div style="text-align:left;width:80%;margin:auto">
+        <label for="email">Email:</label>
+        <br>
+        <input id="email" type="text" value="" formControlName="email" 
+          alt="Email input field." style="width:100%">
+        <br>
+        <label for="password">Password:</label>
+        <br>
+        <input id="password" type="password" value="" 
+          formControlName="password" alt="Password input field." style="width:100%">
+        <a routerLink="/login" (click)="showForgotPasswordComponent()" style="font-size:12px">Forgot Password?</a>
+      </div>
+      <div style="margin-top:30px;margin-bottom:10px;text-align:center">
+        <button type="submit" *ngIf="!isSubmitting" (click)="submit()">
+          Login
+        </button>
+        <img *ngIf="isSubmitting" src="assets/spinner.gif" alt="Loading">
+      </div>
+    </form>
+  </div>
+  
+  <div *ngIf="showForgotPassword" style="width:400px;margin:80px auto;padding:20px;line-height:32px;background:#fff;text-align:center;border-radius:5px">
+    <h1>Reset Your Password</h1>
+    <form [formGroup]="form">
+      <div style="text-align:left;width:80%;margin:auto">
+        <div style="margin:20px 0">Let us know your email address so that we can send you a password reset email.</div>
+        <label for="email">Email:</label>
+        <br>
+        <input id="email" type="text" value="" formControlName="email" 
+          alt="Email input field." style="width:100%">
+      </div>
+      <div style="margin-top:30px;margin-bottom:10px;text-align:center">
+        <button type="submit" *ngIf="!isSubmittingForgotPassword" (click)="forgotPassword()">
+          Send
+        </button>
+        <img *ngIf="isSubmittingForgotPassword" src="assets/spinner.gif" alt="Loading">
+      </div>
+      <div style="text-align:center;font-size:12px">
+        <a routerLink="/login" (click)="backToLogin()">Back to Login</a>
+      </div>
+    </form>
+  </div>
+  

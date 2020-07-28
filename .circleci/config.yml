@@ -1,0 +1,25 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/stealthmoney
+    docker:
+      - image: circleci/node:9.11.1
+    steps:
+      - checkout
+      - run: |
+          if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            sudo apt-get update
+            sudo npm install -g @angular/cli@7.3.9 > /dev/null
+            cd frontend
+            npm install
+            sudo ng build --prod
+            sudo ssh-keyscan 35.193.69.175 >> ~/.ssh/known_hosts
+            sudo apt-get install sshpass
+            sshpass -p "${ssh_password}" scp -r -v dist/* root@35.193.69.175:/var/www/stealthmoney
+            cd ../backend
+            sudo npm install typescript
+            npm run build
+            sudo rm -rf node_modules
+            sshpass -p "${ssh_password}" scp -r -v ../backend/* root@35.193.69.175:/root/stealthmoney/backend
+            sshpass -p "${ssh_password}" ssh root@35.193.69.175 "cd stealthmoney/backend; npm install; npm rebuild; sudo NODE_ENV=production forever restart dist/www.js;"
+          fi
