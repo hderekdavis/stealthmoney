@@ -1,0 +1,26 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node ./dist/www.js",
+    "nodemon": "tsc && nodemon ./dist/www.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "lodash": "^4.17.15",
+    "morgan": "~1.9.1",
+    "node-mysql": "^0.4.2",
+    "request": "^2.88.2",
+    "request-promise": "4.2.5",
+    "request-promise-native": "^1.0.8",
+    "typescript": "^3.7.4"
+  },
+  "devDependencies": {
+    "@types/request-promise": "^4.1.46",
+    "nodemon": "^1.19.3"
+  }
+}
