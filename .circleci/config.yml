@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/stealthmoney
     docker:
-      - image: circleci/node:9.11.1
+      - image: circleci/node:12.18.2
     steps:
       - checkout
       - run: |
