@@ -9,6 +9,8 @@ import { FooterComponent } from './footer/footer.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LayoutContainerComponent } from './layout-container/layout-container.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -17,13 +19,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     HeaderComponent,
     FooterComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    LayoutContainerComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    NgbModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

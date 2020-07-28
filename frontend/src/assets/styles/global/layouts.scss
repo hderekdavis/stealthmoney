@@ -1,0 +1,59 @@
+@import "./variables.scss";
+
+.container-title {
+    font-family: Helvetica;
+    font-weight: bold;
+    font-size: 40px;
+}
+
+.layout-input-label {
+    font-weight: normal;
+}
+
+.required:after {
+    content:" *";
+    color: red;
+}
+
+.layout-input {
+    border-radius: 9px;
+    border-color: $medium-dark-grey;
+    border-width: 2px;
+    height: 43px;
+}
+
+input[type="radio"] {
+    border-color: $dark-grey;
+    border-width: 2px;
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    outline: none;
+    border-style: solid;
+}
+
+input[type='radio']:before {
+    content: '';
+    display: block;
+    width: 50%;
+    height: 60%;
+    margin: 20% auto;
+    border-radius: 50%;
+}
+
+input[type="radio"]:checked:before {
+    background: $dark-grey;
+    
+}
+
+input[type="radio"]:checked {
+  border-color:$dark-grey;
+}
+
+.layout-button {
+    background-color: black;
+    color: white;
+    height: 48px;
+    border-radius: 9px;
+}
