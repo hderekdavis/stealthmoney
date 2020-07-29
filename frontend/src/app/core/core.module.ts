@@ -9,6 +9,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { CoreRoutingModule } from './core-routing.module';
+import { SettingsComponent } from './settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { CoreRoutingModule } from './core-routing.module';
     HeaderComponent,
     FooterComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    SettingsComponent
   ],
   imports: [
     CommonModule,
@@ -26,11 +28,8 @@ import { CoreRoutingModule } from './core-routing.module';
     CoreRoutingModule,
   ],
   exports: [
-    DashboardComponent,
     HeaderComponent,
     FooterComponent,
-    LoginComponent,
-    SignupComponent
   ]
 })
 export class CoreModule { }
