@@ -57,3 +57,21 @@ input[type="radio"]:checked {
     height: 48px;
     border-radius: 9px;
 }
+
+.login-button {
+    background-color: black;
+    color: white;
+    height: 48px;
+    border-radius: 9px;
+    width: 85px;
+}
+
+.light-text {
+    color: $light-grey-text;
+    font-weight: normal;
+}
+
+.dark-text {
+    font-weight: bold;
+    font-family: Helvetica;
+}
