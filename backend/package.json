@@ -8,7 +8,10 @@
     "nodemon": "tsc && nodemon ./dist/www.js"
   },
   "dependencies": {
+    "@types/node": "^14.0.27",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "lodash": "^4.17.15",
