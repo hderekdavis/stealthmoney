@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require('dotenv').config();
+
 var app = require('./app');
 var debug = require('debug')('server:server');
 var http = require('http');
