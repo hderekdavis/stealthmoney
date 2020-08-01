@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { CoreRoutingModule } from './core-routing.module';
 import { SettingsComponent } from './settings/settings.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { SettingsComponent } from './settings/settings.component';
     ReactiveFormsModule,
     SharedModule,
     CoreRoutingModule,
+    HttpClientModule 
   ],
   exports: [
     HeaderComponent,
