@@ -11,15 +11,16 @@ import { ToastrService } from 'ngx-toastr';
   providedIn: 'root'
 })
 export class AuthService {
-
     tokenSubject = new Subject<string>();
     auth0LoginApi = 'https://' + environment.auth0_domain + '/oauth/token';
     auth0SignUpApi = 'https://' + environment.auth0_domain + '/dbconnections/signup';
+    userInfo = {
+        businessId: 1 // TODO: Set this after logging in or signing up
+    }
 
     constructor(private httpClient: HttpClient,
                 private router: Router,
-                private toastr: ToastrService) {
-    }
+                private toastr: ToastrService) {}
 
     login(email:string, password:string ) {
         const body = {
@@ -99,4 +100,11 @@ export class AuthService {
         return this.tokenSubject;
     }
   
+    setUserInfo(businessId: number) {
+        // this.userInfo.businessId = businessId;
+    }
+
+    getUserInfo() {
+        return this.userInfo;
+    }
 }
