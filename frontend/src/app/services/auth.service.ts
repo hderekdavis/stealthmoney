@@ -5,22 +5,22 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
     tokenSubject = new Subject<string>();
-    auth0LoginApi = 'https://' + environment.auth0_domain +'/oauth/token';
+    auth0LoginApi = 'https://' + environment.auth0_domain + '/oauth/token';
+    auth0SignUpApi = 'https://' + environment.auth0_domain + '/dbconnections/signup';
     userInfo = {
         businessId: 1 // TODO: Set this after logging in or signing up
     }
 
-    constructor(
-        private httpClient: HttpClient,
-        public router: Router
-    ) {
-    }
+    constructor(private httpClient: HttpClient,
+                private router: Router,
+                private toastr: ToastrService) {}
 
     login(email:string, password:string ) {
         const body = {
@@ -34,15 +34,39 @@ export class AuthService {
         this.httpClient.post(this.auth0LoginApi, body)
         .pipe(
             tap((data: any) => {
-                console.log('Logged in successfully!');
+                this.toastr.success('Logged in successfully!', 'Log In');
             }),
             catchError( err => {
-                console.log('Error in source. Details: ' + err.error.error_description);
+                this.toastr.error('Error in source. Details: ' + err.error.error_description, 'Error');
                 return throwError(err);
             })
         ).subscribe(response => {
             this.setSession(response);
             this.router.navigate(['/dashboard']);
+        });
+    }
+
+    signup(email:string, password:string) {
+        const body = {
+            client_id: environment.auth0_client_id,
+            email: email,
+            password: password,
+            connection: environment.auth0_connection
+        }
+        this.httpClient.post(this.auth0SignUpApi, body)
+        .pipe(
+            tap((data: any) => {
+            }),
+            catchError( err => {
+                if (err.error.statusCode === 400) {
+                    this.toastr.error('The email is already being used.', 'Error in source');
+                } else {
+                    this.toastr.error(err.error.error_description, 'Error in source');
+                }
+                return throwError(err);
+            })
+        ).subscribe(response => {
+            this.login(email, password);
         });
     }
             
