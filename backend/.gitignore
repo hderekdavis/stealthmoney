@@ -70,3 +70,6 @@ tools/docker/env/*
 
 # Certs
 certs/
+
+#Visual Studio
+.vs/
