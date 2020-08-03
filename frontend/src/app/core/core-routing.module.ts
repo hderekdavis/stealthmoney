@@ -6,6 +6,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PlaidComponent } from '../plaid/plaid.component';
 import { IncomeComponent } from '../income/income.component';
+import { AuthGuardService } from '../services/auth-guard.service';
 
 const routes: Routes = [
   {
@@ -22,19 +23,23 @@ const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: DashboardComponent
+    component: DashboardComponent,
+    canActivate: [AuthGuardService]
   },
   {
     path: 'settings',
-    component: SettingsComponent
+    component: SettingsComponent,
+    canActivate: [AuthGuardService]
   },
   {
     path: 'plaid',
-    component: PlaidComponent
+    component: PlaidComponent,
+    canActivate: [AuthGuardService]
   },
   {
     path: 'income',
-    component: IncomeComponent
+    component: IncomeComponent,
+    canActivate: [AuthGuardService]
   }
 ];
 
