@@ -10,12 +10,16 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-
     tokenSubject = new Subject<string>();
     auth0LoginApi = 'https://' + environment.auth0_domain +'/oauth/token';
+    userInfo = {
+        businessId: 1 // TODO: Set this after logging in or signing up
+    }
 
-    constructor(private httpClient: HttpClient,
-                public router: Router) {
+    constructor(
+        private httpClient: HttpClient,
+        public router: Router
+    ) {
     }
 
     login(email:string, password:string ) {
@@ -72,4 +76,11 @@ export class AuthService {
         return this.tokenSubject;
     }
   
+    setUserInfo(businessId: number) {
+        // this.userInfo.businessId = businessId;
+    }
+
+    getUserInfo() {
+        return this.userInfo;
+    }
 }
