@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AddressFormComponent } from '../address-form/address-form.component';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -27,7 +28,8 @@ export class SignupComponent implements OnInit {
     public fb: FormBuilder,
     public router: Router,
     private activatedRoute: ActivatedRoute,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -43,20 +45,21 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit() {
-    this.validateForms();
-    // this.router.navigate(['/dashboard']);
+    if(this.validForms()) {
+      const email = this.signupForm.controls['email'].value;
+      const password = this.signupForm.controls['password'].value
+      this.authService.signup(email, password);
+    } else {
+      this.toastr.error('Please complete all of the required fields', 'Invalid Form');
+    }
   }
 
   addAddress() {
     this.addressForms.push(this.addressForms.length);
   }
 
-  validateForms() {
-    if (this.addresses.toArray().every(this.isValidForm) && this.signupForm.valid) {
-      this.toastr.success('Your form is valid', 'Sign Up');
-    } else {
-      this.toastr.error('Please complete all of the required fields', 'Invalid Form');
-    }
+  validForms() {
+    return this.addresses.toArray().every(this.isValidForm) && this.signupForm.valid;
   }
 
   isValidForm(addressComponent: AddressFormComponent) {

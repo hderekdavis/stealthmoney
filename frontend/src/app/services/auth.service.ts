@@ -45,26 +45,27 @@ export class AuthService {
         });
     }
 
-    signup(email:string, password:string, metadata: any) {
+    signup(email:string, password:string) {
         const body = {
             client_id: environment.auth0_client_id,
-            username: email,
+            email: email,
             password: password,
-            user_metadata: metadata,
             connection: environment.auth0_connection
         }
         this.httpClient.post(this.auth0SignUpApi, body)
         .pipe(
             tap((data: any) => {
-                this.toastr.success('Signed in successfully!', 'Sign In');
             }),
             catchError( err => {
-                this.toastr.error('Error in source. Details: ' + err.error.error_description, 'Error');
+                if (err.error.statusCode === 400) {
+                    this.toastr.error('The email is already being used.', 'Error in source');
+                } else {
+                    this.toastr.error(err.error.error_description, 'Error in source');
+                }
                 return throwError(err);
             })
         ).subscribe(response => {
-            this.setSession(response);
-            this.router.navigate(['/dashboard']);
+            this.login(email, password);
         });
     }
             
