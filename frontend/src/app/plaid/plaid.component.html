@@ -1,0 +1,12 @@
+<mr-ngx-plaid-link-button
+  env="sandbox"
+  publicKey="d17298a88d20be6c0fb14bb7513747"
+  [countryCodes]="['US']"
+  (Success)="onPlaidSuccess($event)"
+  (Exit)="onPlaidExit($event)"
+  (Load)="onPlaidLoad($event)"
+  (Event)="onPlaidEvent($event)"
+  (Click)="onPlaidClick($event)"
+  className="launch-plaid-link-button"
+  buttonText="Connect Bank Account"
+></mr-ngx-plaid-link-button>
