@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
-import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -20,17 +19,14 @@ export class ApiService {
   };
 
   constructor(
-    private authService: AuthService,
     private httpClient: HttpClient,
-  ) {
-    this.authService.getToken().subscribe( token => {
-      if (token) {
-        this.headers.headers = new HttpHeaders({
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Bearer ${token}`
-        });
-      }
+  ) {}
+
+  setToken( token: string) {
+    this.headers.headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`
     });
   }
 
