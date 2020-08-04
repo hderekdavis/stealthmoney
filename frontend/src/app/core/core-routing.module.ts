@@ -4,10 +4,10 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SettingsComponent } from './settings/settings.component';
-import { PlaidComponent } from '../plaid/plaid.component';
-import { IncomeComponent } from '../income/income.component';
 import { AuthGuardService } from '../services/auth-guard.service';
 import { PlaidGuardService } from '../services/plaid-guard.service';
+import { PlaidComponent } from './plaid/plaid.component';
+import { IncomeComponent } from './income/income.component';
 
 const routes: Routes = [
   {

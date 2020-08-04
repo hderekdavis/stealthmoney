@@ -89,6 +89,7 @@ export class AuthService {
 
     logout() {
         this.httpClient.get(this.auth0LogoutApi, {responseType: 'text'}).subscribe( result => {
+            this.toastr.success('Logged out successfully.', 'Logout');
             localStorage.removeItem("id_token");
             localStorage.removeItem("expires_at");
         });
