@@ -13,6 +13,10 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { ToastrModule } from 'ngx-toastr';
 import { AddressFormComponent } from './address-form/address-form.component';
+import { PlaidComponent } from './plaid/plaid.component';
+import { IncomeComponent } from './income/income.component';
+import { ExpenseComponent } from './expense/expense.component';
+import { NgxPlaidLinkModule } from 'ngx-plaid-link';
 
 @NgModule({
   declarations: [
@@ -22,7 +26,10 @@ import { AddressFormComponent } from './address-form/address-form.component';
     LoginComponent,
     SignupComponent,
     SettingsComponent,
-    AddressFormComponent
+    AddressFormComponent,
+    PlaidComponent,
+    IncomeComponent,
+    ExpenseComponent
   ],
   imports: [
     CommonModule,
@@ -31,6 +38,7 @@ import { AddressFormComponent } from './address-form/address-form.component';
     SharedModule,
     CoreRoutingModule,
     HttpClientModule,
+    NgxPlaidLinkModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-right'
     }),
