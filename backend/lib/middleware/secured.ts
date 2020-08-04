@@ -3,8 +3,8 @@ const jwksRsa = require("jwks-rsa");
 
 // Set up Auth0 configuration
 const authConfig = {
-    domain: process.env.AUTH0_CLIENT_ID,
-    audience: process.env.AUTH0_DOMAIN
+    domain: process.env.AUTH0_DOMAIN,
+    audience: process.env.AUTH0_AUDIENCE
 };
 
 // Define middleware that validates incoming bearer tokens
@@ -22,4 +22,4 @@ const checkJwt = jwt({
   algorithms: ["RS256"]
 });
 
-module.exports = checkJwt;
+export default checkJwt;

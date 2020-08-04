@@ -35,3 +35,17 @@ export const getCategories = async function(): Promise<{any}> {
         `
     );
 }
+
+export const saveBusiness = async function(email: string, businessName: string, phoneNumber: string, legalEntity: string): Promise<any> {
+    return db.queryAsync<string>(`
+        INSERT INTO business
+        (businessName, phoneNumber, legalEntity, email)
+        VALUES (:businessName, :phoneNumber, :legalEntity, :email)`,
+        {
+            email,
+            businessName,
+            phoneNumber,
+            legalEntity
+         }
+    );
+}
