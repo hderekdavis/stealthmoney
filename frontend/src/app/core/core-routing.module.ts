@@ -7,6 +7,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { PlaidComponent } from '../plaid/plaid.component';
 import { IncomeComponent } from '../income/income.component';
 import { AuthGuardService } from '../services/auth-guard.service';
+import { PlaidGuardService } from '../services/plaid-guard.service';
 
 const routes: Routes = [
   {
@@ -24,12 +25,12 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService, PlaidGuardService]
   },
   {
     path: 'settings',
     component: SettingsComponent,
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService, PlaidGuardService]
   },
   {
     path: 'plaid',
@@ -39,7 +40,7 @@ const routes: Routes = [
   {
     path: 'income',
     component: IncomeComponent,
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService, PlaidGuardService]
   }
 ];
 

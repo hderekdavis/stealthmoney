@@ -15,7 +15,8 @@ export class AuthService {
     auth0LoginApi = 'https://' + environment.auth0_domain + '/oauth/token';
     auth0SignUpApi = 'https://' + environment.auth0_domain + '/dbconnections/signup';
     userInfo = {
-        businessId: 1 // TODO: Set this after logging in or signing up
+        businessId: 1,
+        isPlaidSetup: false // TODO: Set this after logging in or signing up or initializing the app
     }
 
     constructor(private httpClient: HttpClient,
@@ -102,6 +103,14 @@ export class AuthService {
   
     setUserInfo(businessId: number) {
         // this.userInfo.businessId = businessId;
+    }
+
+    setPlaidSetup(isSetup: boolean) {
+        this.userInfo.isPlaidSetup = isSetup;
+    }
+
+    isPlaidSetup() {
+        return this.getUserInfo().isPlaidSetup;
     }
 
     getUserInfo() {

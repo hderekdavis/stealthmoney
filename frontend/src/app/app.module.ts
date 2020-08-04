@@ -7,12 +7,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxPlaidLinkModule } from "ngx-plaid-link";
 import { PlaidComponent } from './plaid/plaid.component';
 import { IncomeComponent } from './income/income.component';
+import { ExpenseComponent } from './expense/expense.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PlaidComponent,
-    IncomeComponent
+    IncomeComponent,
+    ExpenseComponent
   ],
   imports: [
     AppRoutingModule,

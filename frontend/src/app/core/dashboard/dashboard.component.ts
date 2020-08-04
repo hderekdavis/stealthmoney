@@ -36,16 +36,19 @@ export class DashboardComponent implements OnInit {
       if (response.error_code !== 'PRODUCT_NOT_READY') {
         this.isLoaded = true;
         this.transactions = response;
+
+        // Storing transactions into a service for other components to access
+        
+
         this.expenseCategories = this.transactions.filter(transaction => transaction.type === 'expense');
         this.expenseCategories = _.groupBy(this.expenseCategories, 'category');
         this.expenseCategories = _.mapValues(this.expenseCategories, categoryExpenses => _.sumBy(categoryExpenses, 'amount'));
-        this.expenseCategories = _.mapValues(this.expenseCategories, expense => Math.abs(expense));
         this.expenseCategories = Object.keys(this.expenseCategories).map(key => ({ category: key, amount: this.expenseCategories[key] }));
         this.totalIncome = _.sumBy(this.transactions, transaction => {
-          return transaction.type === 'income' ? transaction.amount : 0;
+          return transaction.type === 'income' ? Math.abs(transaction.amount) : 0;
         });
         this.totalExpenses = _.sumBy(this.transactions, transaction => {
-          return transaction.type === 'expense' ? Math.abs(transaction.amount) : 0;
+          return transaction.type === 'expense' ? transaction.amount : 0;
         });
       }
     })

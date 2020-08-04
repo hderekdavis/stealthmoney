@@ -10,7 +10,6 @@ import { SharedModule } from '../shared/shared.module';
 import { CoreRoutingModule } from './core-routing.module';
 import { SettingsComponent } from './settings/settings.component';
 import { HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
 import { AddressFormComponent } from './address-form/address-form.component';
@@ -32,7 +31,9 @@ import { AddressFormComponent } from './address-form/address-form.component';
     SharedModule,
     CoreRoutingModule,
     HttpClientModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right'
+    }),
   ],
   exports: [
     HeaderComponent,

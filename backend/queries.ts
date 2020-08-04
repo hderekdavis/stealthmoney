@@ -25,3 +25,13 @@ export const updateAccessToken = async function(businessId: number, accessToken:
          }
     );
 }
+
+export const getCategories = async function(): Promise<{any}> {
+    return db.queryAsync<any>(`
+        SELECT * 
+        FROM plaidToAccountMapping
+        JOIN chartOfAccounts
+        ON plaidToAccountMapping.categoryID = chartOfAccounts.categoryID
+        `
+    );
+}

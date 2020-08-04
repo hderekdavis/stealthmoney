@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -9,6 +9,9 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./plaid.component.scss']
 })
 export class PlaidComponent implements OnInit {
+  // TODO: Is there a better way to trigger Plaid Link?
+  @ViewChild('launchButton') launchButton: ElementRef<HTMLElement>;
+
   constructor(
     private apiService: ApiService,
     private authService: AuthService,
@@ -27,6 +30,7 @@ export class PlaidComponent implements OnInit {
       businessId: this.authService.getUserInfo().businessId
     })
     .subscribe((response: any) => {
+      this.authService.setPlaidSetup(true);
       this.router.navigate(['/dashboard']);
     });
   }
@@ -41,6 +45,7 @@ export class PlaidComponent implements OnInit {
 
   onPlaidLoad(event) {
     console.log('Load: ' + JSON.stringify(event));
+    this.launchButton.nativeElement.click();
   }
 
   onPlaidClick(event) {

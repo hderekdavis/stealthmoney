@@ -5,6 +5,8 @@ var plaid = require('plaid');
 var moment = require('moment');
 router.use(cors());
 
+import * as _ from 'lodash';
+
 import * as queries from '../queries';
 
 const plaidClient = new plaid.Client({
@@ -45,20 +47,32 @@ router.post('/transactions', async function (req, res, next) {
     // Fetch transactions from Plaid
     const now = moment();
     const today = now.format('YYYY-MM-DD');
-    const thirtyDaysAgo = now.subtract(30, 'days').format('YYYY-MM-DD');
+    const oneYearAgo = now.subtract(365, 'days').format('YYYY-MM-DD');
 
-    const transactionsResponse = await plaidClient.getTransactions(accessToken, thirtyDaysAgo, today);
+    const transactionsResponse = await plaidClient.getTransactions(accessToken, oneYearAgo, today);
 
     // Save transactions to database
+    // Temporarily default to user's only business location
+    // Get all current transactions from database and see which transactions are new
+    // TODO:
+
+    // Fetch each transaction's mapped category
+    const categoryResponse = await queries.getCategories();
+
+    console.log(JSON.stringify(categoryResponse, null, 2));
 
     // Return transactions in response
     const response = [];
     transactionsResponse.transactions.forEach(transaction => {
+      console.log(transaction)
+      const category = _.find(categoryResponse, ['plaidCategoryID', Number(transaction.category_id)]);
+      console.log(category);
+  
       response.push({
-        type: transaction.amount > 0 ? 'income' : 'expense',
+        type: transaction.amount < 0 ? 'income' : 'expense', // Negative transactions are income: https://support.plaid.com/hc/en-us/articles/360008413653-Negative-transaction-amount
         amount: transaction.amount,
         name: transaction.name,
-        category: 'Uncategorized'
+        category: category.name
       });
     });
     res.json(response);

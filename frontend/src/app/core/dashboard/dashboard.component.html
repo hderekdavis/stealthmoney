@@ -1,15 +1,16 @@
 <div style="max-width:800px;margin:80px auto">
+    <img *ngIf="!isLoaded" src="assets/images/spinner.gif" style="width:50px;display:block;margin:auto;margin-bottom:40px">
     <a routerLink="/income" style="display:block">
-        <div style="padding:20px;background:#141E28">
-            <h3 style="float:left;display:block;color:#fff">Income</h3>
-            <h3 style="float:right;display:block;color:#fff">{{ totalIncome | currency }}</h3>
+        <div style="padding:20px 40px;background:#141E28;border-radius:10px">
+            <h4 style="float:left;display:block;color:#fff">Income</h4>
+            <h4 style="float:right;display:block;color:#fff">{{ totalIncome | currency }}</h4>
             <div style="clear:both"></div>
         </div>
     </a>
 
-    <div style="margin-top:80px;padding:20px;background:#141E28">
-        <h3 style="float:left;display:block;color:#fff">Expenses</h3>
-        <h3 style="float:right;display:block;color:#fff">{{ totalExpenses| currency }}</h3>
+    <div style="margin-top:80px;padding:20px 40px;background:#141E28;border-top-left-radius:10px;border-top-right-radius:10px">
+        <h4 style="float:left;display:block;color:#fff">Expenses</h4>
+        <h4 style="float:right;display:block;color:#fff">{{ totalExpenses| currency }}</h4>
         <div style="clear:both"></div>
     </div>
     <div *ngFor="let expenseCategory of expenseCategories" class="striped-row">
@@ -22,8 +23,8 @@
         <div style="clear:both"></div>
     </div>
 
-    <div style="margin-top:80px;padding:20px;background:#141E28">
-        <h3 style="float:left;display:block;color:#fff">Summary</h3>
+    <div style="margin-top:80px;padding:20px 40px;background:#141E28;border-top-left-radius:10px;border-top-right-radius:10px">
+        <h4 style="float:left;display:block;color:#fff">Summary</h4>
         <div style="clear:both"></div>
     </div>
     <div class="striped-row">
