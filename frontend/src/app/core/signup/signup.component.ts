@@ -47,8 +47,23 @@ export class SignupComponent implements OnInit {
   onSubmit() {
     if(this.validForms()) {
       const email = this.signupForm.controls['email'].value;
-      const password = this.signupForm.controls['password'].value
-      this.authService.signup(email, password);
+      const password = this.signupForm.controls['password'].value;
+      const businessName = this.signupForm.controls['businessName'].value;
+      const phoneNumber = this.signupForm.controls['phoneNumber'].value;
+      const legalEntity = this.signupForm.controls['legalEntity'].value;
+      let addresses = [];
+      this.addresses.forEach( (addressComponent: AddressFormComponent) => {
+        let form = addressComponent.addressForm;
+        addresses.push({
+          addressFirstLine: form.controls['addressFirstLine'].value,
+          addressSecondLine: form.controls['addressSecondLine'].value,
+          city: form.controls['city'].value,
+          state: form.controls['state'].value,
+          zipcode: form.controls['zipcode'].value,
+          businessVertical: form.controls['businessVertical'].value,
+        })
+      });
+      this.authService.signup(email, password, businessName, phoneNumber, legalEntity, addresses);
     } else {
       this.toastr.error('Please complete all of the required fields', 'Invalid Form');
     }

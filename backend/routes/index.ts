@@ -6,7 +6,7 @@ var moment = require('moment');
 router.use(cors());
 
 import * as _ from 'lodash';
-
+import checkJwt from '../lib/middleware/secured';
 import * as queries from '../queries';
 
 const plaidClient = new plaid.Client({
@@ -76,6 +76,28 @@ router.post('/transactions', async function (req, res, next) {
       });
     });
     res.json(response);
+  } catch(error) {
+    console.log(error);
+
+    res.json(error);
+  }
+});
+
+router.post('/business', checkJwt, async function (req, res, next) {
+  try {
+    const email = req.body.email;
+    const businessName = req.body.businessName;
+    const phoneNumber = req.body.phoneNumber;
+    const legalEntity = req.body.legalEntity;
+    const addresses = req.body.addresses;
+    var response: any = await queries.saveBusiness(email, businessName, phoneNumber, legalEntity);
+
+    for (const address of addresses) {
+      await queries.saveBusinessLocation(response.insertId, address.addressFirstLine, address.addressSecondLine,
+        address.city, address.state, address.zipcode, address.businessVertical);
+    }
+
+    res.json({businessId: response.insertId});
   } catch(error) {
     console.log(error);
 
