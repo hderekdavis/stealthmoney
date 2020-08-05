@@ -89,11 +89,15 @@ router.post('/business', checkJwt, async function (req, res, next) {
     const businessName = req.body.businessName;
     const phoneNumber = req.body.phoneNumber;
     const legalEntity = req.body.legalEntity;
+    const addresses = req.body.addresses;
     var response: any = await queries.saveBusiness(email, businessName, phoneNumber, legalEntity);
 
-    console.log(response);
+    for (const address of addresses) {
+      await queries.saveBusinessLocation(response.insertId, address.addressFirstLine, address.addressSecondLine,
+        address.city, address.state, address.zipcode, address.businessVertical);
+    }
 
-    res.json({});
+    res.json({businessId: response.insertId});
   } catch(error) {
     console.log(error);
 
