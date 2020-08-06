@@ -26,7 +26,10 @@ export class AuthService {
         private httpClient: HttpClient,
         private backendService: BackendService
     ) {
-        // On app initialization, call backend and try to fetch user details if id_token exists
+        // On app initialization, call backend and try to fetch user/business details if id_token exists
+        if (this.getToken()) {
+            this.backendService.getBusiness().subscribe();
+        }
     }
 
     login(email:string, password:string): Observable<any>{

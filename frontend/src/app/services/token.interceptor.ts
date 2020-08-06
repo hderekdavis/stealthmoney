@@ -5,12 +5,14 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(public auth: AuthService) {}
+  constructor() {}
+
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     
     request = request.clone({
       setHeaders: {
-        Authorization: `Bearer ${this.auth.getToken()}`
+        // Injecting the AuthService caused a circular dependency, so for now just getting the id_token "manually"
+        Authorization: `Bearer ${localStorage.getItem("id_token")}`
       }
     });
     return next.handle(request);

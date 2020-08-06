@@ -58,6 +58,7 @@ router.post('/transactions', checkJwt, async function (req, res, next) {
     // Get all current transactions from database and see which transactions are new
     // TODO:
 
+
     // Fetch each transaction's mapped category
     const categoryResponse = await queries.getCategories();
 
