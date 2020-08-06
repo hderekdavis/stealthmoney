@@ -37,13 +37,13 @@ export class AuthService {
         // Making this synchronous b/c plaid-guard.service.ts depends on this information
         if (this.getToken()) {
             this.backendService.getBusiness().subscribe(response => {
-                if (response.plaidAccessToken) {
+                if ('plaidAccessToken' in response) {
                     this.userInfo$.next({
                         ...this.userInfo$.getValue(),
                         isPlaidSetup: !!response.plaidAccessToken
                     });
                 }
-                if (response.businessID) {
+                if ('businessID' in response) {
                     this.userInfo$.next({
                         ...this.userInfo$.getValue(),
                         businessId: response.businessID // TODO: Standardize how ID/Id is formatted
