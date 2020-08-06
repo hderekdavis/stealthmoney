@@ -94,10 +94,10 @@ export class AuthService {
             tap((data: any) => {
             }),
             catchError( err => {
-                if (err.error.statusCode === 400) {
-                    this.toastr.error('The email is already being used.', 'Error in source');
+                if (err.error.message) {
+                    this.toastr.error(err.error.message, 'Error');
                 } else {
-                    this.toastr.error(err.error.error_description, 'Error in source');
+                    this.toastr.error('There was an unknown error with your signup. Please contact us for assistance.', 'Error')
                 }
                 return throwError(err);
             })
