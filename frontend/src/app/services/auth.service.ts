@@ -36,21 +36,25 @@ export class AuthService {
         // On app initialization, call backend and try to fetch user/business details if id_token exists
         // Making this synchronous b/c plaid-guard.service.ts depends on this information
         if (this.getToken()) {
-            this.backendService.getBusiness().subscribe(response => {
-                if ('plaidAccessToken' in response) {
-                    this.userInfo$.next({
-                        ...this.userInfo$.getValue(),
-                        isPlaidSetup: !!response.plaidAccessToken
-                    });
-                }
-                if ('businessID' in response) {
-                    this.userInfo$.next({
-                        ...this.userInfo$.getValue(),
-                        businessId: response.businessID // TODO: Standardize how ID/Id is formatted
-                    });
-                }
-            });
+            this.fetchUserInfo();
         }
+    }
+
+    public fetchUserInfo() {
+        this.backendService.getBusiness().subscribe(response => {
+            if ('plaidAccessToken' in response) {
+                this.userInfo$.next({
+                    ...this.userInfo$.getValue(),
+                    isPlaidSetup: !!response.plaidAccessToken
+                });
+            }
+            if ('businessID' in response) {
+                this.userInfo$.next({
+                    ...this.userInfo$.getValue(),
+                    businessId: response.businessID // TODO: Standardize how ID/Id is formatted
+                });
+            }
+        });
     }
 
     login(email:string, password:string): Observable<any>{
@@ -73,6 +77,7 @@ export class AuthService {
             })
         ).toPromise()
             .then(response => this.setSession(response))
+            .then(() => this.fetchUserInfo())
             .then(() => this.router.navigate(['/dashboard']))
         return result;
     }

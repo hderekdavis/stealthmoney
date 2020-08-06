@@ -49,21 +49,23 @@ export class DashboardComponent implements OnInit {
         this.isLoaded = true;
         const transactions = response;
 
-        this.expenseCategories = transactions.filter(transaction => transaction.type === 'expense');
-        this.expenseCategories = _.groupBy(this.expenseCategories, 'category');
-        this.expenseCategories = _.mapValues(this.expenseCategories, categoryExpenses => _.sumBy(categoryExpenses, 'amount'));
-        this.expenseCategories = Object.keys(this.expenseCategories).map(key => ({
-          category: key,
-          amount: this.expenseCategories[key],
-          categoryId: _.find(transactions, ['category', key]).categoryId
-        }));
-        
-        this.totalIncome = _.sumBy(transactions, transaction => {
-          return transaction.type === 'income' ? Math.abs(transaction.amount) : 0;
-        });
-        this.totalExpenses = _.sumBy(transactions, transaction => {
-          return transaction.type === 'expense' ? transaction.amount : 0;
-        });
+        if (transactions && transactions.length) {
+          this.expenseCategories = transactions.filter(transaction => transaction.type === 'expense');
+          this.expenseCategories = _.groupBy(this.expenseCategories, 'category');
+          this.expenseCategories = _.mapValues(this.expenseCategories, categoryExpenses => _.sumBy(categoryExpenses, 'amount'));
+          this.expenseCategories = Object.keys(this.expenseCategories).map(key => ({
+            category: key,
+            amount: this.expenseCategories[key],
+            categoryId: _.find(transactions, ['category', key]).categoryId
+          }));
+          
+          this.totalIncome = _.sumBy(transactions, transaction => {
+            return transaction.type === 'income' ? Math.abs(transaction.amount) : 0;
+          });
+          this.totalExpenses = _.sumBy(transactions, transaction => {
+            return transaction.type === 'expense' ? transaction.amount : 0;
+          });
+        }
       }
     });
   }
