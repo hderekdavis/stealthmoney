@@ -45,7 +45,6 @@ export class PlaidComponent implements OnInit {
 
   onPlaidLoad(event) {
     console.log('Load: ' + JSON.stringify(event));
-    this.launchButton.nativeElement.click();
   }
 
   onPlaidClick(event) {
