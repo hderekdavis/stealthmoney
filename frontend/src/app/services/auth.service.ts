@@ -1,32 +1,57 @@
 import { Injectable } from '@angular/core';
-import * as moment from 'moment';
-import { Subject, Observable, throwError } from 'rxjs';
+import { Observable, throwError, ReplaySubject, BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from './backend.service';
-import { ApiService } from './api.service';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
     auth0LoginApi = 'https://' + environment.auth0_domain + '/oauth/token';
     auth0SignUpApi = 'https://' + environment.auth0_domain + '/dbconnections/signup';
     auth0LogoutApi = 'https://' + environment.auth0_domain + '/v2/logout?client_id=' + environment.auth0_client_id;
-    userInfo = {
-        businessId: 1,
-        isPlaidSetup: false
-    }
+    
+    public userInfo$: BehaviorSubject<{
+        businessId: number,
+        isPlaidSetup: boolean
+    }> = new BehaviorSubject<{
+        businessId: number,
+        isPlaidSetup: boolean
+    }>({
+        businessId: null,
+        isPlaidSetup: null
+    });
 
-    constructor(private router: Router,
-                private toastr: ToastrService,
-                private api: ApiService,
-                private httpClient: HttpClient,
-                private backendService: BackendService) {}
+    constructor(
+        private router: Router,
+        private toastr: ToastrService,
+        private httpClient: HttpClient,
+        private backendService: BackendService
+    ) {
+        // On app initialization, call backend and try to fetch user/business details if id_token exists
+        // Making this synchronous b/c plaid-guard.service.ts depends on this information
+        if (this.getToken()) {
+            this.backendService.getBusiness().subscribe(response => {
+                if ('plaidAccessToken' in response) {
+                    this.userInfo$.next({
+                        ...this.userInfo$.getValue(),
+                        isPlaidSetup: !!response.plaidAccessToken
+                    });
+                }
+                if ('businessID' in response) {
+                    this.userInfo$.next({
+                        ...this.userInfo$.getValue(),
+                        businessId: response.businessID // TODO: Standardize how ID/Id is formatted
+                    });
+                }
+            });
+        }
+    }
 
     login(email:string, password:string): Observable<any>{
         const body = {
@@ -48,7 +73,7 @@ export class AuthService {
             })
         ).toPromise()
             .then(response => this.setSession(response))
-            .then(() => this.router.navigate(['/settings']))
+            .then(() => this.router.navigate(['/dashboard']))
         return result;
     }
 
@@ -111,14 +136,21 @@ export class AuthService {
     }
 
     setPlaidSetup(isSetup: boolean) {
-        this.userInfo.isPlaidSetup = isSetup;
+        this.userInfo$.next({
+            ...this.userInfo$.getValue(),
+            isPlaidSetup: isSetup
+        });
     }
 
     isPlaidSetup() {
-        return this.getUserInfo().isPlaidSetup;
+        return this.userInfo$.getValue().isPlaidSetup;
     }
 
     getUserInfo() {
-        return this.userInfo;
+        return this.userInfo$.getValue();
+    }
+
+    getObservableOfUserInfo() {
+        return this.userInfo$;
     }
 }

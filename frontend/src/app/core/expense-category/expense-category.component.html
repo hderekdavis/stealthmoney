@@ -1,0 +1,23 @@
+<div class="mx-auto income-container container">
+    <div class="row mt-5 mb-5 text-center" style="margin-right:0;margin-left:0">
+        <button class="btn income-button float-left" (click)="back()">
+            <i class="fa fa-arrow-left mr-3"></i>Back to Dashboard
+        </button>
+    </div>
+    <div style="margin-top:40px;padding:20px 40px;background:#141E28;border-top-left-radius:10px;border-top-right-radius:10px">
+        <h4 style="float:left;display:block;color:#fff">{{ category }} (Expense)</h4>
+        <h4 style="float:right;display:block;color:#fff">{{ totalExpenses| currency }}</h4>
+        <div style="clear:both"></div>
+    </div>
+    <ng-container *ngFor="let expense of expenses">
+        <div class="striped-row" [routerLink]="['/transaction', expense.transactionId]" style="cursor:pointer">
+            <div style="float:left">
+                {{ expense.name }}
+            </div>
+            <div style="float:right">
+                {{ expense.amount | currency }}
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    </ng-container>
+</div>

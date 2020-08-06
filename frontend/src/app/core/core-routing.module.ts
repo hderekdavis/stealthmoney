@@ -5,9 +5,10 @@ import { SignupComponent } from './signup/signup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AuthGuardService } from '../services/auth-guard.service';
-import { PlaidGuardService } from '../services/plaid-guard.service';
 import { PlaidComponent } from './plaid/plaid.component';
 import { IncomeComponent } from './income/income.component';
+import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
+import { TransactionComponent } from './transaction/transaction.component';
 
 const routes: Routes = [
   {
@@ -25,7 +26,7 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [AuthGuardService, PlaidGuardService]
+    canActivate: [AuthGuardService]
   },
   {
     path: 'settings',
@@ -41,7 +42,17 @@ const routes: Routes = [
     path: 'income',
     component: IncomeComponent,
     canActivate: [AuthGuardService]
-  }
+  },
+  {
+    path: 'expense/:categoryId',
+    component: ExpenseCategoryComponent,
+    canActivate: [AuthGuardService]
+  },
+  {
+    path: 'transaction/:transactionId',
+    component: TransactionComponent,
+    canActivate: [AuthGuardService]
+  },
 ];
 
 @NgModule({

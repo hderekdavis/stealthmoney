@@ -89,6 +89,43 @@ export const getBusinessByEmail = async function(email: string): Promise<any> {
     ).then(firstOrDefault);
 }
 
+export const getTransactions = async function(businessLocationID: number): Promise<any> {
+    return db.queryAsync<any>(`
+        SELECT
+        amount,
+        businessLocationID,
+        chartOfAccounts.categoryID,
+        date,
+        transaction.name as name,
+        chartOfAccounts.name as account,
+        transactionID,
+        type,
+        vertical
+        FROM transaction
+        JOIN chartOfAccounts
+        ON transaction.categoryID = chartOfAccounts.categoryID
+        WHERE
+            businessLocationID = :businessLocationID
+        `,
+        { businessLocationID }
+    );
+}
+
+export const saveTransaction = async function(businessLocationID: number, name: string, categoryID: number, amount: number, date: string): Promise<any> {
+    return db.queryAsync<any>(`
+        INSERT INTO transaction
+        (businessLocationID, name, categoryID, amount, date)
+        VALUES (:businessLocationID, :name, :categoryID, :amount, :date)`,
+        {
+            businessLocationID,
+            name,
+            categoryID,
+            amount,
+            date
+        }
+    );
+}
+
 export const updateBusiness = async function(businessID: number, email: string, businessName: string, phoneNumber: string, legalEntity: string, password: string): Promise<any> {
     return db.queryAsync<any>(`
         UPDATE business
