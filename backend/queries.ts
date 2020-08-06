@@ -126,7 +126,7 @@ export const saveTransaction = async function(businessLocationID: number, name: 
     );
 }
 
-export const updateBusiness = async function(businessID: number, email: string, businessName: string, phoneNumber: string, legalEntity: string, password: string): Promise<any> {
+export const updateBusiness = async function(businessID: number, email: string, businessName: string, phoneNumber: string, legalEntity: string): Promise<any> {
     return db.queryAsync<any>(`
         UPDATE business
         SET email = :email,
@@ -141,8 +141,7 @@ export const updateBusiness = async function(businessID: number, email: string, 
             email,
             businessName,
             phoneNumber,
-            legalEntity,
-            password
+            legalEntity
         }
     ).then(firstOrDefault);
 }
