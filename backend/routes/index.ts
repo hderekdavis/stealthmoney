@@ -61,13 +61,15 @@ router.post('/transactions', checkJwt, async function (req, res, next) {
         // Find transaction category
         const category = _.find(categories, ['plaidCategoryID', Number(transaction.category_id)]);
 
+        let categoryId = category.categoryID;
+
         if (transaction.amount < 0) {
           // Negative transactions are income: https://support.plaid.com/hc/en-us/articles/360008413653-Negative-transaction-amount
-          category.categoryID = 43;
+          categoryId = 43;
         }
 
         // Insert transaction into database
-        await queries.saveTransaction(defaultBusinessLocationId, transaction.name, category.categoryID, transaction.amount, transaction.date);
+        await queries.saveTransaction(defaultBusinessLocationId, transaction.name, categoryId, transaction.amount, transaction.date);
       }
     });
 
@@ -100,6 +102,34 @@ router.post('/expense-category', checkJwt, async function (req, res, next) {
 
     let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
     latestTransactions = latestTransactions.filter(transaction => transaction.categoryID === Number(categoryId));
+
+    latestTransactions = latestTransactions.map(transaction => {
+      return {
+        type: transaction.type.toLowerCase(),
+        amount: transaction.amount,
+        name: transaction.name,
+        category: transaction.account,
+        categoryId: transaction.categoryID,
+        transactionId: transaction.transactionID
+      };
+    });
+
+    res.json(latestTransactions);
+  } catch(error) {
+    console.log(error);
+
+    res.json(error);
+  }
+});
+
+router.post('/income', checkJwt, async function (req, res, next) {
+  try{
+    const businessId = req.body.businessId;
+    const businessLocationsForBusiness = await queries.getBusinessLocationsForBusiness(businessId);
+    const defaultBusinessLocationId = businessLocationsForBusiness[0].businessLocationID; // Temporarily default to user's first business location
+
+    let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
+    latestTransactions = latestTransactions.filter(transaction => transaction.type === 'Income');
 
     latestTransactions = latestTransactions.map(transaction => {
       return {

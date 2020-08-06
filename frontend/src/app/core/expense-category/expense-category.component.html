@@ -12,7 +12,7 @@
     <ng-container *ngFor="let expense of expenses">
         <div class="striped-row" [routerLink]="['/transaction', expense.transactionId]" style="cursor:pointer">
             <div style="float:left">
-                {{ expense.category }}
+                {{ expense.name }}
             </div>
             <div style="float:right">
                 {{ expense.amount | currency }}

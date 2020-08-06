@@ -8,70 +8,15 @@
         <label class="my-auto ml-5">Income</label>
         <label class="my-auto ml-auto mr-5">$52,984.93</label>
     </div>
-    <div class="row w-100 income-item color-darker">
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-3">Barclaycard Us Creditcard</label>
+    <ng-container *ngFor="let transaction of income">
+        <div class="row striped-row" [routerLink]="['/transaction', transaction.transactionId]" style="cursor:pointer">
+            <div style="float:left">
+                {{ transaction.name }}
+            </div>
+            <div style="float:right">
+                {{ transaction.amount | currency }}
+            </div>
+            <div style="clear:both"></div>
         </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto mx-auto">Income</label>
-        </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-auto mr-3 cash-text">$57.96</label>
-        </div>
-    </div>
-    <div class="row w-100 income-item color-lighter">
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-3">Sheetz</label>
-        </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto mx-auto">Income - Other</label>
-        </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-auto mr-3 cash-text">$57.96</label>
-        </div>
-    </div>
-    <div class="row w-100 income-item color-darker">
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-3">Barclaycard Us Creditcard</label>
-        </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto mx-auto">Uncategorized</label>
-        </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-auto mr-3 cash-text">$57.96</label>
-        </div>
-    </div>
-    <div class="row w-100 income-item color-lighter">
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-3">Sheetz</label>
-        </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto mx-auto">Uncategorized</label>
-        </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-auto mr-3 cash-text">$57.96</label>
-        </div>
-    </div>
-    <div class="row w-100 income-item color-darker">
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-3">Barclaycard Us Creditcard</label>
-        </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto mx-auto">Uncategorized</label>
-        </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-auto mr-3 cash-text">$57.96</label>
-        </div>
-    </div>
-    <div class="row w-100 income-item color-lighter">
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-3">Sheetz</label>
-        </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto mx-auto">Uncategorized</label>
-        </div>
-        <div class="col-4 d-flex align-center">
-            <label class="my-auto ml-auto mr-3 cash-text">$57.96</label>
-        </div>
-    </div>
+    </ng-container>
 </div>
