@@ -20,8 +20,6 @@ const plaidClient = new plaid.Client({
 router.get('/business', checkJwt, async function (req, res, next) {
   var response: any = await queries.getBusiness(1);
 
-  console.log(response);
-
   res.json(response);
 });
 
@@ -39,46 +37,47 @@ router.post('/access-token', checkJwt, async function (req, res, next) {
 
 router.post('/transactions', checkJwt, async function (req, res, next) {
   try{
-    // Exchange public token for access token
+    // 1. Exchange public token for access token
     const businessId = req.body.businessId;
-    
-    // Fetch accessToken from database
     const getBusinessResponse: any = await queries.getBusiness(businessId);
     const accessToken = getBusinessResponse.plaidAccessToken;
 
-    // Fetch transactions from Plaid
+    // 2. Fetch transactions from Plaid
     const now = moment();
     const today = now.format('YYYY-MM-DD');
     const oneYearAgo = now.subtract(365, 'days').format('YYYY-MM-DD');
-
     const transactionsResponse = await plaidClient.getTransactions(accessToken, oneYearAgo, today);
 
-    // Save transactions to database
-    // Temporarily default to user's only business location
-    // Get all current transactions from database and see which transactions are new
-    // TODO:
+    // 3. Save transactions to database
+    const businessLocationsForBusiness = await queries.getBusinessLocationsForBusiness(businessId);
+    const defaultBusinessLocationId = businessLocationsForBusiness[0].businessLocationID; // Temporarily default to user's first business location
+    const transactions = await queries.getTransactions(defaultBusinessLocationId);
+    const categories = await queries.getCategories();
 
+    transactionsResponse.transactions.forEach(async transaction => {
+      const foundTransaction = _.find(transactions, { 'amount': transaction.amount, 'date': transaction.date, 'name': transaction.name });
 
-    // Fetch each transaction's mapped category
-    const categoryResponse = await queries.getCategories();
+      if (!foundTransaction) {
+        // Find transaction category
+        const category = _.find(categories, ['plaidCategoryID', Number(transaction.category_id)]);
 
-    console.log(JSON.stringify(categoryResponse, null, 2));
+        // Insert transaction into database
+        await queries.saveTransaction(defaultBusinessLocationId, transaction.name, category.categoryID, transaction.amount, transaction.date);
+      }
+    });
 
-    // Return transactions in response
-    const response = [];
-    transactionsResponse.transactions.forEach(transaction => {
-      console.log(transaction)
-      const category = _.find(categoryResponse, ['plaidCategoryID', Number(transaction.category_id)]);
-      console.log(category);
-  
-      response.push({
+    // 4. Return transactions in response
+    let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
+    latestTransactions = transactionsResponse.map(transaction => {
+      return {
         type: transaction.amount < 0 ? 'income' : 'expense', // Negative transactions are income: https://support.plaid.com/hc/en-us/articles/360008413653-Negative-transaction-amount
         amount: transaction.amount,
         name: transaction.name,
-        category: category.name
-      });
+        category: transaction.name // TODO
+      };
     });
-    res.json(response);
+
+    res.json(latestTransactions);
   } catch(error) {
     console.log(error);
 
@@ -111,7 +110,6 @@ router.post('/business', checkJwt, async function (req, res, next) {
 router.get('/business/settings', checkJwt, async function (req, res, next) {
   try {
     const businessEmail = req.body.user_email;
-    console.log(businessEmail);
     const business = await queries.getBusinessByEmail(businessEmail);
     const addresses = await queries.getBusinessLocationsForBusiness(business.businessID);
     
