@@ -40,7 +40,7 @@ export class SettingsComponent implements OnInit {
     request.subscribe( response => {
       this.settingsForm = this.fb.group({
         email: [response.business.email, Validators.required],
-        password: [null, Validators.required],
+        password: [null],
         businessName: [response.business.businessName, Validators.required],
         phoneNumber: [response.business.phoneNumber, Validators.required],
         legalEntity: [response.business.legalEntity, Validators.required],
