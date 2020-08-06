@@ -10,7 +10,11 @@ router.use(cors());
 import * as _ from 'lodash';
 import checkJwt from '../lib/middleware/secured';
 import * as queries from '../queries';
-import { changeUserPassword } from '../lib/middleware/userInfo';
+import { changeUserPassword, getManagementToken } from '../lib/middleware/userInfo';
+
+let managementToken = '';
+
+getManagementToken().then(response => managementToken = response);
 
 const plaidClient = new plaid.Client({
   clientID: process.env.PLAID_CLIENT_ID,
@@ -188,6 +192,7 @@ router.post('/business', checkJwt, async function (req, res, next) {
     const legalEntity = req.body.legalEntity;
     const addresses = req.body.addresses;
     var response: any = await queries.saveBusiness(email, businessName, phoneNumber, legalEntity);
+    console.log(response);
 
     for (const address of addresses) {
       await queries.saveBusinessLocation(response.insertId, address.addressFirstLine, address.addressSecondLine,
@@ -238,9 +243,7 @@ router.post('/business/settings', checkJwt, async function (req, res, next) {
   const response = await queries.updateBusiness(businessID, email, businessName, phoneNumber, legalEntity);
 
   if (password) {
-    let token = req.header('authorization');
-    console.log(req.body.auth0_user_id);
-    await changeUserPassword(token, req.body.auth0_user_id, password);
+    await changeUserPassword(managementToken, req.body.auth0_user_id, password);
   }
 
   res.json(response);

@@ -19,11 +19,27 @@ export const changeUserPassword = async function(token: string, auth0UserId: str
       password: newPassword,
       connection: 'Username-Password-Authentication'
     })
-    .set('Authorization',token)
+    .set('Authorization', 'Bearer ' + token)
     .set('content-type', 'application/json')
     .then(res => {
-      console.log('Password changed for user with ID' + auth0UserId);
+      console.log('Password changed for user with ID: ' + auth0UserId);
   }).catch(err => {
     console.log(err);
   })
 }
+
+export const getManagementToken = async function() {
+  return await superagent.post('https://' + process.env.AUTH0_DOMAIN + '/oauth/token')
+    .send({
+      grant_type: 'client_credentials',
+      client_id: process.env.AUTH0_MANAGEMENT_ID,
+      client_secret: process.env.AUTH0_MANAGEMENT_SECRET,
+      audience: 'https://' + process.env.AUTH0_DOMAIN + '/api/v2/'
+    })
+    .set('content-type', 'application/x-www-form-urlencoded')
+    .then(res => {
+      return res.body.access_token;
+  }).catch(err => {
+    console.log(err);
+  })
+} 
