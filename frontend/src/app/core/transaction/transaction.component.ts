@@ -42,11 +42,16 @@ export class TransactionComponent implements OnInit {
     )
     .subscribe((result: any) => {
       this.transaction = result[0];
+
+      this.transaction.amount = Math.abs(this.transaction.amount);
     });
   }
 
   back() {
-
+    if (this.transaction.type === 'income') {
+      this.router.navigate(['/income']);
+    } else {
+      this.router.navigate(['/expense', this.transaction.categoryId]);
+    }
   }
-
 }

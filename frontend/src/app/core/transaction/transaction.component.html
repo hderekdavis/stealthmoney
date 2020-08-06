@@ -1,7 +1,9 @@
 <div class="mx-auto income-container container">
     <div class="row mt-5 mb-5 text-center">
-        <button class="btn income-button float-left" (click)="back()">
-            <i class="fa fa-arrow-left mr-3"></i>Back to Dashboard
+        <button class="btn income-button float-left" (click)="back()" style="min-width:210px;width:auto">
+            <i class="fa fa-arrow-left mr-3"></i>
+            <ng-container *ngIf="transaction?.type === 'income'">Back to Income</ng-container>
+            <ng-container *ngIf="transaction?.type !== 'income'">Back to {{ transaction?.category }} (Expense)</ng-container>
         </button>
     </div>
     <div class="row" style="margin-top:40px;padding:20px 40px;background:#141E28;border-top-left-radius:10px;border-top-right-radius:10px">
@@ -13,6 +15,22 @@
         </div>
         <div class="col-sm-6" style="text-align:right">
             {{ transaction?.amount | currency }}
+        </div>
+    </div>
+    <div class="row striped-row" style="cursor:pointer">
+        <div class="col-sm-6">
+            Category
+        </div>
+        <div class="col-sm-6" style="text-align:right">
+            <input [value]="transaction?.category">
+        </div>
+    </div>
+    <div class="row striped-row" style="cursor:pointer">
+        <div class="col-sm-6">
+            Business/Location
+        </div>
+        <div class="col-sm-6" style="text-align:right">
+            <input>
         </div>
     </div>
 </div>
