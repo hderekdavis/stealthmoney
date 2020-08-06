@@ -40,7 +40,7 @@ const routes: Routes = [
   {
     path: 'income',
     component: IncomeComponent,
-    canActivate: [AuthGuardService, PlaidGuardService]
+    canActivate: [AuthGuardService]
   }
 ];
 
