@@ -1,9 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var cors = require('cors')
-var plaid = require('plaid');
+var plaid = require('plaid');``
 var moment = require('moment');
-var logger = require('morgan');
 const http = require('http');
 
 router.use(cors());
@@ -18,7 +17,7 @@ const plaidClient = new plaid.Client({
   env: plaid.environments.sandbox
 });
 
-router.get('/business', async function (req, res, next) {
+router.get('/business', checkJwt, async function (req, res, next) {
   var response: any = await queries.getBusiness(1);
 
   console.log(response);
@@ -26,7 +25,7 @@ router.get('/business', async function (req, res, next) {
   res.json(response);
 });
 
-router.post('/access-token', async function (req, res, next) {
+router.post('/access-token', checkJwt, async function (req, res, next) {
   const publicToken = req.body.publicToken;
   const businessId = req.body.businessId;
 
@@ -38,7 +37,7 @@ router.post('/access-token', async function (req, res, next) {
   res.json({});
 });
 
-router.post('/transactions', async function (req, res, next) {
+router.post('/transactions', checkJwt, async function (req, res, next) {
   try{
     // Exchange public token for access token
     const businessId = req.body.businessId;
@@ -126,14 +125,14 @@ router.get('/business/settings', checkJwt, async function (req, res, next) {
   }
 })
 
-router.get('/business', async function (req, res, next) {
+router.get('/business', checkJwt, async function (req, res, next) {
   const email = req.user_email;
   const response = await queries.getBusinessByEmail(email);
 
   res.json(response);
 });
 
-router.post('/business/settings', async function (req, res, next) {
+router.post('/business/settings', checkJwt, async function (req, res, next) {
 
   const businessID = parseInt(req.body.businessID);
   const email = req.body.email;

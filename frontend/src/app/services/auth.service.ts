@@ -1,19 +1,17 @@
 import { Injectable } from '@angular/core';
-import * as moment from 'moment';
-import { Subject, Observable, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from './backend.service';
-import { ApiService } from './api.service';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
     auth0LoginApi = 'https://' + environment.auth0_domain + '/oauth/token';
     auth0SignUpApi = 'https://' + environment.auth0_domain + '/dbconnections/signup';
     auth0LogoutApi = 'https://' + environment.auth0_domain + '/v2/logout?client_id=' + environment.auth0_client_id;
@@ -22,11 +20,14 @@ export class AuthService {
         isPlaidSetup: false
     }
 
-    constructor(private router: Router,
-                private toastr: ToastrService,
-                private api: ApiService,
-                private httpClient: HttpClient,
-                private backendService: BackendService) {}
+    constructor(
+        private router: Router,
+        private toastr: ToastrService,
+        private httpClient: HttpClient,
+        private backendService: BackendService
+    ) {
+        // On app initialization, call backend and try to fetch user details if id_token exists
+    }
 
     login(email:string, password:string): Observable<any>{
         const body = {
