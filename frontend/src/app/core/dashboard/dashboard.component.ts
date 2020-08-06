@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
-import { interval } from 'rxjs';
+import { interval, combineLatest } from 'rxjs';
 import { filter, switchMap, startWith } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -24,15 +24,28 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    const businessId$ = this.authService.getObservableOfUserInfo()
+      .pipe(
+        filter((userInfo: any) => userInfo.businessId !== null) // Filter initialization value
+      );
+
     // Every 5 seconds try calling the API to see if transactions are ready
-    interval(5000)
+    const timer$ = interval(5000)
+      .pipe(
+        startWith(0),
+        filter(() => !this.isLoaded)
+      );
+
+    combineLatest(
+      businessId$,
+      timer$
+    )
     .pipe(
-      startWith(0),
-      filter(() => !this.isLoaded),
-      switchMap(() => {
-        return this.apiService.post('/transactions', { businessId: this.authService.getUserInfo().businessId })
+      switchMap(response => {
+        return this.apiService.post('/transactions', { businessId: response[0].businessId });
       })
-    ).subscribe((response: any) => {
+    )
+    .subscribe((response: any) => {
       if (response.error_code !== 'PRODUCT_NOT_READY') {
         this.isLoaded = true;
         this.transactions = response;
@@ -51,7 +64,7 @@ export class DashboardComponent implements OnInit {
           return transaction.type === 'expense' ? transaction.amount : 0;
         });
       }
-    })
+    });
   }
 
 }

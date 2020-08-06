@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, ReplaySubject, BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
@@ -15,10 +15,17 @@ export class AuthService {
     auth0LoginApi = 'https://' + environment.auth0_domain + '/oauth/token';
     auth0SignUpApi = 'https://' + environment.auth0_domain + '/dbconnections/signup';
     auth0LogoutApi = 'https://' + environment.auth0_domain + '/v2/logout?client_id=' + environment.auth0_client_id;
-    userInfo = {
-        businessId: 1,
-        isPlaidSetup: false
-    }
+    
+    public userInfo$: BehaviorSubject<{
+        businessId: number,
+        isPlaidSetup: boolean
+    }> = new BehaviorSubject<{
+        businessId: number,
+        isPlaidSetup: boolean
+    }>({
+        businessId: null,
+        isPlaidSetup: null
+    });
 
     constructor(
         private router: Router,
@@ -27,8 +34,22 @@ export class AuthService {
         private backendService: BackendService
     ) {
         // On app initialization, call backend and try to fetch user/business details if id_token exists
+        // Making this synchronous b/c plaid-guard.service.ts depends on this information
         if (this.getToken()) {
-            this.backendService.getBusiness().subscribe();
+            this.backendService.getBusiness().subscribe(response => {
+                if (response.plaidAccessToken) {
+                    this.userInfo$.next({
+                        ...this.userInfo$.getValue(),
+                        isPlaidSetup: !!response.plaidAccessToken
+                    });
+                }
+                if (response.businessID) {
+                    this.userInfo$.next({
+                        ...this.userInfo$.getValue(),
+                        businessId: response.businessID // TODO: Standardize how ID/Id is formatted
+                    });
+                }
+            });
         }
     }
 
@@ -115,14 +136,21 @@ export class AuthService {
     }
 
     setPlaidSetup(isSetup: boolean) {
-        this.userInfo.isPlaidSetup = isSetup;
+        this.userInfo$.next({
+            ...this.userInfo$.getValue(),
+            isPlaidSetup: isSetup
+        });
     }
 
     isPlaidSetup() {
-        return this.getUserInfo().isPlaidSetup;
+        return this.userInfo$.getValue().isPlaidSetup;
     }
 
     getUserInfo() {
-        return this.userInfo;
+        return this.userInfo$.getValue();
+    }
+
+    getObservableOfUserInfo() {
+        return this.userInfo$;
     }
 }
