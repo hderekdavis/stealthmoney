@@ -8,6 +8,7 @@ import { AuthGuardService } from '../services/auth-guard.service';
 import { PlaidComponent } from './plaid/plaid.component';
 import { IncomeComponent } from './income/income.component';
 import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
+import { TransactionComponent } from './transaction/transaction.component';
 
 const routes: Routes = [
   {
@@ -46,7 +47,12 @@ const routes: Routes = [
     path: 'expense/:categoryId',
     component: ExpenseCategoryComponent,
     canActivate: [AuthGuardService]
-  }
+  },
+  {
+    path: 'transaction/:transactionId',
+    component: TransactionComponent,
+    canActivate: [AuthGuardService]
+  },
 ];
 
 @NgModule({

@@ -16,6 +16,7 @@ import { AddressFormComponent } from './address-form/address-form.component';
 import { PlaidComponent } from './plaid/plaid.component';
 import { IncomeComponent } from './income/income.component';
 import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
+import { TransactionComponent } from './transaction/transaction.component';
 import { NgxPlaidLinkModule } from 'ngx-plaid-link';
 
 @NgModule({
@@ -29,7 +30,8 @@ import { NgxPlaidLinkModule } from 'ngx-plaid-link';
     AddressFormComponent,
     PlaidComponent,
     IncomeComponent,
-    ExpenseCategoryComponent
+    ExpenseCategoryComponent,
+    TransactionComponent
   ],
   imports: [
     CommonModule,

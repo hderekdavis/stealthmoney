@@ -1,0 +1,18 @@
+<div class="mx-auto income-container container">
+    <div class="row mt-5 mb-5 text-center">
+        <button class="btn income-button float-left" (click)="back()">
+            <i class="fa fa-arrow-left mr-3"></i>Back to Dashboard
+        </button>
+    </div>
+    <div class="row" style="margin-top:40px;padding:20px 40px;background:#141E28;border-top-left-radius:10px;border-top-right-radius:10px">
+        <h4 class="col-sm-6" style="display:block;color:#fff">Details</h4>
+    </div>
+    <div class="row striped-row" style="cursor:pointer">
+        <div class="col-sm-6">
+            {{ transaction?.name }}
+        </div>
+        <div class="col-sm-6" style="text-align:right">
+            {{ transaction?.amount | currency }}
+        </div>
+    </div>
+</div>

@@ -122,6 +122,35 @@ router.post('/expense-category', checkJwt, async function (req, res, next) {
   }
 });
 
+router.post('/transaction', checkJwt, async function (req, res, next) {
+  try{
+    const transactionId = req.body.transactionId;
+    const businessId = req.body.businessId;
+    const businessLocationsForBusiness = await queries.getBusinessLocationsForBusiness(businessId);
+    const defaultBusinessLocationId = businessLocationsForBusiness[0].businessLocationID; // Temporarily default to user's first business location
+
+    let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
+    latestTransactions = latestTransactions.filter(transaction => transaction.transactionID === Number(transactionId));
+
+    latestTransactions = latestTransactions.map(transaction => {
+      return {
+        type: transaction.type.toLowerCase(),
+        amount: transaction.amount,
+        name: transaction.name,
+        category: transaction.account,
+        categoryId: transaction.categoryID,
+        transactionId: transaction.transactionID
+      };
+    });
+
+    res.json(latestTransactions);
+  } catch(error) {
+    console.log(error);
+
+    res.json(error);
+  }
+});
+
 router.post('/income', checkJwt, async function (req, res, next) {
   try{
     const businessId = req.body.businessId;
