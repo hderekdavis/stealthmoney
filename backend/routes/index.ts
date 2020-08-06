@@ -78,7 +78,37 @@ router.post('/transactions', checkJwt, async function (req, res, next) {
         type: transaction.type.toLowerCase(),
         amount: transaction.amount,
         name: transaction.name,
-        category: transaction.account
+        category: transaction.account,
+        categoryId: transaction.categoryID
+      };
+    });
+
+    res.json(latestTransactions);
+  } catch(error) {
+    console.log(error);
+
+    res.json(error);
+  }
+});
+
+router.post('/expense-category', checkJwt, async function (req, res, next) {
+  try{
+    const categoryId = req.body.categoryId;
+    const businessId = req.body.businessId;
+    const businessLocationsForBusiness = await queries.getBusinessLocationsForBusiness(businessId);
+    const defaultBusinessLocationId = businessLocationsForBusiness[0].businessLocationID; // Temporarily default to user's first business location
+
+    let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
+    latestTransactions = latestTransactions.filter(transaction => transaction.categoryID === Number(categoryId));
+
+    latestTransactions = latestTransactions.map(transaction => {
+      return {
+        type: transaction.type.toLowerCase(),
+        amount: transaction.amount,
+        name: transaction.name,
+        category: transaction.account,
+        categoryId: transaction.categoryID,
+        transactionId: transaction.transactionID
       };
     });
 

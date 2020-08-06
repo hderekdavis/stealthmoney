@@ -73,7 +73,7 @@ export class AuthService {
             })
         ).toPromise()
             .then(response => this.setSession(response))
-            .then(() => this.router.navigate(['/settings']))
+            .then(() => this.router.navigate(['/dashboard']))
         return result;
     }
 

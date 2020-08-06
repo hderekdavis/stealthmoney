@@ -13,7 +13,6 @@ import * as _ from 'lodash';
 })
 export class DashboardComponent implements OnInit {
   expenseCategories: any[] = []
-  transactions: any[] = [];
   totalIncome: number = 0;
   totalExpenses: number = 0;
   isLoaded: boolean;
@@ -48,19 +47,21 @@ export class DashboardComponent implements OnInit {
     .subscribe((response: any) => {
       if (response.error_code !== 'PRODUCT_NOT_READY') {
         this.isLoaded = true;
-        this.transactions = response;
+        const transactions = response;
 
-        // Storing transactions into a service for other components to access
-        
-
-        this.expenseCategories = this.transactions.filter(transaction => transaction.type === 'expense');
+        this.expenseCategories = transactions.filter(transaction => transaction.type === 'expense');
         this.expenseCategories = _.groupBy(this.expenseCategories, 'category');
         this.expenseCategories = _.mapValues(this.expenseCategories, categoryExpenses => _.sumBy(categoryExpenses, 'amount'));
-        this.expenseCategories = Object.keys(this.expenseCategories).map(key => ({ category: key, amount: this.expenseCategories[key] }));
-        this.totalIncome = _.sumBy(this.transactions, transaction => {
+        this.expenseCategories = Object.keys(this.expenseCategories).map(key => ({
+          category: key,
+          amount: this.expenseCategories[key],
+          categoryId: _.find(transactions, ['category', key]).categoryId
+        }));
+        
+        this.totalIncome = _.sumBy(transactions, transaction => {
           return transaction.type === 'income' ? Math.abs(transaction.amount) : 0;
         });
-        this.totalExpenses = _.sumBy(this.transactions, transaction => {
+        this.totalExpenses = _.sumBy(transactions, transaction => {
           return transaction.type === 'expense' ? transaction.amount : 0;
         });
       }

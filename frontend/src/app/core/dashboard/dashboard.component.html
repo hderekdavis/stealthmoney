@@ -13,15 +13,17 @@
         <h4 style="float:right;display:block;color:#fff">{{ totalExpenses| currency }}</h4>
         <div style="clear:both"></div>
     </div>
-    <div *ngFor="let expenseCategory of expenseCategories" class="striped-row">
-        <div style="float:left">
-            {{ expenseCategory.category }}
+    <ng-container *ngFor="let expenseCategory of expenseCategories">
+        <div class="striped-row" [routerLink]="['/expense', expenseCategory.categoryId]" style="cursor:pointer">
+            <div style="float:left">
+                {{ expenseCategory.category }}
+            </div>
+            <div style="float:right">
+                {{ expenseCategory.amount | currency }}
+            </div>
+            <div style="clear:both"></div>
         </div>
-        <div style="float:right">
-            {{ expenseCategory.amount | currency }}
-        </div>
-        <div style="clear:both"></div>
-    </div>
+    </ng-container>
 
     <div style="margin-top:80px;padding:20px 40px;background:#141E28;border-top-left-radius:10px;border-top-right-radius:10px">
         <h4 style="float:left;display:block;color:#fff">Summary</h4>

@@ -15,7 +15,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { AddressFormComponent } from './address-form/address-form.component';
 import { PlaidComponent } from './plaid/plaid.component';
 import { IncomeComponent } from './income/income.component';
-import { ExpenseComponent } from './expense/expense.component';
+import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
 import { NgxPlaidLinkModule } from 'ngx-plaid-link';
 
 @NgModule({
@@ -29,7 +29,7 @@ import { NgxPlaidLinkModule } from 'ngx-plaid-link';
     AddressFormComponent,
     PlaidComponent,
     IncomeComponent,
-    ExpenseComponent
+    ExpenseCategoryComponent
   ],
   imports: [
     CommonModule,

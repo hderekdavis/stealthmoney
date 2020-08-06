@@ -7,6 +7,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { AuthGuardService } from '../services/auth-guard.service';
 import { PlaidComponent } from './plaid/plaid.component';
 import { IncomeComponent } from './income/income.component';
+import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
 
 const routes: Routes = [
   {
@@ -39,6 +40,11 @@ const routes: Routes = [
   {
     path: 'income',
     component: IncomeComponent,
+    canActivate: [AuthGuardService]
+  },
+  {
+    path: 'expense/:categoryId',
+    component: ExpenseCategoryComponent,
     canActivate: [AuthGuardService]
   }
 ];
