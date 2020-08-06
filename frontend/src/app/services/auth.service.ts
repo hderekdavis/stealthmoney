@@ -60,7 +60,7 @@ export class AuthService {
             audience: 'https://stealthmoney/api',
             username: email,
             password: password,
-            scope: 'openid email'
+            scope: 'openid email profile'
         }
         const result = this.httpClient.post(this.auth0LoginApi, body);
         result.pipe(
@@ -98,7 +98,8 @@ export class AuthService {
             })
         ).subscribe(response => {
             this.login(email, password).toPromise().then(() => {
-                this.backendService.createBusiness(email, businessName, phoneNumber, legalEntity, addresses);
+                this.backendService.createBusiness(email, businessName, phoneNumber, legalEntity, addresses)
+                    .subscribe(() => this.toastr.success('Successfully signed up!', 'Sign Up'))
             });
         });
     }
@@ -110,11 +111,10 @@ export class AuthService {
     }          
 
     logout() {
-        this.httpClient.get(this.auth0LogoutApi, {responseType: 'text'}).subscribe( result => {
-            this.toastr.success('Logged out successfully.', 'Logout');
-            localStorage.removeItem("id_token");
-            localStorage.removeItem("expires_at");
-        });
+        window.location.href = this.auth0LogoutApi;
+        this.toastr.success('Logged out successfully.', 'Logout');
+        localStorage.removeItem("id_token");
+        localStorage.removeItem("expires_at");
     }
 
     public isLoggedIn() {
