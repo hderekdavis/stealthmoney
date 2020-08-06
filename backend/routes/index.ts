@@ -23,9 +23,10 @@ const plaidClient = new plaid.Client({
 });
 
 router.get('/business', checkJwt, async function (req, res, next) {
-  var response: any = await queries.getBusiness(1);
+  const businessEmail = req.body.user_email;
+  const business = await queries.getBusinessByEmail(businessEmail);
 
-  res.json(response);
+  res.json(business);
 });
 
 router.post('/access-token', checkJwt, async function (req, res, next) {
@@ -184,7 +185,7 @@ router.post('/income', checkJwt, async function (req, res, next) {
   }
 });
 
-router.post('/business', checkJwt, async function (req, res, next) {
+router.post('/business', async function (req, res, next) {
   try {
     const email = req.body.email;
     const businessName = req.body.businessName;

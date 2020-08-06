@@ -40,19 +40,21 @@ export class AuthService {
         }
     }
 
-    public fetchUserInfo() {
-        this.backendService.getBusiness().subscribe(response => {
-            if ('plaidAccessToken' in response) {
-                this.userInfo$.next({
-                    ...this.userInfo$.getValue(),
-                    isPlaidSetup: !!response.plaidAccessToken
-                });
-            }
-            if ('businessID' in response) {
-                this.userInfo$.next({
-                    ...this.userInfo$.getValue(),
-                    businessId: response.businessID // TODO: Standardize how ID/Id is formatted
-                });
+    public async fetchUserInfo() {
+        await this.backendService.getBusiness().toPromise().then(response => {
+            if (response) {
+                if ('plaidAccessToken' in response) {
+                    this.userInfo$.next({
+                        ...this.userInfo$.getValue(),
+                        isPlaidSetup: !!response.plaidAccessToken
+                    });
+                }
+                if ('businessID' in response) {
+                    this.userInfo$.next({
+                        ...this.userInfo$.getValue(),
+                        businessId: response.businessID // TODO: Standardize how ID/Id is formatted
+                    });
+                }
             }
         });
     }
@@ -104,7 +106,10 @@ export class AuthService {
         ).subscribe(response => {
             this.login(email, password).toPromise().then(() => {
                 this.backendService.createBusiness(email, businessName, phoneNumber, legalEntity, addresses)
-                    .subscribe(() => this.toastr.success('Successfully signed up!', 'Sign Up'))
+                    .subscribe(() => {
+                        this.toastr.success('Successfully signed up!', 'Sign Up');
+                        this.router.navigate(['/plaid']);
+                    })
             });
         });
     }
