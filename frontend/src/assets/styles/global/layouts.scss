@@ -75,3 +75,42 @@ input[type="radio"]:checked {
     font-weight: bold;
     font-family: Helvetica;
 }
+
+.income-container {
+    width: 820px;
+    padding-bottom: 100px;
+}
+
+.income-button {
+    background-color: $button-grey;
+    color: black;
+    height: 48px;
+    border-radius: 9px;
+    width: 210px;
+}
+
+.income-header {
+    background-color: $income-header;
+    color: white;
+    height: 90px;
+    border-top-left-radius: 9px;
+    border-top-right-radius: 9px;
+    font-size: 20px;
+}
+
+.income-item {
+    height: 50px;
+}
+
+.color-darker {
+    background-color: $medium-dark-grey;
+}
+
+.color-lighter {
+    background-color: $light-grey;
+}
+
+.cash-text {
+    color: $cash-color
+}
+

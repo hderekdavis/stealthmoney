@@ -11,5 +11,9 @@ export class IncomeComponent implements OnInit {
 
   ngOnInit(): void {
   }
+  
+  back() {
+    
+  }
 
 }
