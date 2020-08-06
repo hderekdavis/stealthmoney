@@ -19,7 +19,7 @@ export class AuthService {
     auth0LogoutApi = 'https://' + environment.auth0_domain + '/v2/logout?client_id=' + environment.auth0_client_id;
     userInfo = {
         businessId: 1,
-        isPlaidSetup: false // TODO: Set this after logging in or signing up or initializing the app
+        isPlaidSetup: false
     }
 
     constructor(private router: Router,
@@ -35,7 +35,7 @@ export class AuthService {
             audience: 'https://stealthmoney/api',
             username: email,
             password: password,
-            scope: 'opendid email profile'
+            scope: 'openid email'
         }
         const result = this.httpClient.post(this.auth0LoginApi, body);
         result.pipe(
@@ -46,10 +46,9 @@ export class AuthService {
                 this.toastr.error('Error in source. Details: ' + err.error.error_description, 'Error');
                 return throwError(err);
             })
-        ).subscribe(response => {
-            this.setSession(response);
-            this.router.navigate(['/dashboard']);
-        });
+        ).toPromise()
+            .then(response => this.setSession(response))
+            .then(() => this.router.navigate(['/settings']))
         return result;
     }
 
@@ -74,9 +73,8 @@ export class AuthService {
             })
         ).subscribe(response => {
             this.login(email, password).toPromise().then(() => {
-                this.backendService.createBusiness(email, businessName, phoneNumber, legalEntity, addresses)
-                    .subscribe(response => this.setUserInfo(response.businessId));
-            })
+                this.backendService.createBusiness(email, businessName, phoneNumber, legalEntity, addresses);
+            });
         });
     }
             
@@ -84,7 +82,6 @@ export class AuthService {
         const expiresAt = moment().add(authResult.expires_in,'second');
         localStorage.setItem('id_token', authResult.access_token);
         localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()) );
-        this.api.setToken(authResult.access_token);
     }          
 
     logout() {
@@ -108,9 +105,9 @@ export class AuthService {
         const expiresAt = JSON.parse(expiration);
         return moment(expiresAt);
     }
-  
-    setUserInfo(businessId: number) {
-        this.userInfo.businessId = businessId;
+
+    getToken() {
+        return localStorage.getItem("id_token");
     }
 
     setPlaidSetup(isSetup: boolean) {

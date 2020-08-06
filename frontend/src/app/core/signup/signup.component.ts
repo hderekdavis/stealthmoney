@@ -16,18 +16,11 @@ export class SignupComponent implements OnInit {
   @ViewChildren(AddressFormComponent) addresses: QueryList<AddressFormComponent>
   private ngUnsubscribe = new Subject();
   signupForm: FormGroup;
-  showVerifyEmailMessage = false;
-  showRequiredText = false;
-  showInvalidEmailText = false;
-  emailText: string;
-  isSubmitting = false;
-  isResending = false;
   addressForms = [];
 
   constructor(
     public fb: FormBuilder,
     public router: Router,
-    private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private authService: AuthService
   ) { }
@@ -41,7 +34,6 @@ export class SignupComponent implements OnInit {
       legalEntity: [null, Validators.required],
     });
     this.addressForms.push(1);
-    const queryParams$ = this.activatedRoute.queryParams;
   }
 
   onSubmit() {

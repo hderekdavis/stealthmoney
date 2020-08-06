@@ -30,7 +30,7 @@ const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
-    canActivate: [AuthGuardService, PlaidGuardService]
+    canActivate: [AuthGuardService]
   },
   {
     path: 'plaid',

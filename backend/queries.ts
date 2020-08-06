@@ -66,3 +66,46 @@ export const saveBusinessLocation = async function(businessID: number, addressFi
          }
     );
 }
+
+export const getBusinessLocationsForBusiness = async function(businessID: number): Promise<any> {
+    return db.queryAsync<any>(`
+        SELECT * 
+        FROM businessLocation
+        WHERE
+            businessID = :businessID
+        `,
+        { businessID }
+    );
+}
+
+export const getBusinessByEmail = async function(email: string): Promise<any> {
+    return db.queryAsync<any>(`
+        SELECT * 
+        FROM business
+        WHERE
+            email = :email
+        `,
+        { email }
+    ).then(firstOrDefault);
+}
+
+export const updateBusiness = async function(businessID: number, email: string, businessName: string, phoneNumber: string, legalEntity: string, password: string): Promise<any> {
+    return db.queryAsync<any>(`
+        UPDATE business
+        SET email = :email,
+        businessName =:businessName,
+        phoneNumber =:phoneNumber,
+        legalEntity =:legalEntity
+        WHERE
+            businessID = :businessID
+        `,
+        { 
+            businessID,
+            email,
+            businessName,
+            phoneNumber,
+            legalEntity,
+            password
+        }
+    ).then(firstOrDefault);
+}

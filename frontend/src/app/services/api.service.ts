@@ -22,14 +22,6 @@ export class ApiService {
     private httpClient: HttpClient,
   ) {}
 
-  setToken( token: string) {
-    this.headers.headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `Bearer ${token}`
-    });
-  }
-
   get<T>(path: string, params?: HttpParams): Observable<T> {
     return this.handleResponse(this.httpClient.get<T>(this.endpoint + path, { ...this.headers, params }));
   }
