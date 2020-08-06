@@ -91,7 +91,16 @@ export const getBusinessByEmail = async function(email: string): Promise<any> {
 
 export const getTransactions = async function(businessLocationID: number): Promise<any> {
     return db.queryAsync<any>(`
-        SELECT * 
+        SELECT
+        amount,
+        businessLocationID,
+        chartOfAccounts.categoryID,
+        date,
+        transaction.name as name,
+        chartOfAccounts.name as account,
+        transactionID,
+        type,
+        vertical
         FROM transaction
         JOIN chartOfAccounts
         ON transaction.categoryID = chartOfAccounts.categoryID

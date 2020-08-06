@@ -51,7 +51,7 @@ router.post('/transactions', checkJwt, async function (req, res, next) {
     // 3. Save transactions to database
     const businessLocationsForBusiness = await queries.getBusinessLocationsForBusiness(businessId);
     const defaultBusinessLocationId = businessLocationsForBusiness[0].businessLocationID; // Temporarily default to user's first business location
-    const transactions = await queries.getTransactions(defaultBusinessLocationId);
+    let transactions = await queries.getTransactions(defaultBusinessLocationId);
     const categories = await queries.getCategories();
 
     transactionsResponse.transactions.forEach(async transaction => {
@@ -61,6 +61,11 @@ router.post('/transactions', checkJwt, async function (req, res, next) {
         // Find transaction category
         const category = _.find(categories, ['plaidCategoryID', Number(transaction.category_id)]);
 
+        if (transaction.amount < 0) {
+          // Negative transactions are income: https://support.plaid.com/hc/en-us/articles/360008413653-Negative-transaction-amount
+          category.categoryID = 43;
+        }
+
         // Insert transaction into database
         await queries.saveTransaction(defaultBusinessLocationId, transaction.name, category.categoryID, transaction.amount, transaction.date);
       }
@@ -68,12 +73,12 @@ router.post('/transactions', checkJwt, async function (req, res, next) {
 
     // 4. Return transactions in response
     let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
-    latestTransactions = transactionsResponse.map(transaction => {
+    latestTransactions = latestTransactions.map(transaction => {
       return {
-        type: transaction.amount < 0 ? 'income' : 'expense', // Negative transactions are income: https://support.plaid.com/hc/en-us/articles/360008413653-Negative-transaction-amount
+        type: transaction.type.toLowerCase(),
         amount: transaction.amount,
         name: transaction.name,
-        category: transaction.name // TODO
+        category: transaction.account
       };
     });
 
