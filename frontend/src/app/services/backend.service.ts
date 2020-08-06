@@ -12,4 +12,16 @@ export class BackendService {
   createBusiness(email: string, businessName: string, phoneNumber: string, legalEntity: string, addresses: any[]): Observable<any> {
     return this.api.post('/business',{ email, businessName, phoneNumber, legalEntity, addresses });
   }
+
+  getBusinessSettings(): Observable<any> {
+    return this.api.get('/business/settings');
+  }
+
+  getBusiness(): Observable<any> {
+    return this.api.get('/business');
+  }
+
+  updateSettings(businessID: string, email: string, password: string, businessName: string, phoneNumber: string, legalEntity: string, addresses: any[]): Observable<any> {
+    return this.api.post('/business/settings',{ businessID, email, password, businessName, phoneNumber, legalEntity, addresses });
+  }
 }

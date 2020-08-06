@@ -3,6 +3,9 @@ var router = express.Router();
 var cors = require('cors')
 var plaid = require('plaid');
 var moment = require('moment');
+var logger = require('morgan');
+const http = require('http');
+
 router.use(cors());
 
 import * as _ from 'lodash';
@@ -20,7 +23,7 @@ router.get('/business', async function (req, res, next) {
 
   console.log(response);
 
-  res.json({});
+  res.json(response);
 });
 
 router.post('/access-token', async function (req, res, next) {
@@ -103,6 +106,46 @@ router.post('/business', checkJwt, async function (req, res, next) {
 
     res.json(error);
   }
+});
+
+router.get('/business/settings', checkJwt, async function (req, res, next) {
+  try {
+    const businessEmail = req.body.user_email;
+    console.log(businessEmail);
+    const business = await queries.getBusinessByEmail(businessEmail);
+    const addresses = await queries.getBusinessLocationsForBusiness(business.businessID);
+    
+    res.json({
+      business: business,
+      addresses: addresses
+    });
+  } catch(error) {
+    console.log(error);
+
+    res.json(error);
+  }
+})
+
+router.get('/business', async function (req, res, next) {
+  const email = req.user_email;
+  const response = await queries.getBusinessByEmail(email);
+
+  res.json(response);
+});
+
+router.post('/business/settings', async function (req, res, next) {
+
+  const businessID = parseInt(req.body.businessID);
+  const email = req.body.email;
+  const businessName = req.body.businessName;
+  const phoneNumber = req.body.phoneNumber;
+  const legalEntity = req.body.legalEntity;
+  const addresses = req.body.addresses;
+  const password = req.body.password;
+  const response = await queries.updateBusiness(businessID, email, businessName, phoneNumber, legalEntity, password);
+
+  res.json(response);
+
 });
 
 module.exports = router;
