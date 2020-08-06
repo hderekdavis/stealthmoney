@@ -4,19 +4,21 @@
             <i class="fa fa-arrow-left mr-3"></i>Back to Dashboard
         </button>
     </div>
-    <div class="row w-100 income-header">
-        <label class="my-auto ml-5">Income</label>
-        <label class="my-auto ml-auto mr-5">$52,984.93</label>
+    <div class="row" style="margin-top:40px;padding:20px 40px;background:#141E28;border-top-left-radius:10px;border-top-right-radius:10px">
+        <h4 class="col-sm-6" style="display:block;color:#fff">Income</h4>
+        <h4 class="col-sm-6" style="display:block;color:#fff;text-align:right">{{ totalIncome| currency }}</h4>
     </div>
     <ng-container *ngFor="let transaction of income">
         <div class="row striped-row" [routerLink]="['/transaction', transaction.transactionId]" style="cursor:pointer">
-            <div style="float:left">
+            <div class="col-sm-4">
                 {{ transaction.name }}
             </div>
-            <div style="float:right">
+            <div class="col-sm-4" style="text-align:center">
+                {{ transaction.category }}
+            </div>
+            <div class="col-sm-4" style="text-align:right">
                 {{ transaction.amount | currency }}
             </div>
-            <div style="clear:both"></div>
         </div>
     </ng-container>
 </div>

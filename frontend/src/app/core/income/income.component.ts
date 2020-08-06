@@ -32,7 +32,11 @@ export class IncomeComponent implements OnInit {
         })
       )
       .subscribe((result: any) => {
-        this.income = result;
+        this.income = result.map(x => {
+          x.amount = Math.abs(x.amount);
+
+          return x;
+        });
 
         this.totalIncome = _.sumBy(this.income, 'amount');
       });
