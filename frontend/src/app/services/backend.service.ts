@@ -24,4 +24,16 @@ export class BackendService {
   updateSettings(businessID: string, email: string, password: string, businessName: string, phoneNumber: string, legalEntity: string, addresses: any[]): Observable<any> {
     return this.api.post('/business/settings',{ businessID, email, password, businessName, phoneNumber, legalEntity, addresses });
   }
+
+  getTransactionCategories(): Observable<any> {
+    return this.api.get('/transaction-categories');
+  }
+
+  getBusinessLocation(): Observable<any> {
+    return this.api.get('/location');
+  }
+
+  updateTransaction(transaction: any): Observable<any> {
+    return this.api.put('/transactions', { transaction: transaction });
+  }
 }

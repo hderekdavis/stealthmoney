@@ -22,7 +22,10 @@
             Category
         </div>
         <div class="col-sm-6" style="text-align:right">
-            <input [value]="transaction?.category">
+            <select class="form-control ml-auto w-75" *ngIf="transactionCategories && transaction" [ngModel]="transaction.categoryId"
+                (ngModelChange)="updateTransaction($event)">
+                <option *ngFor="let category of transactionCategories;" value="{{ category.categoryID }}">{{ category.name }}</option>
+            </select>
         </div>
     </div>
     <div class="row striped-row" style="cursor:pointer">
@@ -30,7 +33,7 @@
             Business/Location
         </div>
         <div class="col-sm-6" style="text-align:right">
-            <input>
+            <label *ngIf="addressData">{{ addressData.addressLine1 + ', ' + addressData.city + ', ' + addressData.state }}</label>
         </div>
     </div>
 </div>
