@@ -1,27 +1,48 @@
 <app-layout-container width="400px" height="520px" marginTop="3rem" marginBottom="12rem">
-  <div class="w-100 text-center mt-5 mb-4">
-    <label class="container-title">
-      Login
-    </label>
+  <div *ngIf="!showForgotPasswordForm">
+    <div class="w-100 text-center mt-5 mb-4">
+      <label class="container-title">
+        Login
+      </label>
+    </div>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="mx-4">
+        <div class="form-group mb-0">
+          <label for="addressLine1" class="layout-input-label">Email</label>
+          <input id="addressLine1" class="form-control layout-input" formControlName="email">
+        </div>
+        <div class="form-group mb-1">
+          <label for="addressLine2" class="layout-input-label">Password</label>
+          <input type="password" id="addressLine2" class="form-control layout-input" formControlName="password">
+        </div>
+        <label class="light-text" (click)="showForgotPasswordForm = true" style="cursor:pointer">Forgot Password?</label>
+      </div>
+      <div class="mt-4 text-center">
+        <button class="btn login-button mx-auto" type="submit" [disabled]="!loginForm.valid" style="cursor:pointer">Login</button>
+      </div>
+    </form>
+    <div class="mt-4 text-center">
+      <label class="mx-auto dark-text" routerLink="/signup" style="cursor:pointer">Don't have an account? Sign Up</label>
+    </div>
   </div>
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <div *ngIf="showForgotPasswordForm">
+    <div class="w-100 text-center mt-5 mb-4">
+      <label class="container-title">
+        Forgot Password
+      </label>
+    </div>
     <div class="mx-4">
+      <p>Please enter an email and you will receive a reset link.</p>
       <div class="form-group mb-0">
-        <label for="addressLine1" class="layout-input-label">Email</label>
-        <input id="addressLine1" class="form-control layout-input" formControlName="email">
+        <input id="forgotEmailInput" class="form-control layout-input" (change)="setForgotEmail($event)" type="email">
       </div>
-      <div class="form-group mb-1">
-        <label for="addressLine2" class="layout-input-label">Password</label>
-        <input type="password" id="addressLine2" class="form-control layout-input" formControlName="password">
-      </div>
-      <label class="light-text">Forgot Password?</label>
     </div>
     <div class="mt-4 text-center">
-      <button class="btn login-button mx-auto" type="submit" [disabled]="!loginForm.valid" style="cursor:pointer">Login</button>
+      <button class="btn login-button mx-auto" style="cursor:pointer; width: 120px;" (click)="sendLink()">Send Link</button>
     </div>
-  </form>
-  <div class="mt-4 text-center">
-    <label class="mx-auto dark-text" routerLink="/signup" style="cursor:pointer">Don't have an account? Sign Up</label>
+    <div class="mt-4 text-center">
+      <label class="mx-auto light-text" style="cursor:pointer" (click)="showForgotPasswordForm = false">Back to Login</label>
+    </div>
   </div>
 </app-layout-container>
   

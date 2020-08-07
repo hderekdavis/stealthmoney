@@ -9,12 +9,15 @@ export class TokenInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     
-    request = request.clone({
-      setHeaders: {
-        // Injecting the AuthService caused a circular dependency, so for now just getting the id_token "manually"
-        Authorization: `Bearer ${localStorage.getItem("id_token")}`
-      }
-    });
+    let token = localStorage.getItem("id_token");
+    if (token) {
+      request = request.clone({
+        setHeaders: {
+          // Injecting the AuthService caused a circular dependency, so for now just getting the id_token "manually"
+          Authorization: `Bearer ${localStorage.getItem("id_token")}`
+        }
+      });
+    }
     return next.handle(request);
   }
 }

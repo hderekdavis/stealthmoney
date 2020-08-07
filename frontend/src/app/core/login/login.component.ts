@@ -3,6 +3,8 @@ import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
+import { ToastrService } from 'ngx-toastr';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-login',
@@ -12,14 +14,15 @@ import { AuthService } from 'src/app/services/auth.service';
 export class LoginComponent implements OnInit {
   private ngUnsubscribe = new Subject();
   public loginForm: FormGroup;
-  public isSubmitting = false;
-  public showForgotPassword = false;
-  public isSubmittingForgotPassword = false;
+  public showForgotPasswordForm = false;
+  public forgotEmail = '';
 
   constructor(
     public fb: FormBuilder,
     public router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService,
+    private backendService: BackendService
   ) {}
 
   ngOnInit() {
@@ -35,20 +38,22 @@ export class LoginComponent implements OnInit {
     this.authService.login(email, password);
   }
 
-  showForgotPasswordComponent() {
-    this.showForgotPassword = true;
-  }
-
-  forgotPassword() {
-    
-  }
-
-  backToLogin() {
-    this.showForgotPassword = false;
-  }
-
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+  }
+
+  setForgotEmail(event) {
+    this.forgotEmail = event.srcElement.value;
+  }
+
+  sendLink() {
+    console.log(this.forgotEmail);
+    if (this.forgotEmail) {
+      this.backendService.sendResetLink(this.forgotEmail)
+        .subscribe(() => this.toastr.success('Reset Password Link sent!', 'Reset Password'))
+    } else {
+      this.toastr.error('Please enter a valid email', 'Invalid Email');
+    }
   }
 }

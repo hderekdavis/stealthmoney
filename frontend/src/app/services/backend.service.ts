@@ -24,4 +24,8 @@ export class BackendService {
   updateSettings(businessID: string, email: string, password: string, businessName: string, phoneNumber: string, legalEntity: string, addresses: any[]): Observable<any> {
     return this.api.post('/business/settings',{ businessID, email, password, businessName, phoneNumber, legalEntity, addresses });
   }
+
+  sendResetLink(email: string): Observable<any> {
+    return this.api.post('/reset-password',{ email });
+  }
 }

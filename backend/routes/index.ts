@@ -10,11 +10,7 @@ router.use(cors());
 import * as _ from 'lodash';
 import checkJwt from '../lib/middleware/secured';
 import * as queries from '../queries';
-import { changeUserPassword, getManagementToken } from '../lib/middleware/userInfo';
-
-let managementToken = '';
-
-getManagementToken().then(response => managementToken = response);
+import { changeUserPassword, getManagementToken, sendResetPasswordLink } from '../lib/middleware/userInfo';
 
 const plaidClient = new plaid.Client({
   clientID: process.env.PLAID_CLIENT_ID,
@@ -22,10 +18,15 @@ const plaidClient = new plaid.Client({
   env: plaid.environments.sandbox
 });
 
-router.get('/business', checkJwt, async function (req, res, next) {
-  var response: any = await queries.getBusiness(1);
+let managementToken = '';
 
-  res.json(response);
+getManagementToken().then(response => managementToken = response);
+
+router.get('/business', checkJwt, async function (req, res, next) {
+  const businessEmail = req.body.user_email;
+  const business = await queries.getBusinessByEmail(businessEmail);
+
+  res.json(business);
 });
 
 router.post('/access-token', checkJwt, async function (req, res, next) {
@@ -184,7 +185,7 @@ router.post('/income', checkJwt, async function (req, res, next) {
   }
 });
 
-router.post('/business', checkJwt, async function (req, res, next) {
+router.post('/business', async function (req, res, next) {
   try {
     const email = req.body.email;
     const businessName = req.body.businessName;
@@ -243,10 +244,17 @@ router.post('/business/settings', checkJwt, async function (req, res, next) {
   const response = await queries.updateBusiness(businessID, email, businessName, phoneNumber, legalEntity);
 
   if (password) {
-    await changeUserPassword(managementToken, req.body.auth0_user_id, password);
+     await changeUserPassword(managementToken, req.body.auth0_user_id, password)
   }
+  
+  res.json(response)
+});
 
-  res.json(response);
+router.post('/reset-password', async function (req, res, next) {
+
+  await sendResetPasswordLink(req.body.email, managementToken)
+  
+  res.json({});
 
 });
 
