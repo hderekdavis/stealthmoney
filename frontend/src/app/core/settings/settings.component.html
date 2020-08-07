@@ -28,12 +28,12 @@
           <b>Address #{{ i + 1 }}</b>
           <br>
         </div>
-        <app-address-form #address addressNumber="i + 1"></app-address-form>
+        <app-address-form #address addressNumber="i + 1" editing="true"></app-address-form>
         <br>
       </div>
-      <div class="mt-3 text-center">
+      <!-- <div class="mt-3 text-center">
         <button class="btn layout-button mx-auto" (click)="addAddress()">Add Another Business Location</button>
-      </div>
+      </div> -->
       <div class="mt-3">
         <label class="layout-input-label required">Legal Entity</label>
         <div class="form-check">
