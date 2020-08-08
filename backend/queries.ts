@@ -145,3 +145,40 @@ export const updateBusiness = async function(businessID: number, email: string, 
         }
     ).then(firstOrDefault);
 }
+
+export const getChartOfAccountsCategories = async function(): Promise<any> {
+    return db.queryAsync<any>(`
+        SELECT * 
+        FROM chartOfAccounts
+        `
+    );
+}
+
+export const getBusinessLocation = async function(email: string): Promise<any> {
+    let emailString = email + '%';
+    return db.queryAsync<any>(`
+        SELECT * 
+        FROM businessLocation
+        JOIN business
+        ON businessLocation.businessID = business.businessID
+        WHERE email LIKE :emailString
+        `,
+        {
+            emailString
+        }).then(firstOrDefault);
+}
+
+export const updateTransaction = async function(transaction: any): Promise<any> {
+    let categoryID = parseInt(transaction.categoryId);
+    let transactionID = parseInt(transaction.transactionId);
+    return db.queryAsync<any>(`
+        UPDATE transaction
+        SET categoryID = :categoryID
+        WHERE
+            transactionID = :transactionID
+        `,
+        { 
+            categoryID,
+            transactionID
+        });
+}
