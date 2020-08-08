@@ -8,18 +8,20 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class AddressFormComponent implements OnInit {
   @Input() addessNumber: string;
+  @Input() editing: string;
   addressForm: FormGroup;
   
   constructor(public fb: FormBuilder,) { }
 
   ngOnInit(): void {
+    let disabled = this.editing === "true";
     this.addressForm = this.fb.group({
-      addressFirstLine: [null, Validators.required],
-      addressSecondLine: [null],
-      city: [null, Validators.required],
-      state: [null, Validators.required],
-      zipcode: [null, Validators.required],
-      businessVertical: [null, Validators.required],
+      addressFirstLine: [{ value: null, disabled: disabled }, Validators.required],
+      addressSecondLine: [{ value: null, disabled: disabled }],
+      city: [{ value: null, disabled: disabled }, Validators.required],
+      state: [{ value: null, disabled: disabled }, Validators.required],
+      zipcode: [{ value: null, disabled: disabled }, Validators.required],
+      businessVertical: [{ value: null, disabled }, Validators.required],
     });
   }
 
