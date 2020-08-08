@@ -10,17 +10,17 @@ router.use(cors());
 import * as _ from 'lodash';
 import checkJwt from '../lib/middleware/secured';
 import * as queries from '../queries';
-import { changeUserPassword, getManagementToken } from '../lib/middleware/userInfo';
-
-let managementToken = '';
-
-getManagementToken().then(response => managementToken = response);
+import { changeUserPassword, getManagementToken, sendResetPasswordLink } from '../lib/middleware/userInfo';
 
 const plaidClient = new plaid.Client({
   clientID: process.env.PLAID_CLIENT_ID,
   secret: process.env.PLAID_SECRET,
   env: plaid.environments.sandbox
 });
+
+let managementToken = '';
+
+getManagementToken().then(response => managementToken = response);
 
 router.get('/business', checkJwt, async function (req, res, next) {
   const businessEmail = req.body.user_email;
@@ -244,10 +244,17 @@ router.post('/business/settings', checkJwt, async function (req, res, next) {
   const response = await queries.updateBusiness(businessID, email, businessName, phoneNumber, legalEntity);
 
   if (password) {
-    await changeUserPassword(managementToken, req.body.auth0_user_id, password);
+     await changeUserPassword(managementToken, req.body.auth0_user_id, password)
   }
+  
+  res.json(response)
+});
 
-  res.json(response);
+router.post('/reset-password', async function (req, res, next) {
+
+  await sendResetPasswordLink(req.body.email, managementToken)
+  
+  res.json({});
 
 });
 

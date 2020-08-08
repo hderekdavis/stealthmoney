@@ -25,6 +25,10 @@ export class BackendService {
     return this.api.post('/business/settings',{ businessID, email, password, businessName, phoneNumber, legalEntity, addresses });
   }
 
+  sendResetLink(email: string): Observable<any> {
+    return this.api.post('/reset-password',{ email });
+  }
+
   getTransactionCategories(): Observable<any> {
     return this.api.get('/transaction-categories');
   }

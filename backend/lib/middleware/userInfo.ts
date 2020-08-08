@@ -14,7 +14,7 @@ export const setUserInfo = async function(req, res, next) {
 }
 
 export const changeUserPassword = async function(token: string, auth0UserId: string, newPassword: string) {
-  await superagent.patch('https://' + process.env.AUTH0_DOMAIN + '/api/v2/users/' + auth0UserId)
+  return await superagent.patch('https://' + process.env.AUTH0_DOMAIN + '/api/v2/users/' + auth0UserId)
     .send({
       password: newPassword,
       connection: 'Username-Password-Authentication'
@@ -42,4 +42,18 @@ export const getManagementToken = async function() {
   }).catch(err => {
     console.log(err);
   })
-} 
+}
+
+export const sendResetPasswordLink = async function(email: string, token: string) {
+  return await superagent.post('https://' + process.env.AUTH0_DOMAIN + '/dbconnections/change_password')
+    .send({
+      client_id: process.env.AUTH0_MANAGEMENT_ID,
+      email: email,
+      connection: 'Username-Password-Authentication'
+    })
+    .set('Authorization', 'Bearer ' + token)
+    .set('content-type', 'application/json')
+    .catch(err => {
+      console.log(err);
+    })
+}
