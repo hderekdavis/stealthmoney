@@ -258,4 +258,36 @@ router.post('/reset-password', async function (req, res, next) {
 
 });
 
+router.get('/transaction-categories', checkJwt, async function (req, res, next) {
+
+  const response = await queries.getChartOfAccountsCategories();
+
+  res.json(response);
+
+});
+
+router.get('/location', checkJwt, async function (req, res, next) {
+
+  const email = req.body.user_email;
+
+  const response = await queries.getBusinessLocation(email);
+
+  res.json(response);
+
+});
+
+router.put('/transactions', checkJwt, async function (req, res, next) {
+  try {
+    const transaction = req.body.transaction;
+
+    const response = await queries.updateTransaction(transaction);
+
+    res.json(response);
+  } catch(error) {
+    console.log(error);
+
+    res.json(error);
+  }
+});
+
 module.exports = router;

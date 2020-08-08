@@ -4,6 +4,8 @@ import { filter, switchMap } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-transaction',
@@ -12,12 +14,16 @@ import { ApiService } from 'src/app/services/api.service';
 })
 export class TransactionComponent implements OnInit {
   transaction: any;
+  addressData: any;
+  transactionCategories:[];
 
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private backendService: BackendService,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit(): void {
@@ -45,6 +51,12 @@ export class TransactionComponent implements OnInit {
 
       this.transaction.amount = Math.abs(this.transaction.amount);
     });
+    this.backendService.getBusinessLocation().subscribe( result => {
+      this.addressData = result;
+    });
+    this.backendService.getTransactionCategories().subscribe( result => {
+      this.transactionCategories = result;
+    });
   }
 
   back() {
@@ -53,5 +65,11 @@ export class TransactionComponent implements OnInit {
     } else {
       this.router.navigate(['/expense', this.transaction.categoryId]);
     }
+  }
+
+  updateTransaction(value) {
+    this.transaction.categoryId = value;
+    this.backendService.updateTransaction(this.transaction)
+      .subscribe( result => this.toastr.success('Transaction updated!', 'Transaction Update'));
   }
 }

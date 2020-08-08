@@ -28,4 +28,16 @@ export class BackendService {
   sendResetLink(email: string): Observable<any> {
     return this.api.post('/reset-password',{ email });
   }
+
+  getTransactionCategories(): Observable<any> {
+    return this.api.get('/transaction-categories');
+  }
+
+  getBusinessLocation(): Observable<any> {
+    return this.api.get('/location');
+  }
+
+  updateTransaction(transaction: any): Observable<any> {
+    return this.api.put('/transactions', { transaction: transaction });
+  }
 }
