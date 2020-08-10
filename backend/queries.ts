@@ -12,15 +12,16 @@ export const getBusiness = async function(businessId: number): Promise<{business
     ).then(firstOrDefault);
 }
 
-export const updateAccessToken = async function(businessId: number, accessToken: string): Promise<any> {
+export const updateAccessToken = async function(email: string, accessToken: string): Promise<any> {
+    let emailString = email + '%';
     return db.queryAsync<any>(`
         UPDATE business
         SET plaidAccessToken = :accessToken
-        WHERE businessId = :businessId
+        WHERE email LIKE :emailString
         LIMIT 1
         `,
         {
-            businessId,
+            emailString,
             accessToken
          }
     );
@@ -181,4 +182,16 @@ export const updateTransaction = async function(transaction: any): Promise<any> 
             categoryID,
             transactionID
         });
+}
+
+export const getBusinessPlaidToken = async function(email: string): Promise<any> {
+    let emailString = email + '%';
+    return db.queryAsync<any>(`
+        SELECT plaidAccessToken 
+        FROM business
+        WHERE email LIKE :emailString
+        `,
+        {
+            emailString
+        }).then(firstOrDefault);
 }
