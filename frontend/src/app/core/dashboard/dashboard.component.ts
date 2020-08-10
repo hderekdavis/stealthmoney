@@ -18,15 +18,10 @@ export class DashboardComponent implements OnInit {
   isLoaded: boolean;
 
   constructor(
-    private apiService: ApiService,
-    private authService: AuthService
+    private apiService: ApiService
   ) { }
 
   ngOnInit(): void {
-    const businessId$ = this.authService.getObservableOfUserInfo()
-      .pipe(
-        filter((userInfo: any) => userInfo.businessId !== null) // Filter initialization value
-      );
 
     // Every 5 seconds try calling the API to see if transactions are ready
     const timer$ = interval(5000)
@@ -36,15 +31,13 @@ export class DashboardComponent implements OnInit {
       );
 
     combineLatest(
-      businessId$,
       timer$
     )
     .pipe(
       switchMap(response => {
-        return this.apiService.post('/transactions', { businessId: response[0].businessId });
+        return this.apiService.get('/transactions');
       })
-    )
-    .subscribe((response: any) => {
+    ).subscribe((response: any) => {
       if (response.error_code !== 'PRODUCT_NOT_READY') {
         this.isLoaded = true;
         const transactions = response;

@@ -15,17 +15,7 @@ export class AuthService {
     auth0LoginApi = 'https://' + environment.auth0_domain + '/oauth/token';
     auth0SignUpApi = 'https://' + environment.auth0_domain + '/dbconnections/signup';
     auth0LogoutApi = 'https://' + environment.auth0_domain + '/v2/logout?client_id=' + environment.auth0_client_id;
-    
-    public userInfo$: BehaviorSubject<{
-        businessId: number,
-        isPlaidSetup: boolean
-    }> = new BehaviorSubject<{
-        businessId: number,
-        isPlaidSetup: boolean
-    }>({
-        businessId: null,
-        isPlaidSetup: null
-    });
+    hasPlaidToken = false;
 
     constructor(
         private router: Router,
@@ -43,17 +33,9 @@ export class AuthService {
     public async fetchUserInfo() {
         await this.backendService.getBusiness().toPromise().then(response => {
             if (response) {
-                if ('plaidAccessToken' in response) {
-                    this.userInfo$.next({
-                        ...this.userInfo$.getValue(),
-                        isPlaidSetup: !!response.plaidAccessToken
-                    });
-                }
-                if ('businessID' in response) {
-                    this.userInfo$.next({
-                        ...this.userInfo$.getValue(),
-                        businessId: response.businessID // TODO: Standardize how ID/Id is formatted
-                    });
+                if (response.plaidAccessToken) {
+                    console.log('lo tiene', response.plaidAccessToken);
+                    this.hasPlaidToken = true;
                 }
             }
         });
@@ -108,7 +90,6 @@ export class AuthService {
                 this.backendService.createBusiness(email, businessName, phoneNumber, legalEntity, addresses)
                     .subscribe(() => {
                         this.toastr.success('Successfully signed up!', 'Sign Up');
-                        this.router.navigate(['/plaid']);
                     })
             });
         });
@@ -145,22 +126,11 @@ export class AuthService {
         return localStorage.getItem("id_token");
     }
 
-    setPlaidSetup(isSetup: boolean) {
-        this.userInfo$.next({
-            ...this.userInfo$.getValue(),
-            isPlaidSetup: isSetup
-        });
-    }
-
     isPlaidSetup() {
-        return this.userInfo$.getValue().isPlaidSetup;
+        return this.hasPlaidToken;
     }
 
-    getUserInfo() {
-        return this.userInfo$.getValue();
-    }
-
-    getObservableOfUserInfo() {
-        return this.userInfo$;
+    setHasPlaidToken(status: boolean) {
+        this.hasPlaidToken = status;
     }
 }

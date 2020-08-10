@@ -40,4 +40,8 @@ export class BackendService {
   updateTransaction(transaction: any): Observable<any> {
     return this.api.put('/transactions', { transaction: transaction });
   }
+
+  hasPlaidToken(): Observable<any> {
+    return this.api.get('/has-plaid-token');
+  }
 }

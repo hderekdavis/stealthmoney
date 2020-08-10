@@ -9,6 +9,7 @@ import { PlaidComponent } from './plaid/plaid.component';
 import { IncomeComponent } from './income/income.component';
 import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
 import { TransactionComponent } from './transaction/transaction.component';
+import { PlaidGuardService } from '../services/plaid-guard.service';
 
 const routes: Routes = [
   {
@@ -26,12 +27,12 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService, PlaidGuardService]
   },
   {
     path: 'settings',
     component: SettingsComponent,
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService, PlaidGuardService]
   },
   {
     path: 'plaid',
@@ -41,17 +42,17 @@ const routes: Routes = [
   {
     path: 'income',
     component: IncomeComponent,
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService, PlaidGuardService]
   },
   {
     path: 'expense/:categoryId',
     component: ExpenseCategoryComponent,
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService, PlaidGuardService]
   },
   {
     path: 'transaction/:transactionId',
     component: TransactionComponent,
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService, PlaidGuardService]
   },
 ];
 

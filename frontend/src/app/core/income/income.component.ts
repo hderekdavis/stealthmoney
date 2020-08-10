@@ -17,29 +17,19 @@ export class IncomeComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService,
     private apiService: ApiService
   ) { }
 
   ngOnInit(): void {
-    this.authService.getObservableOfUserInfo()
-      .pipe(
-        filter((userInfo: any) => userInfo.businessId !== null), // Filter initialization value
-        switchMap(userInfo => {
-          return this.apiService.post('/income', {
-            businessId: userInfo.businessId
-          });
-        })
-      )
-      .subscribe((result: any) => {
-        this.income = result.map(x => {
-          x.amount = Math.abs(x.amount);
+    this.apiService.get('/income').subscribe((result: any) => {
+      this.income = result.map(x => {
+        x.amount = Math.abs(x.amount);
 
-          return x;
-        });
-
-        this.totalIncome = _.sumBy(this.income, 'amount');
+        return x;
       });
+
+      this.totalIncome = _.sumBy(this.income, 'amount');
+    });
   }
   
   back() {
