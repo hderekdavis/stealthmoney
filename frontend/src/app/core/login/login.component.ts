@@ -48,7 +48,6 @@ export class LoginComponent implements OnInit {
   }
 
   sendLink() {
-    console.log(this.forgotEmail);
     if (this.forgotEmail) {
       this.backendService.sendResetLink(this.forgotEmail)
         .subscribe(() => this.toastr.success('Reset Password Link sent!', 'Reset Password'))
