@@ -20,6 +20,8 @@ export class PlaidGuardService {
           } else {
             this.router.navigate(['/plaid']);
           }
+        } else {
+          this.router.navigate(['/plaid']);
         }
       });
     }
