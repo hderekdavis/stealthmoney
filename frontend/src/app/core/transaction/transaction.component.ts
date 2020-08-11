@@ -6,6 +6,7 @@ import { combineLatest } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { ToastrService } from 'ngx-toastr';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-transaction',
@@ -26,10 +27,9 @@ export class TransactionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.apiService.post('/transaction', {
-        transactionId: params.transactionId
-      }).subscribe((result: any) => {
+    this.route.paramMap.subscribe(params => {
+      let httpParams = new HttpParams().append('transactionId', params.get('transactionId'));
+      this.apiService.get('/transaction', httpParams).subscribe((result: any) => {
         this.transaction = result[0];
   
         this.transaction.amount = Math.abs(this.transaction.amount);

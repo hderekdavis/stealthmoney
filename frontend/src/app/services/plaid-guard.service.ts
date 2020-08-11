@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router, NavigationCancel } from '@angular/router';
+import { Router, ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -10,20 +10,18 @@ export class PlaidGuardService {
   constructor(private authService: AuthService,
               private router: Router) { }
 
-  canActivate(): boolean {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     let status = this.authService.isPlaidSetup();
     if (!status) {
-      this.router.events.subscribe((event) => {
-        if (event instanceof NavigationCancel) {
-          if(!this.router.navigated && this.authService.isLoggedIn()) {
-            this.authService.fetchUserInfo().then(() => this.router.navigate([event.url]));
-          } else {
-            this.router.navigate(['/plaid']);
-          }
+      this.authService.fetchUserInfo().then(result => {
+        if(result.plaidAccessToken != null) {
+          this.router.navigate([state.url]);
+          return true;
         } else {
           this.router.navigate(['/plaid']);
+          return false;
         }
-      });
+      });    
     }
     return status;        
   }
