@@ -25,12 +25,13 @@ export class AuthService {
     ) {}
 
     public async fetchUserInfo() {
-        await this.backendService.getBusiness().toPromise().then(response => {
+        return await this.backendService.getBusiness().toPromise().then(response => {
             if (response) {
                 if (response.plaidAccessToken) {
                     this.hasPlaidToken = true;
                 }
             }
+            return response;
         });
     }
 

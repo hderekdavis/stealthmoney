@@ -22,7 +22,7 @@ export class ApiService {
     private httpClient: HttpClient,
   ) {}
 
-  get<T>(path: string, params?: HttpParams): Observable<T> {
+  get<T>(path: string, params?: any): Observable<T> {
     return this.handleResponse(this.httpClient.get<T>(this.endpoint + path, { ...this.headers, params }));
   }
 
