@@ -17,13 +17,7 @@ export class PlaidComponent implements AfterViewInit {
   private plaidLinkHandler: PlaidLinkHandler;
 
   private config: PlaidConfig = {
-    apiVersion: "v2",
-    env: "sandbox",
-    token: null,
-    webhook: "https://clearviewmoney.com/dashboard",
-    product: ["auth"],
-    countryCodes: ['US'],
-    key: environment.plaid_public_key,
+    ...environment.plaid_default_config,
     onSuccess: this.onSuccess,
     onExit: this.onExit
   };
@@ -33,7 +27,7 @@ export class PlaidComponent implements AfterViewInit {
     private authService: AuthService,
     private router: Router,
     private plaidLinkService: NgxPlaidLinkService
-  ) { }
+  ) {}
 
   ngAfterViewInit() {
     this.plaidLinkService

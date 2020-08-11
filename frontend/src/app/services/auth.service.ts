@@ -22,19 +22,12 @@ export class AuthService {
         private toastr: ToastrService,
         private httpClient: HttpClient,
         private backendService: BackendService
-    ) {
-        // On app initialization, call backend and try to fetch user/business details if id_token exists
-        // Making this synchronous b/c plaid-guard.service.ts depends on this information
-        if (this.getToken()) {
-            this.fetchUserInfo();
-        }
-    }
+    ) {}
 
     public async fetchUserInfo() {
         await this.backendService.getBusiness().toPromise().then(response => {
             if (response) {
                 if (response.plaidAccessToken) {
-                    console.log('lo tiene', response.plaidAccessToken);
                     this.hasPlaidToken = true;
                 }
             }

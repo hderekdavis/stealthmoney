@@ -9,7 +9,16 @@ export const environment = {
   auth0_connection: 'Username-Password-Authentication',
   api_url: 'http://localhost:3000/api',
   plaid_client_id: '56c75e0edb2afcb6184d2c0a',
-  plaid_public_key: 'd17298a88d20be6c0fb14bb7513747'
+  plaid_public_key: 'd17298a88d20be6c0fb14bb7513747',
+  plaid_default_config: {
+    apiVersion: "v2",
+    env: "sandbox",
+    token: null,
+    webhook: "https://clearviewmoney.com/dashboard",
+    product: ["auth"],
+    countryCodes: ['US'],
+    key: 'd17298a88d20be6c0fb14bb7513747',
+  }
 };
 
 /*
