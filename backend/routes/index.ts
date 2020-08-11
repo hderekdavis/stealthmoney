@@ -101,7 +101,7 @@ router.get('/transactions', checkJwt, async function (req, res, next) {
 
 router.get('/expense-category', checkJwt, async function (req, res, next) {
   try{
-    const categoryId = req.body.categoryId;
+    const categoryId = req.query.categoryId;
     const email = req.body.user_email;
     const businessLocationsForBusiness = await queries.getBusinessLocation(email);
     const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID; 
@@ -129,7 +129,7 @@ router.get('/expense-category', checkJwt, async function (req, res, next) {
 });
 
 router.get('/transaction', checkJwt, async function (req, res, next) {
-  try{
+  try {
     const transactionId = req.query.transactionId;
     const email = req.body.user_email;
     const businessLocationsForBusiness = await queries.getBusinessLocation(email);
