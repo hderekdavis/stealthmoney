@@ -44,20 +44,6 @@ export class PlaidComponent implements AfterViewInit {
       });
   }
 
-  onPlaidSuccess(event) {
-    console.log('Success: ' + JSON.stringify(event));
-
-    this.authService.setHasPlaidToken(true);
-
-    // Save access token
-    this.apiService.post('/access-token', {
-      publicToken: event.token
-    })
-    .subscribe((response: any) => {
-      this.router.navigate(['/dashboard']);
-    });
-  }
-
   open() {
     this.plaidLinkHandler.open();
   }
