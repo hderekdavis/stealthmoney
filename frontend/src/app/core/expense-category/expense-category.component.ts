@@ -25,15 +25,14 @@ export class ExpenseCategoryComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      let httpParams = new HttpParams();
-      httpParams.set('categoryId', params.categoryId);
+    this.route.paramMap.subscribe(params => {
+      let httpParams = new HttpParams().append('categoryId', params.get('categoryId'));
       this.apiService.get('/expense-category', httpParams).subscribe((result: any) => {
         this.expenses = result;
   
         this.totalExpenses = _.sumBy(this.expenses, 'amount');
   
-        this.category = this.expenses[0].category;
+        this.category = this.expenses.length > 0 ? this.expenses[0].category : null;
       });
     });
   }
