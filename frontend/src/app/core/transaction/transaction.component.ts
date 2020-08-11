@@ -28,7 +28,6 @@ export class TransactionComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      console.log(params);
       let httpParams = new HttpParams().append('transactionId', params.get('transactionId'));
       this.apiService.get('/transaction', httpParams).subscribe((result: any) => {
         this.transaction = result[0];
