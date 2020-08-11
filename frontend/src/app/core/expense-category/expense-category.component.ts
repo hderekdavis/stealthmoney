@@ -6,6 +6,7 @@ import { ApiService } from 'src/app/services/api.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 import * as _ from 'lodash';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-expense-category',
@@ -21,35 +22,19 @@ export class ExpenseCategoryComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
-    const businessId$ = this.authService.getObservableOfUserInfo()
-      .pipe(
-        filter((userInfo: any) => userInfo.businessId !== null) // Filter initialization value
-      );
-
-    combineLatest(
-      this.route.params,
-      businessId$
-    )
-    .pipe(
-      switchMap(result => {
-        const params = result[0];
-
-        return this.apiService.post('/expense-category', {
-          businessId: result[1].businessId,
-          categoryId: params.categoryId
-        });
-      })
-    )
-    .subscribe((result: any) => {
-      this.expenses = result;
-
-      this.totalExpenses = _.sumBy(this.expenses, 'amount');
-
-      this.category = this.expenses[0].category;
+    this.route.queryParams.subscribe(params => {
+      let httpParams = new HttpParams();
+      httpParams.set('categoryId', params.categoryId);
+      this.apiService.get('/expense-category', httpParams).subscribe((result: any) => {
+        this.expenses = result;
+  
+        this.totalExpenses = _.sumBy(this.expenses, 'amount');
+  
+        this.category = this.expenses[0].category;
+      });
     });
   }
 

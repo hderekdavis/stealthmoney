@@ -18,7 +18,6 @@ export class TransactionComponent implements OnInit {
   transactionCategories:[];
 
   constructor(
-    private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService,
@@ -27,29 +26,14 @@ export class TransactionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const businessId$ = this.authService.getObservableOfUserInfo()
-      .pipe(
-        filter((userInfo: any) => userInfo.businessId !== null) // Filter initialization value
-      );
-
-    combineLatest(
-      this.route.params,
-      businessId$
-    )
-    .pipe(
-      switchMap(result => {
-        const params = result[0];
-
-        return this.apiService.post('/transaction', {
-          businessId: result[1].businessId,
-          transactionId: params.transactionId
-        });
-      })
-    )
-    .subscribe((result: any) => {
-      this.transaction = result[0];
-
-      this.transaction.amount = Math.abs(this.transaction.amount);
+    this.route.queryParams.subscribe(params => {
+      this.apiService.post('/transaction', {
+        transactionId: params.transactionId
+      }).subscribe((result: any) => {
+        this.transaction = result[0];
+  
+        this.transaction.amount = Math.abs(this.transaction.amount);
+      });
     });
     this.backendService.getBusinessLocation().subscribe( result => {
       this.addressData = result;

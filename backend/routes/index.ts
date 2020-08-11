@@ -31,21 +31,21 @@ router.get('/business', checkJwt, async function (req, res, next) {
 
 router.post('/access-token', checkJwt, async function (req, res, next) {
   const publicToken = req.body.publicToken;
-  const businessId = req.body.businessId;
+  const email = req.body.user_email;
 
   const exchangeResponse = await plaidClient.exchangePublicToken(publicToken);
   const accessToken = exchangeResponse.access_token;
   // Save access token to database for this business
-  await queries.updateAccessToken(businessId, accessToken);
+  await queries.updateAccessToken(email, accessToken);
 
   res.json({});
 });
 
-router.post('/transactions', checkJwt, async function (req, res, next) {
+router.get('/transactions', checkJwt, async function (req, res, next) {
   try{
     // 1. Exchange public token for access token
-    const businessId = req.body.businessId;
-    const getBusinessResponse: any = await queries.getBusiness(businessId);
+    const email = req.body.user_email;
+    const getBusinessResponse: any = await queries.getBusinessByEmail(email);
     const accessToken = getBusinessResponse.plaidAccessToken;
 
     // 2. Fetch transactions from Plaid
@@ -55,8 +55,8 @@ router.post('/transactions', checkJwt, async function (req, res, next) {
     const transactionsResponse = await plaidClient.getTransactions(accessToken, oneYearAgo, today);
 
     // 3. Save transactions to database
-    const businessLocationsForBusiness = await queries.getBusinessLocationsForBusiness(businessId);
-    const defaultBusinessLocationId = businessLocationsForBusiness[0].businessLocationID; // Temporarily default to user's first business location
+    const businessLocationsForBusiness = await queries.getBusinessLocation(email);
+    const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID; // Temporarily default to user's first business location
     let transactions = await queries.getTransactions(defaultBusinessLocationId);
     const categories = await queries.getCategories();
 
@@ -99,12 +99,12 @@ router.post('/transactions', checkJwt, async function (req, res, next) {
   }
 });
 
-router.post('/expense-category', checkJwt, async function (req, res, next) {
+router.get('/expense-category', checkJwt, async function (req, res, next) {
   try{
     const categoryId = req.body.categoryId;
-    const businessId = req.body.businessId;
-    const businessLocationsForBusiness = await queries.getBusinessLocationsForBusiness(businessId);
-    const defaultBusinessLocationId = businessLocationsForBusiness[0].businessLocationID; // Temporarily default to user's first business location
+    const email = req.body.user_email;
+    const businessLocationsForBusiness = await queries.getBusinessLocation(email);
+    const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID; 
 
     let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
     latestTransactions = latestTransactions.filter(transaction => transaction.categoryID === Number(categoryId));
@@ -128,12 +128,12 @@ router.post('/expense-category', checkJwt, async function (req, res, next) {
   }
 });
 
-router.post('/transaction', checkJwt, async function (req, res, next) {
+router.get('/transaction', checkJwt, async function (req, res, next) {
   try{
-    const transactionId = req.body.transactionId;
-    const businessId = req.body.businessId;
-    const businessLocationsForBusiness = await queries.getBusinessLocationsForBusiness(businessId);
-    const defaultBusinessLocationId = businessLocationsForBusiness[0].businessLocationID; // Temporarily default to user's first business location
+    const transactionId = req.query.transactionId;
+    const email = req.body.user_email;
+    const businessLocationsForBusiness = await queries.getBusinessLocation(email);
+    const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID;
 
     let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
     latestTransactions = latestTransactions.filter(transaction => transaction.transactionID === Number(transactionId));
@@ -157,11 +157,11 @@ router.post('/transaction', checkJwt, async function (req, res, next) {
   }
 });
 
-router.post('/income', checkJwt, async function (req, res, next) {
+router.get('/income', checkJwt, async function (req, res, next) {
   try{
-    const businessId = req.body.businessId;
-    const businessLocationsForBusiness = await queries.getBusinessLocationsForBusiness(businessId);
-    const defaultBusinessLocationId = businessLocationsForBusiness[0].businessLocationID; // Temporarily default to user's first business location
+    const email = req.body.user_email;
+    const businessLocationsForBusiness = await queries.getBusinessLocation(email);
+    const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID;
 
     let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
     latestTransactions = latestTransactions.filter(transaction => transaction.type === 'Income');
@@ -283,6 +283,20 @@ router.put('/transactions', checkJwt, async function (req, res, next) {
     const response = await queries.updateTransaction(transaction);
 
     res.json(response);
+  } catch(error) {
+    console.log(error);
+
+    res.json(error);
+  }
+});
+
+router.get('/has-plaid-token', checkJwt, async function (req, res, next) {
+  try {
+    const email = req.body.user_email;
+
+    const response = await queries.getBusinessPlaidToken(email);
+
+    res.json(response != null);
   } catch(error) {
     console.log(error);
 
