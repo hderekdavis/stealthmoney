@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from './backend.service';
 import * as moment from 'moment';
-import { env } from 'process';
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +22,8 @@ export class AuthService {
         private router: Router,
         private toastr: ToastrService,
         private httpClient: HttpClient,
-        private backendService: BackendService
+        private backendService: BackendService,
+        private spinner: NgxSpinnerService
     ) {}
 
     public async fetchUserInfo() {
@@ -37,6 +38,7 @@ export class AuthService {
     }
 
     login(email:string, password:string): Observable<any>{
+        this.spinner.show();
         const body = {
             grant_type: 'password',
             client_id: environment.auth0_client_id,
@@ -58,10 +60,12 @@ export class AuthService {
             .then(response => this.setSession(response))
             .then(() => this.fetchUserInfo())
             .then(() => this.router.navigate(['/dashboard']))
+            .finally(() => this.spinner.hide())
         return result;
     }
 
     signup(email:string, password:string, businessName: string, phoneNumber: string, legalEntity: string, addresses: any) {
+        this.spinner.show();
         const body = {
             client_id: environment.auth0_client_id,
             email: email,
