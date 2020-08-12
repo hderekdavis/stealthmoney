@@ -15,7 +15,7 @@ import { changeUserPassword, getManagementToken, sendResetPasswordLink } from '.
 const plaidClient = new plaid.Client({
   clientID: process.env.PLAID_CLIENT_ID,
   secret: process.env.PLAID_SECRET,
-  env: process.env.NODE_ENV === 'PRODUCTION' ? plaid.environments.development : plaid.environments.sandbox
+  env: process.env.NODE_ENV.toUpperCase() === 'PRODUCTION' ? plaid.environments.development : plaid.environments.sandbox
 });
 
 let managementToken = '';
