@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from './backend.service';
 import * as moment from 'moment';
+import { env } from 'process';
 
 @Injectable({
   providedIn: 'root'
@@ -96,7 +97,13 @@ export class AuthService {
     }          
 
     logout() {
-        window.location.href = this.auth0LogoutApi;
+        let redirect;
+        if (environment.production) {
+            redirect = 'https://clearviewmoney.com/login';
+        } else {
+            redirect = 'http://localhost:4200/login';
+        }
+        window.location.href = this.auth0LogoutApi + '&returnTo=' + redirect;
         this.toastr.success('Logged out successfully.', 'Logout');
         localStorage.removeItem("id_token");
         localStorage.removeItem("expires_at");
