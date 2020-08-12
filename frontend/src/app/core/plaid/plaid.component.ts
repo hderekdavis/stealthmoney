@@ -6,6 +6,7 @@ import { PlaidLinkHandler } from 'ngx-plaid-link/lib/ngx-plaid-link-handler';
 import { PlaidConfig } from 'ngx-plaid-link/lib/interfaces';
 import { environment } from 'src/environments/environment';
 import { NgxPlaidLinkService } from 'ngx-plaid-link';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-plaid',
@@ -26,10 +27,12 @@ export class PlaidComponent implements AfterViewInit {
     private apiService: ApiService,
     private authService: AuthService,
     private router: Router,
-    private plaidLinkService: NgxPlaidLinkService
+    private plaidLinkService: NgxPlaidLinkService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngAfterViewInit() {
+    this.spinner.show();
     this.plaidLinkService
       .createPlaid(
         Object.assign({}, this.config, {
@@ -48,16 +51,13 @@ export class PlaidComponent implements AfterViewInit {
     this.plaidLinkHandler.open();
   }
 
-  exit() {
-    this.plaidLinkHandler.exit();
-  }
-
   onSuccess(token, metadata) {
     this.authService.setHasPlaidToken(true);
     this.apiService.post('/access-token', {
       publicToken: token
     }).subscribe((response: any) => {
       this.router.navigate(['/dashboard']);
+      this.spinner.hide();
     });
   }
 
@@ -69,5 +69,6 @@ export class PlaidComponent implements AfterViewInit {
   onExit(error, metadata) {
     console.log("We exited:", error);
     console.log("We got metadata:", metadata);
+    this.spinner.hide();
   }
 }
