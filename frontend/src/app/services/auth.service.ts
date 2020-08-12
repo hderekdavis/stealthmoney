@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from './backend.service';
 import * as moment from 'moment';
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,8 @@ export class AuthService {
         private router: Router,
         private toastr: ToastrService,
         private httpClient: HttpClient,
-        private backendService: BackendService
+        private backendService: BackendService,
+        private spinner: NgxSpinnerService
     ) {}
 
     public async fetchUserInfo() {
@@ -36,6 +38,7 @@ export class AuthService {
     }
 
     login(email:string, password:string): Observable<any>{
+        this.spinner.show();
         const body = {
             grant_type: 'password',
             client_id: environment.auth0_client_id,
@@ -57,10 +60,12 @@ export class AuthService {
             .then(response => this.setSession(response))
             .then(() => this.fetchUserInfo())
             .then(() => this.router.navigate(['/dashboard']))
+            .finally(() => this.spinner.hide())
         return result;
     }
 
     signup(email:string, password:string, businessName: string, phoneNumber: string, legalEntity: string, addresses: any) {
+        this.spinner.show();
         const body = {
             client_id: environment.auth0_client_id,
             email: email,
@@ -96,7 +101,13 @@ export class AuthService {
     }          
 
     logout() {
-        window.location.href = this.auth0LogoutApi;
+        let redirect;
+        if (environment.production) {
+            redirect = 'https://clearviewmoney.com/login';
+        } else {
+            redirect = 'http://localhost:4200/login';
+        }
+        window.location.href = this.auth0LogoutApi + '&returnTo=' + redirect;
         this.toastr.success('Logged out successfully.', 'Logout');
         localStorage.removeItem("id_token");
         localStorage.removeItem("expires_at");
