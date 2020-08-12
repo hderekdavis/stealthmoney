@@ -69,7 +69,7 @@ export class SettingsComponent implements OnInit {
   }
 
   validForms() {
-    return this.addresses.toArray().every(this.isValidForm) && this.settingsForm.valid;
+    return this.settingsForm.valid;
   }
 
   isValidForm(addressComponent: AddressFormComponent) {
