@@ -10,19 +10,23 @@ import { IncomeComponent } from './income/income.component';
 import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
 import { TransactionComponent } from './transaction/transaction.component';
 import { PlaidGuardService } from '../services/plaid-guard.service';
+import { AlreadyLoggedInGuardService } from '../already-logged-in-guard.service';
 
 const routes: Routes = [
   {
     path: '',
-    component: LoginComponent
+    component: LoginComponent,
+    canActivate: [AlreadyLoggedInGuardService]
   },
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
+    canActivate: [AlreadyLoggedInGuardService]
   },
   {
     path: 'signup',
-    component: SignupComponent
+    component: SignupComponent,
+    canActivate: [AlreadyLoggedInGuardService]
   },
   {
     path: 'dashboard',
