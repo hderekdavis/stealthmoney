@@ -15,7 +15,7 @@ export const environment = {
     env: "sandbox",
     token: null,
     webhook: "https://clearviewmoney.com/dashboard",
-    product: ["auth"],
+    product: ["transactions"],
     countryCodes: ['US'],
     key: 'd17298a88d20be6c0fb14bb7513747',
   }
