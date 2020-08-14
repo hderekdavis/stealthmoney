@@ -73,3 +73,6 @@ certs/
 
 #Visual Studio
 .vs/
+
+#Signing Certificate
+.pem

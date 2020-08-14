@@ -1,25 +1,31 @@
 const superagent = require('superagent');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
-export const setUserInfo = async function(req, res, next) {
-    let token = req.header('authorization');
-    if (token) {
-      await superagent.get('https://' + process.env.AUTH0_DOMAIN + '/userinfo').set('Authorization',token).then(res => {
-        req.body.user_email = res.body.email;
-        req.body.auth0_user_id = res.body.sub;
-      }).catch(err => {
-        console.log(err);
-      })
-    }
-    next();
+export const decodeIDToken = async function(req, res, next) {
+  let token = req.header('UserInfo');
+  var cert = fs.readFileSync('./certificate.pem');
+  if (token) {
+    jwt.verify(token, cert, { algorithms: ['RS256'] }, function(err, decoded) {
+      if (err) { 
+        res.status(403);
+        res.send({message: "invalid ID Token signature"})
+      } else {
+        req.body.user_email = decoded.email;
+        req.body.auth0_user_id = decoded.sub;
+      }
+    });
+  }
+  next();
 }
 
-export const changeUserPassword = async function(token: string, auth0UserId: string, newPassword: string) {
+export const changeUserPassword = async function(managementToken: string, auth0UserId: string, newPassword: string) {
   return await superagent.patch('https://' + process.env.AUTH0_DOMAIN + '/api/v2/users/' + auth0UserId)
     .send({
       password: newPassword,
       connection: 'Username-Password-Authentication'
     })
-    .set('Authorization', 'Bearer ' + token)
+    .set('Authorization', 'Bearer ' + managementToken)
     .set('content-type', 'application/json')
     .then(res => {
       console.log('Password changed for user with ID: ' + auth0UserId);
