@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {  HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -9,15 +9,19 @@ export class TokenInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     
-    let token = localStorage.getItem("id_token");
-    if (token) {
+    let host = request.url.substr(8,28);
+    
+    if (host != environment.auth0_domain) {
+      let accessToken = localStorage.getItem("access_token");
+      let idToken = localStorage.getItem("id_token");
       request = request.clone({
         setHeaders: {
-          // Injecting the AuthService caused a circular dependency, so for now just getting the id_token "manually"
-          Authorization: `Bearer ${localStorage.getItem("id_token")}`
+          Authorization: `Bearer ${accessToken}`,
+          UserInfo: idToken
         }
       });
     }
+
     return next.handle(request);
   }
 }
