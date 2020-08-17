@@ -96,7 +96,8 @@ export class AuthService {
             
     private setSession(authResult) {
         const expiresAt = moment().add(authResult.expires_in,'second');
-        localStorage.setItem('id_token', authResult.access_token);
+        localStorage.setItem('id_token', authResult.id_token);
+        localStorage.setItem('access_token', authResult.access_token);
         localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()) );
     }          
 
@@ -110,6 +111,7 @@ export class AuthService {
         window.location.href = this.auth0LogoutApi + '&returnTo=' + redirect;
         this.toastr.success('Logged out successfully.', 'Logout');
         localStorage.removeItem("id_token");
+        localStorage.removeItem("access_token");
         localStorage.removeItem("expires_at");
     }
 
@@ -127,8 +129,12 @@ export class AuthService {
         return moment(expiresAt);
     }
 
-    getToken() {
-        return localStorage.getItem("id_token");
+    getAccessToken() {
+        return localStorage.getItem("access_token");
+    }
+
+    getIDToken() {
+        return localStorage.getItem("access_token");
     }
 
     isPlaidSetup() {
