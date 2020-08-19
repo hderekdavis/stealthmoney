@@ -50,7 +50,6 @@ export class AuthService {
         const result = this.httpClient.post(this.auth0LoginApi, body);
         result.pipe(
             tap((data: any) => {
-                this.toastr.success('Logged in successfully!', 'Log In');
             }),
             catchError( err => {
                 this.toastr.error('Error in source. Details: ' + err.error.error_description, 'Error');
@@ -60,6 +59,7 @@ export class AuthService {
             .then(response => this.setSession(response))
             .then(() => this.fetchUserInfo())
             .then(() => this.router.navigate(['/dashboard']))
+            .then(() => this.toastr.success('Logged in successfully!', 'Log In'))
             .finally(() => this.spinner.hide())
         return result;
     }
@@ -85,12 +85,10 @@ export class AuthService {
                 return throwError(err);
             })
         ).subscribe(response => {
-            this.login(email, password).toPromise().then(() => {
-                this.backendService.createBusiness(email, businessName, phoneNumber, legalEntity, addresses)
-                    .subscribe(() => {
-                        this.toastr.success('Successfully signed up!', 'Sign Up');
-                    })
-            });
+            this.backendService.createBusiness(email, businessName, phoneNumber, legalEntity, addresses)
+                .subscribe(() => {
+                    this.login(email, password).subscribe(() => console.log('loged in!'));
+                })
         });
     }
             
