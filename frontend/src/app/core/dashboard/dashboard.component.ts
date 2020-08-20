@@ -23,8 +23,8 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // Every 5 seconds try calling the API to see if transactions are ready
-    const timer$ = interval(5000)
+    // Every 10 seconds try calling the API to see if transactions are ready
+    const timer$ = interval(10000)
       .pipe(
         startWith(0),
         filter(() => !this.isLoaded)
