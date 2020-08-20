@@ -17,6 +17,7 @@ export class TransactionComponent implements OnInit {
   transaction: any;
   addressData: any;
   transactionCategories:[];
+  formerCategoryId: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -31,7 +32,7 @@ export class TransactionComponent implements OnInit {
       let httpParams = new HttpParams().append('transactionId', params.get('transactionId'));
       this.apiService.get('/transaction', httpParams).subscribe((result: any) => {
         this.transaction = result[0];
-  
+        this.formerCategoryId = result[0].categoryId;
         this.transaction.amount = Math.abs(this.transaction.amount);
       });
     });
@@ -47,7 +48,7 @@ export class TransactionComponent implements OnInit {
     if (this.transaction.type === 'income') {
       this.router.navigate(['/income']);
     } else {
-      this.router.navigate(['/expense', this.transaction.categoryId]);
+      this.router.navigate(['/expense', this.formerCategoryId]);
     }
   }
 

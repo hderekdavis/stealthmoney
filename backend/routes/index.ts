@@ -23,10 +23,16 @@ let managementToken = '';
 getManagementToken().then(response => managementToken = response);
 
 router.get('/business', checkJwt, async function (req, res, next) {
-  const businessEmail = req.body.user_email;
-  const business = await queries.getBusinessByEmail(businessEmail);
+    try {
+        const businessEmail = req.body.user_email;
+        const business = await queries.getBusinessByEmail(businessEmail);
 
-  res.json(business);
+        res.json(business);
+    } catch (error) {
+        console.log(error);
+
+        res.json(error);
+    }
 });
 
 router.post('/access-token', checkJwt, async function (req, res, next) {
@@ -65,9 +71,7 @@ router.get('/transactions', checkJwt, async function (req, res, next) {
 
       if (!foundTransaction) {
         // Find transaction category
-        const category = _.find(categories, ['plaidCategoryID', Number(transaction.category_id)]);
-
-        let categoryId = category.categoryID;
+        let categoryId = await queries.getCategoryForTransaction(transaction.name, defaultBusinessLocationId, businessLocationsForBusiness.vertical, Number(transaction.category_id));
 
         if (transaction.amount < 0) {
           // Negative transactions are income: https://support.plaid.com/hc/en-us/articles/360008413653-Negative-transaction-amount
@@ -279,8 +283,12 @@ router.get('/location', checkJwt, async function (req, res, next) {
 router.put('/transactions', checkJwt, async function (req, res, next) {
   try {
     const transaction = req.body.transaction;
-
+    const email = req.body.user_email;
+    const businessLocationsForBusiness = await queries.getBusinessLocation(email);
+    const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID;
     const response = await queries.updateTransaction(transaction);
+
+    queries.updateSimilarTransactionsForUser(transaction.name, transaction.categoryId, defaultBusinessLocationId);
 
     res.json(response);
   } catch(error) {

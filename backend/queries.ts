@@ -174,7 +174,8 @@ export const updateTransaction = async function(transaction: any): Promise<any> 
     let transactionID = parseInt(transaction.transactionId);
     return db.queryAsync<any>(`
         UPDATE transaction
-        SET categoryID = :categoryID
+        SET categoryID = :categoryID,
+            isManualSet = 1
         WHERE
             transactionID = :transactionID
         `,
@@ -194,4 +195,112 @@ export const getBusinessPlaidToken = async function(email: string): Promise<any>
         {
             emailString
         }).then(firstOrDefault);
+}
+
+export const getBusinessLatestCategoryForTransaction = async function(transactionName: string, businessLocationID: number): Promise<any> {
+    return db.queryAsync<any>(`
+        SELECT categoryID
+        FROM transaction
+        WHERE name = :transactionName AND isManualSet = 1 AND businessLocationID = :businessLocationID
+        `,
+        {
+            businessLocationID,
+            transactionName
+        }).then(firstOrDefault);
+}
+
+export const getGeneralLatestCategoryForTransaction = async function(transactionName: string): Promise<any> {
+    return db.queryAsync<any>(`
+        SELECT categoryID
+        FROM transaction
+        WHERE name = :transactionName AND isManualSet = 1
+        `,
+        {
+            transactionName
+        }).then(firstOrDefault);
+}
+
+export const getDefaultCategoryForTransaction = async function(plaidCategoryID: number, businessVertical: string): Promise<any> {
+    switch(businessVertical) {
+        case 'Cultivation':
+            return db.queryAsync<any>(`
+                SELECT cultivationCategoryID
+                FROM plaidToAccountMapping
+                WHERE plaidCategoryID = :plaidCategoryID
+                `,
+                {
+                    plaidCategoryID
+                }).then(firstOrDefault).then(result => { return result['cultivationCategoryID'] });
+        case 'Distribution':
+            return db.queryAsync<any>(`
+                SELECT distributionCategoryID
+                FROM plaidToAccountMapping
+                WHERE plaidCategoryID = :plaidCategoryID
+                `,
+                {
+                    plaidCategoryID
+                }).then(firstOrDefault).then(result => { return result['distributionCategoryID'] });
+        case 'Retail':
+            return db.queryAsync<any>(`
+                SELECT retailCategoryID
+                FROM plaidToAccountMapping
+                WHERE plaidCategoryID = :plaidCategoryID
+                `,
+                {
+                    plaidCategoryID
+                }).then(firstOrDefault).then(result => { return result['retailCategoryID'] });
+        case 'Manufacture':
+            return db.queryAsync<any>(`
+                SELECT manufactureCategoryID
+                FROM plaidToAccountMapping
+                WHERE plaidCategoryID = :plaidCategoryID
+                `,
+                {
+                    plaidCategoryID
+                }).then(firstOrDefault).then(result => { return result['manufactureCategoryID'] });
+        case 'Delivery':
+            return db.queryAsync<any>(`
+                SELECT deliveryCategoryID
+                FROM plaidToAccountMapping
+                WHERE plaidCategoryID = :plaidCategoryID
+                `,
+                {
+                    plaidCategoryID
+                }).then(firstOrDefault).then(result => { return result['deliveryCategoryID'] });
+      }
+}
+
+export const getCategoryForTransaction = async function(transactionName: string, businessLocationID: number, businessVertical: string, plaidCategoryID: number): Promise<any> {
+    try {
+        let category = await getBusinessLatestCategoryForTransaction(transactionName, businessLocationID);
+        if (!category) {
+            category = await getGeneralLatestCategoryForTransaction(transactionName);
+        } 
+        if (!category) {
+            category = await getDefaultCategoryForTransaction(plaidCategoryID, businessVertical);
+        } else {
+            category = category['categoryID'];
+        }
+        return category;
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+export const updateSimilarTransactionsForUser = async function(transactionName: string, categoryID: number, businessLocationID: number): Promise<any> {
+    try {
+        return db.queryAsync<any>(`
+            UPDATE transaction
+            SET categoryID = :categoryID
+            WHERE name = :transactionName AND businessLocationID = :businessLocationID
+
+            `,
+            {
+                categoryID,
+                transactionName,
+                businessLocationID
+            })
+    } catch(error) {
+        console.log(error);
+    }
 }

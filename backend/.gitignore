@@ -76,3 +76,4 @@ certs/
 
 #Signing Certificate
 .pem
+certificate.pem
