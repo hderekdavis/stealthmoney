@@ -63,10 +63,9 @@ router.get('/transactions', checkJwt, async function (req, res, next) {
     // 3. Save transactions to database
     const businessLocationsForBusiness = await queries.getBusinessLocation(email);
     const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID; // Temporarily default to user's first business location
-    let transactions = await queries.getTransactions(defaultBusinessLocationId);
-    const categories = await queries.getCategories();
+    const transactions = await queries.getTransactions(defaultBusinessLocationId);
 
-    transactionsResponse.transactions.forEach(async transaction => {
+    for (const transaction of transactionsResponse.transactions) {
       const foundTransaction = _.find(transactions, { 'amount': transaction.amount, 'date': transaction.date, 'name': transaction.name });
 
       if (!foundTransaction) {
@@ -81,7 +80,7 @@ router.get('/transactions', checkJwt, async function (req, res, next) {
         // Insert transaction into database
         await queries.saveTransaction(defaultBusinessLocationId, transaction.name, categoryId, transaction.amount, transaction.date);
       }
-    });
+    }
 
     // 4. Return transactions in response
     let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
