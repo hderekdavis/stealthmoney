@@ -199,9 +199,10 @@ export const getBusinessPlaidToken = async function(email: string): Promise<any>
 
 export const getBusinessLatestCategoryForTransaction = async function(transactionName: string, businessLocationID: number): Promise<any> {
     return db.queryAsync<any>(`
-        SELECT categoryID
-        FROM transaction
+        SELECT  categoryID
+        FROM     Production.transaction
         WHERE name = :transactionName AND isManualSet = 1 AND businessLocationID = :businessLocationID
+        LIMIT 1;
         `,
         {
             businessLocationID,
@@ -211,9 +212,12 @@ export const getBusinessLatestCategoryForTransaction = async function(transactio
 
 export const getGeneralLatestCategoryForTransaction = async function(transactionName: string): Promise<any> {
     return db.queryAsync<any>(`
-        SELECT categoryID
-        FROM transaction
+        SELECT  categoryID, COUNT(categoryID) AS 'value_occurrence' 
+        FROM     Production.transaction
         WHERE name = :transactionName AND isManualSet = 1
+        GROUP BY categoryID
+        ORDER BY 'value_occurrence' DESC
+        LIMIT    1;
         `,
         {
             transactionName
@@ -292,8 +296,7 @@ export const updateSimilarTransactionsForUser = async function(transactionName: 
         return db.queryAsync<any>(`
             UPDATE transaction
             SET categoryID = :categoryID
-            WHERE name = :transactionName AND businessLocationID = :businessLocationID
-
+            WHERE name = :transactionName AND businessLocationID = :businessLocationID AND isManualSet = 0
             `,
             {
                 categoryID,

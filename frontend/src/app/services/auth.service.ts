@@ -48,10 +48,7 @@ export class AuthService {
             scope: 'openid email profile'
         }
         const result = this.httpClient.post(this.auth0LoginApi, body);
-        result.pipe(
-            tap((data: any) => {
-            }),
-            catchError( err => {
+        result.pipe(catchError( err => {
                 this.toastr.error('Error in source. Details: ' + err.error.error_description, 'Error');
                 return throwError(err);
             })
@@ -73,10 +70,7 @@ export class AuthService {
             connection: environment.auth0_connection
         }
         this.httpClient.post(this.auth0SignUpApi, body)
-        .pipe(
-            tap((data: any) => {
-            }),
-            catchError( err => {
+        .pipe(catchError( err => {
                 if (err.error.message) {
                     this.toastr.error(err.error.message, 'Error');
                 } else {
@@ -87,7 +81,7 @@ export class AuthService {
         ).subscribe(response => {
             this.backendService.createBusiness(email, businessName, phoneNumber, legalEntity, addresses)
                 .subscribe(() => {
-                    this.login(email, password).subscribe(() => console.log('loged in!'));
+                    this.login(email, password).subscribe();
                 })
         });
     }
