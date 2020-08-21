@@ -81,7 +81,7 @@ export class AuthService {
         ).subscribe(response => {
             this.backendService.createBusiness(email, businessName, phoneNumber, legalEntity, addresses)
                 .subscribe(() => {
-                    this.login(email, password).subscribe(() => console.log('loged in!'));
+                    this.login(email, password).subscribe();
                 })
         });
     }
