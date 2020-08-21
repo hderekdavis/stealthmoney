@@ -199,12 +199,10 @@ export const getBusinessPlaidToken = async function(email: string): Promise<any>
 
 export const getBusinessLatestCategoryForTransaction = async function(transactionName: string, businessLocationID: number): Promise<any> {
     return db.queryAsync<any>(`
-        SELECT  categoryID, COUNT(categoryID) AS 'value_occurrence' 
+        SELECT  categoryID
         FROM     Production.transaction
         WHERE name = :transactionName AND isManualSet = 1 AND businessLocationID = :businessLocationID
-        GROUP BY categoryID
-        ORDER BY 'value_occurrence' DESC
-        LIMIT    1;
+        LIMIT 1;
         `,
         {
             businessLocationID,

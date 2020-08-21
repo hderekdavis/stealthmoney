@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
-import { interval, combineLatest } from 'rxjs';
+import { interval } from 'rxjs';
 import { filter, switchMap, startWith } from 'rxjs/operators';
-import { AuthService } from 'src/app/services/auth.service';
 
 import * as _ from 'lodash';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,52 +15,54 @@ export class DashboardComponent implements OnInit {
   expenseCategories: any[] = []
   totalIncome: number = 0;
   totalExpenses: number = 0;
-  isLoaded: boolean;
+  retry = false;
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
 
-    // Every 10 seconds try calling the API to see if transactions are ready
-    const timer$ = interval(10000)
+    // Every 5 seconds try calling the API to see if transactions are ready
+    const timer$ = interval(5000)
       .pipe(
+        filter(() => this.retry === true),
         startWith(0),
-        filter(() => !this.isLoaded)
-      );
+        switchMap(() => {
+          this.retry = false;
+          return this.apiService.get('/transactions');
+        })
+      ).subscribe((response: any) => {
+        if (response.error_code === 'PRODUCT_NOT_READY') {
+          this.retry = true;
+        } else {
+          this.retry = false;
 
-    combineLatest(
-      timer$
-    )
-    .pipe(
-      switchMap(response => {
-        return this.apiService.get('/transactions');
-      })
-    ).subscribe((response: any) => {
-      if (response.error_code !== 'PRODUCT_NOT_READY') {
-        this.isLoaded = true;
-        const transactions = response;
+          const transactions = response;
 
-        if (transactions && transactions.length) {
-          this.expenseCategories = transactions.filter(transaction => transaction.type === 'expense');
-          this.expenseCategories = _.groupBy(this.expenseCategories, 'category');
-          this.expenseCategories = _.mapValues(this.expenseCategories, categoryExpenses => _.sumBy(categoryExpenses, 'amount'));
-          this.expenseCategories = Object.keys(this.expenseCategories).map(key => ({
-            category: key,
-            amount: this.expenseCategories[key],
-            categoryId: _.find(transactions, ['category', key]).categoryId
-          }));
-          
-          this.totalIncome = _.sumBy(transactions, transaction => {
-            return transaction.type === 'income' ? Math.abs(transaction.amount) : 0;
-          });
-          this.totalExpenses = _.sumBy(transactions, transaction => {
-            return transaction.type === 'expense' ? transaction.amount : 0;
-          });
+          if (transactions && transactions.length) {
+            this.expenseCategories = transactions.filter(transaction => transaction.type === 'expense');
+            this.expenseCategories = _.groupBy(this.expenseCategories, 'category');
+            this.expenseCategories = _.mapValues(this.expenseCategories, categoryExpenses => _.sumBy(categoryExpenses, 'amount'));
+            this.expenseCategories = Object.keys(this.expenseCategories).map(key => ({
+              category: key,
+              amount: this.expenseCategories[key],
+              categoryId: _.find(transactions, ['category', key]).categoryId
+            }));
+            
+            this.totalIncome = _.sumBy(transactions, transaction => {
+              return transaction.type === 'income' ? Math.abs(transaction.amount) : 0;
+            });
+            this.totalExpenses = _.sumBy(transactions, transaction => {
+              return transaction.type === 'expense' ? transaction.amount : 0;
+            });
+          }
         }
-      }
-    });
+      },
+      () => {
+        this.toastr.error('Loading your transactions may take a few minutes. Please wait and try reloading the page later.', 'Error');
+      });
   }
 
 }
