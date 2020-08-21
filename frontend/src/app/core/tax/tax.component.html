@@ -1,0 +1,27 @@
+<div class="mx-auto income-container container">
+    <div class="row mt-5 mb-5 text-center">
+        <button class="btn income-button float-left" (click)="back()">
+            <i class="fa fa-arrow-left mr-3"></i>Back to Dashboard
+        </button>
+    </div>
+    <div class="row income-header px-4">
+        <h4 class="col-sm-6 my-auto mr-auto">Estimated {{ context | titlecase }} Tax</h4>
+        <h4 class="col-sm-6 my-auto ml-auto text-right">$2,297.60</h4>
+    </div>
+    <div class="row striped-row separator-line">
+        <div class="col-sm-6">
+            Net Income
+        </div>
+        <div class="col-sm-6 cash-text" style="text-align:right">
+            $10,940.96
+        </div>
+    </div>
+    <div class="row striped-row">
+        <div class="col-sm-6">
+            Income {{ context | titlecase }} Tax - 21%
+        </div>
+        <div class="col-sm-6 red-color" style="text-align:right">
+            $2,297.60
+        </div>
+    </div>
+</div>

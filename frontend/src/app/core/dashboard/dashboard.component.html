@@ -38,13 +38,13 @@
         </div>
         <div style="clear:both"></div>
     </div>
-    <div class="striped-row">
+    <div class="striped-row" [routerLink]="['/tax','federal', 1]" style="cursor:pointer">
         Estimated Federal Tax
     </div>
-    <div class="striped-row">
+    <div class="striped-row" [routerLink]="['/tax','state', 1]" style="cursor:pointer">
         Estimated State Tax
     </div>
-    <div class="striped-row">
+    <div class="striped-row" [routerLink]="['/tax','local', 1]" style="cursor:pointer">
         Estimated Local Tax
     </div>
 </div>

@@ -11,6 +11,7 @@ import { ExpenseCategoryComponent } from './expense-category/expense-category.co
 import { TransactionComponent } from './transaction/transaction.component';
 import { PlaidGuardService } from '../services/plaid-guard.service';
 import { AlreadyLoggedInGuardService } from '../services/already-logged-in-guard.service';
+import { TaxComponent } from './tax/tax.component';
 
 const routes: Routes = [
   {
@@ -56,6 +57,11 @@ const routes: Routes = [
   {
     path: 'transaction/:transactionId',
     component: TransactionComponent,
+    canActivate: [AuthGuardService, PlaidGuardService]
+  },
+  {
+    path: 'tax/:context/:transactionId',
+    component: TaxComponent,
     canActivate: [AuthGuardService, PlaidGuardService]
   },
 ];
