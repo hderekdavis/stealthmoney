@@ -5,6 +5,7 @@ import { filter, switchMap, startWith } from 'rxjs/operators';
 
 import * as _ from 'lodash';
 import { ToastrService } from 'ngx-toastr';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,11 +16,16 @@ export class DashboardComponent implements OnInit {
   expenseCategories: any[] = []
   totalIncome: number = 0;
   totalExpenses: number = 0;
+  netIncome: number = 0;
+  federalTax: number = 0;
+  stateTax: number = 0;
+  localTax: number = 0;
   retry = false;
 
   constructor(
     private apiService: ApiService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private backendService: BackendService
   ) { }
 
   ngOnInit(): void {
@@ -57,6 +63,10 @@ export class DashboardComponent implements OnInit {
             this.totalExpenses = _.sumBy(transactions, transaction => {
               return transaction.type === 'expense' ? transaction.amount : 0;
             });
+            this.netIncome = this.totalIncome - this.totalExpenses;
+            this.backendService.getFederalTax(this.netIncome.toString()).subscribe( result => this.federalTax = result.tax );
+            this.backendService.getLocalTax(this.netIncome.toString()).subscribe( result => this.localTax = result.tax );
+            this.backendService.getStateTax(this.netIncome.toString()).subscribe( result => this.stateTax = result.tax );
           }
         }
       },

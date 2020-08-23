@@ -34,17 +34,35 @@
             Net Income
         </div>
         <div style="float:right">
-            {{ totalIncome - totalExpenses | currency}}
+            {{ netIncome | currency}}
         </div>
         <div style="clear:both"></div>
     </div>
-    <div class="striped-row" [routerLink]="['/tax','federal']" style="cursor:pointer">
-        Estimated Federal Tax
+    <div class="striped-row" [routerLink]="['/tax','federal']"  [queryParams]="{ netIncome: netIncome }" style="cursor:pointer">
+        <div style="float:left">
+            Estimated Federal Tax
+        </div>
+        <div style="float:right">
+            {{ federalTax | currency}}
+        </div>
+        <div style="clear:both"></div>
     </div>
-    <div class="striped-row" [routerLink]="['/tax','state']" style="cursor:pointer">
-        Estimated State Tax
+    <div class="striped-row" [routerLink]="['/tax','state']"  [queryParams]="{ netIncome: netIncome }" style="cursor:pointer">
+        <div style="float:left">
+            Estimated State Tax
+        </div>
+        <div style="float:right">
+            {{ stateTax | currency}}
+        </div>
+        <div style="clear:both"></div>
     </div>
-    <div class="striped-row" [routerLink]="['/tax','local']" style="cursor:pointer">
-        Estimated Local Tax
+    <div class="striped-row" [routerLink]="['/tax','local']" [queryParams]="{ netIncome: netIncome }" style="cursor:pointer">
+        <div style="float:left">
+            Estimated Local Tax
+        </div>
+        <div style="float:right">
+            {{ localTax | currency}}
+        </div>
+        <div style="clear:both"></div>
     </div>
 </div>
