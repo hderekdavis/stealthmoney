@@ -311,4 +311,6 @@ router.get('/has-plaid-token', checkJwt, async function (req, res, next) {
   }
 });
 
+router.use('/taxes', require('./taxes'));
+
 module.exports = router;

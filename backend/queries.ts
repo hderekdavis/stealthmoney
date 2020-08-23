@@ -307,3 +307,18 @@ export const updateSimilarTransactionsForUser = async function(transactionName: 
         console.log(error);
     }
 }
+
+export const getStateTax = async function(state: string): Promise<any> {
+    try {
+        return db.queryAsync<any>(`
+            SELECT singleRate, singleBracket
+            FROM stateTaxes
+            WHERE state = :state
+            `,
+            {
+                state
+            })
+    } catch(error) {
+        console.log(error);
+    }
+}
