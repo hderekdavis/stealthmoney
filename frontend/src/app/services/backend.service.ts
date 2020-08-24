@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { Observable } from 'rxjs';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -43,5 +44,20 @@ export class BackendService {
 
   hasPlaidToken(): Observable<any> {
     return this.api.get('/has-plaid-token');
+  }
+
+  getLocalTax(netIncome: string): Observable<any> {
+    let httpParams = new HttpParams().append('netIncome', netIncome);
+    return this.api.get('/taxes/local', httpParams);
+  }
+
+  getStateTax(netIncome: string): Observable<any> {
+    let httpParams = new HttpParams().append('netIncome', netIncome);
+    return this.api.get('/taxes/state', httpParams);
+  }
+
+  getFederalTax(netIncome: string): Observable<any> {
+    let httpParams = new HttpParams().append('netIncome', netIncome);
+    return this.api.get('/taxes/federal', httpParams);
   }
 }

@@ -8,20 +8,22 @@
         <input id="{{ 'addressSecondLine' + addessNumber }}" class="form-control layout-input" formControlName="addressSecondLine">
       </div>
       <div class="row">
-        <div class="col">
-          <div class="form-group w-75 mb-0">
+        <div class="col-4">
+          <div class="form-group mb-0">
             <label for="{{ 'city' + addessNumber }}" class="layout-input-label required">City</label>
             <input id="{{ 'city' + addessNumber }}" class="form-control layout-input" formControlName="city">
           </div>
         </div>
-        <div class="col">
-          <div class="form-group w-75 mb-0">
+        <div class="col-5">
+          <div class="form-group mb-0">
             <label for="{{ 'state' + addessNumber }}" class="layout-input-label required">State</label>
-            <input id="{{ 'state' + addessNumber }}" class="form-control layout-input" formControlName="state">
+            <select id="{{ 'state' + addessNumber }}" class="form-control layout-input ml-auto" formControlName="state">
+                <option *ngFor="let state of states;" value="{{ state }}">{{ state }}</option>
+            </select>
           </div>
         </div>
-        <div class="col">
-          <div class="form-group w-75 mb-0">
+        <div class="col-3">
+          <div class="form-group mb-0">
             <label for="{{ 'zipcode' + addessNumber }}" class="layout-input-label required">Zipcode</label>
             <input id="{{ 'zipcode' + addessNumber }}" class="form-control layout-input" formControlName="zipcode">
           </div>

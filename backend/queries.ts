@@ -210,7 +210,7 @@ export const getBusinessLatestCategoryForTransaction = async function(transactio
         }).then(firstOrDefault);
 }
 
-export const getGeneralLatestCategoryForTransaction = async function(transactionName: string): Promise<any> {
+export const getGeneralMostFrequentCategoryForTransaction = async function(transactionName: string): Promise<any> {
     return db.queryAsync<any>(`
         SELECT  categoryID, COUNT(categoryID) AS 'value_occurrence' 
         FROM     Production.transaction
@@ -278,7 +278,7 @@ export const getCategoryForTransaction = async function(transactionName: string,
     try {
         let category = await getBusinessLatestCategoryForTransaction(transactionName, businessLocationID);
         if (!category) {
-            category = await getGeneralLatestCategoryForTransaction(transactionName);
+            category = await getGeneralMostFrequentCategoryForTransaction(transactionName);
         } 
         if (!category) {
             category = await getDefaultCategoryForTransaction(plaidCategoryID, businessVertical);
@@ -302,6 +302,21 @@ export const updateSimilarTransactionsForUser = async function(transactionName: 
                 categoryID,
                 transactionName,
                 businessLocationID
+            })
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+export const getStateTax = async function(state: string): Promise<any> {
+    try {
+        return db.queryAsync<any>(`
+            SELECT singleRate, singleBracket
+            FROM stateTaxes
+            WHERE state = :state
+            `,
+            {
+                state
             })
     } catch(error) {
         console.log(error);

@@ -60,7 +60,7 @@ const routes: Routes = [
     canActivate: [AuthGuardService, PlaidGuardService]
   },
   {
-    path: 'tax/:context/:transactionId',
+    path: 'tax/:context',
     component: TaxComponent,
     canActivate: [AuthGuardService, PlaidGuardService]
   },
