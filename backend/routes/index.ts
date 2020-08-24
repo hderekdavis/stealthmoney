@@ -263,7 +263,7 @@ router.post('/reset-password', async function (req, res, next) {
 
 router.get('/transaction-categories', checkJwt, async function (req, res, next) {
 
-  const response = await queries.getChartOfAccountsCategories();
+  const response = await queries.getChartOfAccountsCategories(req.query.vertical, req.query.type);
 
   res.json(response);
 

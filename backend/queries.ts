@@ -147,11 +147,17 @@ export const updateBusiness = async function(businessID: number, email: string, 
     ).then(firstOrDefault);
 }
 
-export const getChartOfAccountsCategories = async function(): Promise<any> {
+export const getChartOfAccountsCategories = async function(vertical: string, type: string): Promise<any> {
     return db.queryAsync<any>(`
         SELECT * 
         FROM chartOfAccounts
-        `
+        WHERE vertical = :vertical
+        AND type = :type
+        `,
+        { 
+            vertical,
+            type
+        }
     );
 }
 
