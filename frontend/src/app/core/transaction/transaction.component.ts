@@ -28,18 +28,25 @@ export class TransactionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      let httpParams = new HttpParams().append('transactionId', params.get('transactionId'));
-      this.apiService.get('/transaction', httpParams).subscribe((result: any) => {
+    combineLatest(
+      this.route.paramMap,
+      this.backendService.getBusinessLocation()
+    ).pipe(
+      switchMap(result => {
+        const params = result[0];
+        this.addressData = result[1]; // TODO: Access token should not be passed to the frontend
+
+        let httpParams = new HttpParams().append('transactionId', params.get('transactionId'));
+        return this.apiService.get('/transaction', httpParams);
+      }),
+      switchMap(result => {
         this.transaction = result[0];
         this.formerCategoryId = result[0].categoryId;
         this.transaction.amount = Math.abs(this.transaction.amount);
-      });
-    });
-    this.backendService.getBusinessLocation().subscribe( result => {
-      this.addressData = result;
-    });
-    this.backendService.getTransactionCategories().subscribe( result => {
+
+        return this.backendService.getTransactionCategories(this.addressData.vertical, this.transaction.type);
+      })
+    ).subscribe(result => {
       this.transactionCategories = result;
     });
   }

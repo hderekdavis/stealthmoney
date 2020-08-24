@@ -30,8 +30,10 @@ export class BackendService {
     return this.api.post('/reset-password',{ email });
   }
 
-  getTransactionCategories(): Observable<any> {
-    return this.api.get('/transaction-categories');
+  getTransactionCategories(vertical: string, type: string): Observable<any> {
+    let httpParams = new HttpParams().append('vertical', vertical);
+    httpParams = httpParams.append('type', type);
+    return this.api.get('/transaction-categories', httpParams);
   }
 
   getBusinessLocation(): Observable<any> {
@@ -47,17 +49,17 @@ export class BackendService {
   }
 
   getLocalTax(netIncome: string): Observable<any> {
-    let httpParams = new HttpParams().append('netIncome', netIncome);
+    const httpParams = new HttpParams().append('netIncome', netIncome);
     return this.api.get('/taxes/local', httpParams);
   }
 
   getStateTax(netIncome: string): Observable<any> {
-    let httpParams = new HttpParams().append('netIncome', netIncome);
+    const httpParams = new HttpParams().append('netIncome', netIncome);
     return this.api.get('/taxes/state', httpParams);
   }
 
   getFederalTax(netIncome: string): Observable<any> {
-    let httpParams = new HttpParams().append('netIncome', netIncome);
+    const httpParams = new HttpParams().append('netIncome', netIncome);
     return this.api.get('/taxes/federal', httpParams);
   }
 }
