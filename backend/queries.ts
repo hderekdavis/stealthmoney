@@ -323,7 +323,19 @@ export const getStateTax = async function(state: string): Promise<any> {
             `,
             {
                 state
-            })
+            });
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+export const getIndividualTaxes = async function(): Promise<any> {
+    try {
+        return db.queryAsync<any>(`
+            SELECT rate, bracket
+            FROM individualTaxes
+            `,
+        );
     } catch(error) {
         console.log(error);
     }

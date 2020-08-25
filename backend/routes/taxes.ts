@@ -4,14 +4,35 @@ import * as queries from '../queries';
 
 router.get('/federal', checkJwt, async function (req, res, next) {
     try {
-        const netIncome = Number(req.query.netIncome);
-        
-        if (netIncome <= 0) {
-          res.json({ tax: 0, rate: 0 });
-        } else {
-          res.json({ tax: netIncome*0.21, rate: 0.21 });
+      const email = req.body.user_email;
+      const businessLocationsForBusiness = await queries.getBusinessLocation(email);
+      const netIncome = Number(req.query.netIncome);
+      
+      if (netIncome <= 0) {
+        res.json({ tax: 0, rate: 0 });
+      } else if (businessLocationsForBusiness.legalEntity === 'C Corporation') {
+        res.json({ tax: netIncome * 0.21, rate: 0.21 });
+      } else {
+        let taxes = await queries.getIndividualTaxes();
+
+        let taxedAmount = 0;
+        for (var x = 0; x < taxes.length; x++) {
+          if (netIncome > taxes[x].bracket) {
+            let taxedAmountInThisBracket = netIncome - taxes[x].bracket;
+            // Check if there's a next tax bracket and netIncome overflows into next bracket
+            if (x < taxes.length - 1 && netIncome > taxes[x + 1].bracket) {
+              // Since there's a next tax bracket, need to find how much income fits into this bracket
+              taxedAmountInThisBracket = taxes[x + 1].bracket - taxes[x].bracket;
+            }
+
+            taxedAmount += taxedAmountInThisBracket * taxes[x].rate;
+          } else {
+            break;
+          }
         }
     
+        res.json({ tax: taxedAmount, rate: (taxedAmount / netIncome) });
+      }
     } catch(error) {
       console.log(error);
   
@@ -29,7 +50,6 @@ router.get('/state', checkJwt, async function (req, res, next) {
       if (netIncome <= 0) {
         res.json({ tax: 0, rate: 0 });
       } else {
-        
         let taxes = await queries.getStateTax(state);
 
         let taxedAmount = 0;
