@@ -3,14 +3,13 @@ var router = express.Router();
 var cors = require('cors')
 var plaid = require('plaid');``
 var moment = require('moment');
-const http = require('http');
 
 router.use(cors());
 
 import * as _ from 'lodash';
 import checkJwt from '../lib/middleware/secured';
 import * as queries from '../queries';
-import { changeUserPassword, getManagementToken, sendResetPasswordLink } from '../lib/middleware/userInfo';
+import { changeUserPassword, getManagementToken, sendResetPasswordLink, decodeIDToken } from '../lib/middleware/userInfo';
 
 const plaidClient = new plaid.Client({
   clientID: process.env.PLAID_CLIENT_ID,
@@ -22,7 +21,7 @@ let managementToken = '';
 
 getManagementToken().then(response => managementToken = response);
 
-router.get('/business', checkJwt, async function (req, res, next) {
+router.get('/business', decodeIDToken, checkJwt, async function (req, res, next) {
     try {
         const businessEmail = req.body.user_email;
         const business = await queries.getBusinessByEmail(businessEmail);
@@ -35,7 +34,7 @@ router.get('/business', checkJwt, async function (req, res, next) {
     }
 });
 
-router.post('/access-token', checkJwt, async function (req, res, next) {
+router.post('/access-token', decodeIDToken, checkJwt, async function (req, res, next) {
   const publicToken = req.body.publicToken;
   const email = req.body.user_email;
 
@@ -47,7 +46,7 @@ router.post('/access-token', checkJwt, async function (req, res, next) {
   res.json({});
 });
 
-router.get('/transactions', checkJwt, async function (req, res, next) {
+router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, next) {
   try{
     // 1. Exchange public token for access token
     const email = req.body.user_email;
@@ -102,7 +101,7 @@ router.get('/transactions', checkJwt, async function (req, res, next) {
   }
 });
 
-router.get('/expense-category', checkJwt, async function (req, res, next) {
+router.get('/expense-category', decodeIDToken, checkJwt, async function (req, res, next) {
   try{
     const categoryId = req.query.categoryId;
     const email = req.body.user_email;
@@ -131,7 +130,7 @@ router.get('/expense-category', checkJwt, async function (req, res, next) {
   }
 });
 
-router.get('/transaction', checkJwt, async function (req, res, next) {
+router.get('/transaction', decodeIDToken, checkJwt, async function (req, res, next) {
   try {
     const transactionId = req.query.transactionId;
     const email = req.body.user_email;
@@ -160,7 +159,7 @@ router.get('/transaction', checkJwt, async function (req, res, next) {
   }
 });
 
-router.get('/income', checkJwt, async function (req, res, next) {
+router.get('/income', decodeIDToken, checkJwt, async function (req, res, next) {
   try{
     const email = req.body.user_email;
     const businessLocationsForBusiness = await queries.getBusinessLocation(email);
@@ -196,7 +195,6 @@ router.post('/business', async function (req, res, next) {
     const legalEntity = req.body.legalEntity;
     const addresses = req.body.addresses;
     var response: any = await queries.saveBusiness(email, businessName, phoneNumber, legalEntity);
-    console.log(response);
 
     for (const address of addresses) {
       await queries.saveBusinessLocation(response.insertId, address.addressFirstLine, address.addressSecondLine,
@@ -211,7 +209,7 @@ router.post('/business', async function (req, res, next) {
   }
 });
 
-router.get('/business/settings', checkJwt, async function (req, res, next) {
+router.get('/business/settings', decodeIDToken, checkJwt, async function (req, res, next) {
   try {
     const businessEmail = req.body.user_email;
     const business = await queries.getBusinessByEmail(businessEmail);
@@ -228,14 +226,14 @@ router.get('/business/settings', checkJwt, async function (req, res, next) {
   }
 })
 
-router.get('/business', checkJwt, async function (req, res, next) {
+router.get('/business', decodeIDToken, checkJwt, async function (req, res, next) {
   const email = req.user_email;
   const response = await queries.getBusinessByEmail(email);
 
   res.json(response);
 });
 
-router.post('/business/settings', checkJwt, async function (req, res, next) {
+router.post('/business/settings', decodeIDToken, checkJwt, async function (req, res, next) {
 
   const businessID = parseInt(req.body.businessID);
   const email = req.body.email;
@@ -261,7 +259,7 @@ router.post('/reset-password', async function (req, res, next) {
 
 });
 
-router.get('/transaction-categories', checkJwt, async function (req, res, next) {
+router.get('/transaction-categories', decodeIDToken, checkJwt, async function (req, res, next) {
 
   const response = await queries.getChartOfAccountsCategories(req.query.vertical, req.query.type);
 
@@ -269,7 +267,7 @@ router.get('/transaction-categories', checkJwt, async function (req, res, next) 
 
 });
 
-router.get('/location', checkJwt, async function (req, res, next) {
+router.get('/location', decodeIDToken, checkJwt, async function (req, res, next) {
 
   const email = req.body.user_email;
 
@@ -279,7 +277,7 @@ router.get('/location', checkJwt, async function (req, res, next) {
 
 });
 
-router.put('/transactions', checkJwt, async function (req, res, next) {
+router.put('/transactions', decodeIDToken, checkJwt, async function (req, res, next) {
   try {
     const transaction = req.body.transaction;
     const email = req.body.user_email;
@@ -297,7 +295,7 @@ router.put('/transactions', checkJwt, async function (req, res, next) {
   }
 });
 
-router.get('/has-plaid-token', checkJwt, async function (req, res, next) {
+router.get('/has-plaid-token', decodeIDToken, checkJwt, async function (req, res, next) {
   try {
     const email = req.body.user_email;
 

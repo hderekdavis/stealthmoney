@@ -1,8 +1,9 @@
 const router = require('express').Router();
 import checkJwt from '../lib/middleware/secured';
 import * as queries from '../queries';
+import { decodeIDToken } from '../lib/middleware/userInfo';
 
-router.get('/federal', checkJwt, async function (req, res, next) {
+router.get('/federal', decodeIDToken, checkJwt, async function (req, res, next) {
     try {
       const email = req.body.user_email;
       const businessLocationsForBusiness = await queries.getBusinessLocation(email);
@@ -40,7 +41,7 @@ router.get('/federal', checkJwt, async function (req, res, next) {
     }
 });
 
-router.get('/state', checkJwt, async function (req, res, next) {
+router.get('/state', decodeIDToken, checkJwt, async function (req, res, next) {
     try {
       const email = req.body.user_email;
       const netIncome = Number(req.query.netIncome);
@@ -77,7 +78,7 @@ router.get('/state', checkJwt, async function (req, res, next) {
     }
 });
 
-router.get('/local', checkJwt, async function (req, res, next) {
+router.get('/local', decodeIDToken, checkJwt, async function (req, res, next) {
     try {
       const netIncome = Number(req.query.netIncome);
       
