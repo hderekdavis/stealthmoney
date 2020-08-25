@@ -27,19 +27,19 @@ export class TaxComponent implements OnInit {
         case 'local':
           this.backendService.getLocalTax(this.netIncome.toString()).subscribe( result => {
             this.taxValue = result.tax;
-            this.taxRate = Math.ceil(result.rate * 100 * 100) / 100;
+            this.taxRate = Math.round(result.rate * 100 * 100) / 100;
           });
           break;
         case 'federal':
           this.backendService.getFederalTax(this.netIncome.toString()).subscribe( result => {
             this.taxValue = result.tax;
-            this.taxRate = Math.ceil(result.rate * 100 * 100) / 100;
+            this.taxRate = Math.round(result.rate * 100 * 100) / 100;
           });
           break;
         case 'state':
           this.backendService.getStateTax(this.netIncome.toString()).subscribe( result => {
             this.taxValue = result.tax;
-            this.taxRate = Math.ceil(result.rate * 100 * 100) / 100;
+            this.taxRate = Math.round(result.rate * 100 * 100) / 100;
           });
           break;
       }

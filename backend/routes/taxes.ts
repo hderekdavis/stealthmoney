@@ -32,14 +32,23 @@ router.get('/state', checkJwt, async function (req, res, next) {
         
         let taxes = await queries.getStateTax(state);
 
-        let actualTaxRate = 0;
-        taxes.forEach(stateTax => {
-          if (netIncome > stateTax.singleBracket) {
-            actualTaxRate = stateTax.singleRate;
+        let taxedAmount = 0;
+        for (var x = 0; x < taxes.length; x++) {
+          if (netIncome > taxes[x].singleBracket) {
+            let taxedAmountInThisBracket = netIncome - taxes[x].singleBracket;
+            // Check if there's a next tax bracket and netIncome overflows into next bracket
+            if (x < taxes.length - 1 && netIncome > taxes[x + 1].singleBracket) {
+              // Since there's a next tax bracket, need to find how much income fits into this bracket
+              taxedAmountInThisBracket = taxes[x + 1].singleBracket - taxes[x].singleBracket;
+            }
+
+            taxedAmount += taxedAmountInThisBracket * taxes[x].singleRate;
+          } else {
+            break;
           }
-        });
+        }
     
-        res.json({ tax: actualTaxRate*netIncome, rate: actualTaxRate });
+        res.json({ tax: taxedAmount, rate: (taxedAmount / netIncome) });
       }
     } catch(error) {
       console.log(error);
