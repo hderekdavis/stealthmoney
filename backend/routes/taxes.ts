@@ -33,17 +33,11 @@ router.get('/state', checkJwt, async function (req, res, next) {
         let taxes = await queries.getStateTax(state);
 
         let actualTaxRate = 0;
-        if (taxes.length > 1) {
-          taxes.forEach(stateTax => {
-            if (netIncome > stateTax.singleBracket) {
-              actualTaxRate = stateTax.singleRate;
-            }
-          });
-        } else {
-          if (netIncome > taxes[0].singleBracket) {
-            actualTaxRate = taxes[0].singleRate;
+        taxes.forEach(stateTax => {
+          if (netIncome > stateTax.singleBracket) {
+            actualTaxRate = stateTax.singleRate;
           }
-        }
+        });
     
         res.json({ tax: actualTaxRate*netIncome, rate: actualTaxRate });
       }
