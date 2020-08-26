@@ -68,21 +68,24 @@ export class AuthService {
             email: email,
             password: password,
             connection: environment.auth0_connection
-        }
+        };
         this.httpClient.post(this.auth0SignUpApi, body)
-        .pipe(catchError( err => {
-                if (err.error.message) {
-                    this.toastr.error(err.error.message, 'Error');
-                } else {
-                    this.toastr.error('There was an unknown error with your signup. Please contact us for assistance.', 'Error')
-                }
-                return throwError(err);
-            })
-        ).subscribe(response => {
+        .pipe(catchError(err => {
+            if (err.error.message) {
+                this.toastr.error(err.error.message, 'Error');
+            } else if (err.error.description) {
+                // Email is already in use. Does any other error occur here?
+                this.toastr.error('Email is already in use. Please login with your account.', 'Error');
+            } else {
+                this.toastr.error('There was an unknown error with your signup. Please contact us for assistance.', 'Error')
+            }
+            this.spinner.hide();
+            return throwError(err);
+        })).subscribe(() => {
             this.backendService.createBusiness(email, businessName, phoneNumber, legalEntity, addresses)
                 .subscribe(() => {
                     this.login(email, password).subscribe();
-                })
+                });
         });
     }
             
