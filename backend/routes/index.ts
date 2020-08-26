@@ -56,8 +56,8 @@ router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, n
     // 2. Fetch transactions from Plaid
     const now = moment();
     const today = now.format('YYYY-MM-DD');
-    const oneYearAgo = now.subtract(365, 'days').format('YYYY-MM-DD');
-    const transactionsResponse = await plaidClient.getTransactions(accessToken, oneYearAgo, today);
+    const startOfYear = moment().startOf('year').format('YYYY-MM-DD');
+    const transactionsResponse = await plaidClient.getTransactions(accessToken, startOfYear, today);
 
     // 3. Save transactions to database
     const businessLocationsForBusiness = await queries.getBusinessLocation(email);
