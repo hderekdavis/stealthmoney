@@ -340,3 +340,16 @@ export const getIndividualTaxes = async function(): Promise<any> {
         console.log(error);
     }
 }
+
+export const dropBusinessTransactions = async function(businessLocationID: number): Promise<any> {
+    try {
+        return db.queryAsync<any>(`
+            DELETE FROM transaction
+            WHERE businessLocationID = :businessLocationID
+            `,{
+                businessLocationID
+            });
+    } catch(error) {
+        console.log(error);
+    }
+}

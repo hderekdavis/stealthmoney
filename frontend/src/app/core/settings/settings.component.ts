@@ -81,7 +81,9 @@ export class SettingsComponent implements OnInit {
     this.ngUnsubscribe.complete();
   }
 
-  modifyBankAccounts() {}
+  modifyBankAccounts(): void {
+    this.router.navigate(['/plaid']);
+  }
 
   submit() {
     if(this.validForms()) {
