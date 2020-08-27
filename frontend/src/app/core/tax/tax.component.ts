@@ -18,26 +18,26 @@ export class TaxComponent implements OnInit {
               private backendService: BackendService) { }
 
   ngOnInit(): void {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.netIncome = params['netIncome'];
-    })
     this.activatedRoute.params.subscribe(params => {
       this.context = params['context'];
       switch(this.context) {
         case 'local':
-          this.backendService.getLocalTax(this.netIncome.toString()).subscribe( result => {
+          this.backendService.getLocalTax().subscribe( result => {
+            this.netIncome = result.netIncome;
             this.taxValue = result.tax;
             this.taxRate = Math.round(result.rate * 100 * 100) / 100;
           });
           break;
         case 'federal':
-          this.backendService.getFederalTax(this.netIncome.toString()).subscribe( result => {
+          this.backendService.getFederalTax().subscribe( result => {
+            this.netIncome = result.netIncome;
             this.taxValue = result.tax;
             this.taxRate = Math.round(result.rate * 100 * 100) / 100;
           });
           break;
         case 'state':
-          this.backendService.getStateTax(this.netIncome.toString()).subscribe( result => {
+          this.backendService.getStateTax().subscribe( result => {
+            this.netIncome = result.netIncome;
             this.taxValue = result.tax;
             this.taxRate = Math.round(result.rate * 100 * 100) / 100;
           });

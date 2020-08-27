@@ -64,9 +64,9 @@ export class DashboardComponent implements OnInit {
               return transaction.type === 'expense' ? transaction.amount : 0;
             });
             this.netIncome = this.totalIncome - this.totalExpenses;
-            this.backendService.getFederalTax(this.netIncome.toString()).subscribe( result => this.federalTax = result.tax );
-            this.backendService.getLocalTax(this.netIncome.toString()).subscribe( result => this.localTax = result.tax );
-            this.backendService.getStateTax(this.netIncome.toString()).subscribe( result => this.stateTax = result.tax );
+            this.backendService.getFederalTax().subscribe( result => this.federalTax = result.tax );
+            this.backendService.getLocalTax().subscribe( result => this.localTax = result.tax );
+            this.backendService.getStateTax().subscribe( result => this.stateTax = result.tax );
           }
         }
       },

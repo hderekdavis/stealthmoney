@@ -153,6 +153,7 @@ export const getChartOfAccountsCategories = async function(vertical: string, typ
         FROM chartOfAccounts
         WHERE vertical = :vertical
         AND type = :type
+        ORDER BY name ASC;
         `,
         { 
             vertical,

@@ -48,18 +48,15 @@ export class BackendService {
     return this.api.get('/has-plaid-token');
   }
 
-  getLocalTax(netIncome: string): Observable<any> {
-    const httpParams = new HttpParams().append('netIncome', netIncome);
-    return this.api.get('/taxes/local', httpParams);
+  getLocalTax(): Observable<any> {
+    return this.api.get('/taxes/local');
   }
 
-  getStateTax(netIncome: string): Observable<any> {
-    const httpParams = new HttpParams().append('netIncome', netIncome);
-    return this.api.get('/taxes/state', httpParams);
+  getStateTax(): Observable<any> {
+    return this.api.get('/taxes/state');
   }
 
-  getFederalTax(netIncome: string): Observable<any> {
-    const httpParams = new HttpParams().append('netIncome', netIncome);
-    return this.api.get('/taxes/federal', httpParams);
+  getFederalTax(): Observable<any> {
+    return this.api.get('/taxes/federal');
   }
 }

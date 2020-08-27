@@ -2,15 +2,22 @@ const router = require('express').Router();
 import checkJwt from '../lib/middleware/secured';
 import * as queries from '../queries';
 import { decodeIDToken } from '../lib/middleware/userInfo';
+var _ = require('lodash');
 
 router.get('/federal', decodeIDToken, checkJwt, async function (req, res, next) {
     try {
       const email = req.body.user_email;
       const businessLocationsForBusiness = await queries.getBusinessLocation(email);
-      const netIncome = Number(req.query.netIncome);
-      
+
+      let netIncome = await getNetIncome(businessLocationsForBusiness.businessLocationID);
+      console.log(netIncome);
+
       if (netIncome <= 0) {
-        res.json({ tax: 0, rate: 0 });
+        res.json({ 
+          tax: 0, 
+          rate: 0,
+          netIncome: netIncome
+        });
       } else if (businessLocationsForBusiness.legalEntity === 'C Corporation') {
         res.json({ tax: netIncome * 0.21, rate: 0.21 });
       } else {
@@ -32,7 +39,11 @@ router.get('/federal', decodeIDToken, checkJwt, async function (req, res, next) 
           }
         }
     
-        res.json({ tax: taxedAmount, rate: (taxedAmount / netIncome) });
+        res.json({ 
+          tax: taxedAmount, 
+          rate: (taxedAmount / netIncome),
+          netIncome: netIncome
+        });
       }
     } catch(error) {
       console.log(error);
@@ -44,12 +55,18 @@ router.get('/federal', decodeIDToken, checkJwt, async function (req, res, next) 
 router.get('/state', decodeIDToken, checkJwt, async function (req, res, next) {
     try {
       const email = req.body.user_email;
-      const netIncome = Number(req.query.netIncome);
       const businessLocationsForBusiness = await queries.getBusinessLocation(email);
+
+      let netIncome = await getNetIncome(businessLocationsForBusiness.businessLocationID);
+
       const state = businessLocationsForBusiness.state;
 
       if (netIncome <= 0) {
-        res.json({ tax: 0, rate: 0 });
+        res.json({ 
+          tax: 0, 
+          rate: 0,
+          netIncome: netIncome
+        });
       } else {
         let taxes = await queries.getStateTax(state);
 
@@ -69,7 +86,11 @@ router.get('/state', decodeIDToken, checkJwt, async function (req, res, next) {
           }
         }
     
-        res.json({ tax: taxedAmount, rate: (taxedAmount / netIncome) });
+        res.json({ 
+          tax: taxedAmount, 
+          rate: (taxedAmount / netIncome),
+          netIncome: netIncome
+        });
       }
     } catch(error) {
       console.log(error);
@@ -80,12 +101,23 @@ router.get('/state', decodeIDToken, checkJwt, async function (req, res, next) {
 
 router.get('/local', decodeIDToken, checkJwt, async function (req, res, next) {
     try {
-      const netIncome = Number(req.query.netIncome);
+
+      const email = req.body.user_email;
+      const businessLocationsForBusiness = await queries.getBusinessLocation(email);
+      let netIncome = await getNetIncome(businessLocationsForBusiness.businessLocationID);
       
       if (netIncome <= 0) {
-        res.json({ tax: 0, rate: 0 });
+        res.json({ 
+          tax: 0, 
+          rate: 0,
+          netIncome: netIncome
+        });
       } else {
-        res.json({ tax: 0.1*netIncome, rate: 0.1 });
+        res.json({ 
+          tax: 0.1*netIncome, 
+          rate: 0.1,
+          netIncome: netIncome
+        });
       }  
     } catch(error) {
       console.log(error);
@@ -93,5 +125,19 @@ router.get('/local', decodeIDToken, checkJwt, async function (req, res, next) {
       res.json(error);
     }
 });
+
+const getNetIncome = async function(locationID: number): Promise<any> {
+
+  let latestTransactions = await queries.getTransactions(locationID);
+
+  let totalIncome = _.sumBy(latestTransactions, transaction => {
+    return transaction.type === 'Income' ? Math.abs(transaction.amount) : 0;
+  });
+  let totalExpenses = _.sumBy(latestTransactions, transaction => {
+    return transaction.type === 'Expense' ? transaction.amount : 0;
+  });
+
+  return totalIncome - totalExpenses;
+}
 
 module.exports = router;
