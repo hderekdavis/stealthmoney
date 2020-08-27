@@ -43,6 +43,10 @@ router.post('/access-token', decodeIDToken, checkJwt, async function (req, res, 
   // Save access token to database for this business
   await queries.updateAccessToken(email, accessToken);
 
+  const business: any = await queries.getBusinessLocation(email);
+  console.log(business.businessLocationID);
+  let result = await queries.dropBusinessTransactions(business.businessLocationID);
+  console.log(result);
   res.json({});
 });
 
