@@ -30,9 +30,8 @@ export class BackendService {
     return this.api.post('/reset-password',{ email });
   }
 
-  getTransactionCategories(vertical: string, type: string): Observable<any> {
+  getTransactionCategories(vertical: string): Observable<any> {
     let httpParams = new HttpParams().append('vertical', vertical);
-    httpParams = httpParams.append('type', type);
     return this.api.get('/transaction-categories', httpParams);
   }
 
