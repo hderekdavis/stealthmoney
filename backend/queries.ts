@@ -112,6 +112,28 @@ export const getTransactions = async function(businessLocationID: number): Promi
     );
 }
 
+export const getSalesTransactions = async function(businessLocationID: number): Promise<any> {
+    return db.queryAsync<any>(`
+        SELECT
+        amount,
+        businessLocationID,
+        chartOfAccounts.categoryID,
+        date,
+        transaction.name as name,
+        chartOfAccounts.name as account,
+        transactionID,
+        type,
+        vertical
+        FROM transaction
+        JOIN chartOfAccounts
+        ON transaction.categoryID = chartOfAccounts.categoryID
+        WHERE
+            businessLocationID = :businessLocationID AND chartOfAccounts.subType = 'Sales';
+        `,
+        { businessLocationID }
+    );
+}
+
 export const saveTransaction = async function(businessLocationID: number, name: string, categoryID: number, amount: number, date: string): Promise<any> {
     return db.queryAsync<any>(`
         INSERT INTO transaction
@@ -147,17 +169,15 @@ export const updateBusiness = async function(businessID: number, email: string, 
     ).then(firstOrDefault);
 }
 
-export const getChartOfAccountsCategories = async function(vertical: string, type: string): Promise<any> {
+export const getChartOfAccountsCategories = async function(vertical: string): Promise<any> {
     return db.queryAsync<any>(`
         SELECT * 
         FROM chartOfAccounts
         WHERE vertical = :vertical
-        AND type = :type
         ORDER BY name ASC;
         `,
         { 
-            vertical,
-            type
+            vertical
         }
     );
 }
