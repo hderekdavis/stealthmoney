@@ -10,7 +10,6 @@ router.get('/federal', decodeIDToken, checkJwt, async function (req, res, next) 
       const businessLocationsForBusiness = await queries.getBusinessLocation(email);
 
       let netIncome = await getNetIncome(businessLocationsForBusiness.businessLocationID);
-      console.log(netIncome);
 
       if (netIncome <= 0) {
         res.json({ 
