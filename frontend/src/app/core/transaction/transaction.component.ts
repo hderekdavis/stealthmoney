@@ -44,7 +44,7 @@ export class TransactionComponent implements OnInit {
         this.formerCategoryId = result[0].categoryId;
         this.transaction.amount = Math.abs(this.transaction.amount);
 
-        return this.backendService.getTransactionCategories(this.addressData.vertical, this.transaction.type);
+        return this.backendService.getTransactionCategories(this.addressData.vertical);
       })
     ).subscribe(result => {
       this.transactionCategories = result;

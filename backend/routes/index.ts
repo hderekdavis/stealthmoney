@@ -278,7 +278,7 @@ router.post('/reset-password', async function (req, res, next) {
 
 router.get('/transaction-categories', decodeIDToken, checkJwt, async function (req, res, next) {
 
-  const response = await queries.getChartOfAccountsCategories(req.query.vertical, req.query.type);
+  const response = await queries.getChartOfAccountsCategories(req.query.vertical);
 
   res.json(response);
 

@@ -9,7 +9,8 @@ router.get('/federal', decodeIDToken, checkJwt, async function (req, res, next) 
       const email = req.body.user_email;
       const businessLocationsForBusiness = await queries.getBusinessLocation(email);
 
-      let netIncome = await getNetIncome(businessLocationsForBusiness.businessLocationID);
+      let allTransactions = await queries.getTransactions(businessLocationsForBusiness.businessLocationID);
+      let netIncome = await getIncome(allTransactions);
 
       if (netIncome <= 0) {
         res.json({ 
@@ -56,7 +57,8 @@ router.get('/state', decodeIDToken, checkJwt, async function (req, res, next) {
       const email = req.body.user_email;
       const businessLocationsForBusiness = await queries.getBusinessLocation(email);
 
-      let netIncome = await getNetIncome(businessLocationsForBusiness.businessLocationID);
+      let allTransactions = await queries.getTransactions(businessLocationsForBusiness.businessLocationID);
+      let netIncome = await getIncome(allTransactions);
 
       const state = businessLocationsForBusiness.state;
 
@@ -103,7 +105,11 @@ router.get('/local', decodeIDToken, checkJwt, async function (req, res, next) {
 
       const email = req.body.user_email;
       const businessLocationsForBusiness = await queries.getBusinessLocation(email);
-      let netIncome = await getNetIncome(businessLocationsForBusiness.businessLocationID);
+      let allTransactions = await queries.getTransactions(businessLocationsForBusiness.businessLocationID);
+      let netIncome = await getIncome(allTransactions);
+
+      let salesTransactions = await queries.getSalesTransactions(businessLocationsForBusiness.businessLocationID);
+      let salesIncome = await getIncome(salesTransactions);
       
       if (netIncome <= 0) {
         res.json({ 
@@ -113,7 +119,7 @@ router.get('/local', decodeIDToken, checkJwt, async function (req, res, next) {
         });
       } else {
         res.json({ 
-          tax: 0.1*netIncome, 
+          tax: 0.1*salesIncome, 
           rate: 0.1,
           netIncome: netIncome
         });
@@ -125,14 +131,12 @@ router.get('/local', decodeIDToken, checkJwt, async function (req, res, next) {
     }
 });
 
-const getNetIncome = async function(locationID: number): Promise<any> {
+const getIncome = async function(transactions: any): Promise<any> {
 
-  let latestTransactions = await queries.getTransactions(locationID);
-
-  let totalIncome = _.sumBy(latestTransactions, transaction => {
+  let totalIncome = _.sumBy(transactions, transaction => {
     return transaction.type === 'Income' ? Math.abs(transaction.amount) : 0;
   });
-  let totalExpenses = _.sumBy(latestTransactions, transaction => {
+  let totalExpenses = _.sumBy(transactions, transaction => {
     return transaction.type === 'Expense' ? transaction.amount : 0;
   });
 
