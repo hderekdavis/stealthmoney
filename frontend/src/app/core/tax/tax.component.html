@@ -10,10 +10,10 @@
     </div>
     <div class="row striped-row separator-line">
         <div class="col-sm-6">
-            Net Income
+            {{ context === 'local' ? 'Sales' : 'Net' }} Income
         </div>
         <div class="col-sm-6 cash-text" style="text-align:right">
-            {{ netIncome | currency }}
+            {{ income | currency }}
         </div>
     </div>
     <div class="row striped-row">
