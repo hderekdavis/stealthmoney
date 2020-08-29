@@ -105,23 +105,21 @@ router.get('/local', decodeIDToken, checkJwt, async function (req, res, next) {
 
       const email = req.body.user_email;
       const businessLocationsForBusiness = await queries.getBusinessLocation(email);
-      let allTransactions = await queries.getTransactions(businessLocationsForBusiness.businessLocationID);
-      let netIncome = await getIncome(allTransactions);
 
       let salesTransactions = await queries.getSalesTransactions(businessLocationsForBusiness.businessLocationID);
       let salesIncome = await getIncome(salesTransactions);
       
-      if (netIncome <= 0) {
+      if (salesIncome <= 0) {
         res.json({ 
           tax: 0, 
           rate: 0,
-          netIncome: netIncome
+          salesIncome: salesIncome
         });
       } else {
         res.json({ 
           tax: 0.1*salesIncome, 
           rate: 0.1,
-          netIncome: netIncome
+          salesIncome: salesIncome
         });
       }  
     } catch(error) {

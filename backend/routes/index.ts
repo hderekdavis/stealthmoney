@@ -71,7 +71,6 @@ router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, n
     const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID; // Temporarily default to user's first business location
 
     while(actualCount < totalTransactions) {
-      var start = new Date();
       let transactionsResponse = await plaidClient.getTransactions(accessToken, startOfYear, today, options);
       totalTransactions = transactionsResponse.total_transactions;
 
