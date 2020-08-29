@@ -44,9 +44,7 @@ router.post('/access-token', decodeIDToken, checkJwt, async function (req, res, 
   await queries.updateAccessToken(email, accessToken);
 
   const business: any = await queries.getBusinessLocation(email);
-  console.log(business.businessLocationID);
   let result = await queries.dropBusinessTransactions(business.businessLocationID);
-  console.log(result);
   res.json({});
 });
 
@@ -61,27 +59,42 @@ router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, n
     const now = moment();
     const today = now.format('YYYY-MM-DD');
     const startOfYear = moment().startOf('year').format('YYYY-MM-DD');
-    const transactionsResponse = await plaidClient.getTransactions(accessToken, startOfYear, today);
 
-    // 3. Save transactions to database
+    let options = {
+      count: 100,
+      offset: 0
+    };
+
+    let actualCount = options.offset;
+    let totalTransactions = options.count; //Just to enter the loop
     const businessLocationsForBusiness = await queries.getBusinessLocation(email);
     const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID; // Temporarily default to user's first business location
-    const transactions = await queries.getTransactions(defaultBusinessLocationId);
 
-    for (const transaction of transactionsResponse.transactions) {
-      const foundTransaction = _.find(transactions, { 'amount': transaction.amount, 'date': transaction.date, 'name': transaction.name });
+    while(actualCount < totalTransactions) {
+      var start = new Date();
+      let transactionsResponse = await plaidClient.getTransactions(accessToken, startOfYear, today, options);
+      totalTransactions = transactionsResponse.total_transactions;
 
-      if (!foundTransaction) {
-        // Find transaction category
-        let categoryId = await queries.getCategoryForTransaction(transaction.name, defaultBusinessLocationId, businessLocationsForBusiness.vertical, Number(transaction.category_id));
+      actualCount += options.count;
+      options.offset = actualCount;
 
-        if (transaction.amount < 0) {
-          // Negative transactions are income: https://support.plaid.com/hc/en-us/articles/360008413653-Negative-transaction-amount
-          categoryId = 43;
+      // 3. Save transactions to database
+      const transactions = await queries.getTransactions(defaultBusinessLocationId);
+
+      for (const transaction of transactionsResponse.transactions) {
+        const foundTransaction = _.find(transactions, { 'amount': transaction.amount, 'date': transaction.date, 'name': transaction.name });
+
+        if (!foundTransaction) {
+          // Find transaction category
+          let categoryId = await queries.getCategoryForTransaction(transaction.name, defaultBusinessLocationId, businessLocationsForBusiness.vertical, Number(transaction.category_id));
+
+          if (transaction.amount < 0) {
+            // Negative transactions are income: https://support.plaid.com/hc/en-us/articles/360008413653-Negative-transaction-amount
+            categoryId = 43;
+          }
+          // Insert transaction into database
+          await queries.saveTransaction(defaultBusinessLocationId, transaction.name, categoryId, transaction.amount, transaction.date);
         }
-
-        // Insert transaction into database
-        await queries.saveTransaction(defaultBusinessLocationId, transaction.name, categoryId, transaction.amount, transaction.date);
       }
     }
 
