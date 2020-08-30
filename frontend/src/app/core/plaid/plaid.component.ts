@@ -62,13 +62,9 @@ export class PlaidComponent implements AfterViewInit {
   }
 
   onEvent(eventName, metadata) {
-    console.log("We got an event:", eventName);
-    console.log("We got metadata:", metadata);
   }
 
   onExit(error, metadata) {
-    console.log("We exited:", error);
-    console.log("We got metadata:", metadata);
     this.spinner.hide();
   }
 }
