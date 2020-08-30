@@ -69,6 +69,7 @@ router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, n
     let totalTransactions = options.count; //Just to enter the loop
     const businessLocationsForBusiness = await queries.getBusinessLocation(email);
     const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID; // Temporarily default to user's first business location
+    let newTransactions = [];
 
     while(actualCount < totalTransactions) {
       let transactionsResponse = await plaidClient.getTransactions(accessToken, startOfYear, today, options);
@@ -91,10 +92,20 @@ router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, n
             // Negative transactions are income: https://support.plaid.com/hc/en-us/articles/360008413653-Negative-transaction-amount
             categoryId = 43;
           }
-          // Insert transaction into database
-          await queries.saveTransaction(defaultBusinessLocationId, transaction.name, categoryId, transaction.amount, transaction.date);
+          newTransactions.push({
+            businessLocationID: defaultBusinessLocationId,
+            transactionName: transaction.name,
+            categoryID: categoryId,
+            amount: transaction.amount,
+            date: transaction.date
+          })
         }
       }
+    }
+
+    // Insert transaction into database
+    if (newTransactions.length) {
+      await queries.saveTransactions(newTransactions);
     }
 
     // 4. Return transactions in response
