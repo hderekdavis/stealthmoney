@@ -76,7 +76,6 @@ router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, n
     while(actualCount < totalTransactions) {
       let transactionsResponse = await plaidClient.getTransactions(accessToken, startOfYear, today, options);
       totalTransactions = transactionsResponse.total_transactions;
-      console.log(totalTransactions);
 
       actualCount += options.count;
       options.offset = actualCount;
@@ -128,7 +127,6 @@ router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, n
 
     // 4. Return transactions in response
     let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
-    console.log(latestTransactions.length);
     latestTransactions = latestTransactions.map(transaction => {
       return {
         type: transaction.type.toLowerCase(),
