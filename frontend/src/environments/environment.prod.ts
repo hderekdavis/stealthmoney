@@ -8,7 +8,7 @@ export const environment = {
   plaid_public_key: 'd17298a88d20be6c0fb14bb7513747',
   plaid_default_config: {
     apiVersion: "v2",
-    env: "development",
+    env: "production",
     token: null,
     webhook: "https://clearviewmoney.com/dashboard",
     product: ["transactions"],

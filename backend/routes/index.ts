@@ -15,7 +15,7 @@ import { promises } from 'fs';
 const plaidClient = new plaid.Client({
   clientID: process.env.PLAID_CLIENT_ID,
   secret: process.env.PLAID_SECRET,
-  env: process.env.NODE_ENV.toUpperCase() === 'PRODUCTION' ? plaid.environments.development : plaid.environments.sandbox
+  env: process.env.NODE_ENV.toUpperCase() === 'PRODUCTION' ? plaid.environments.production : plaid.environments.sandbox
 });
 
 let managementToken = '';
