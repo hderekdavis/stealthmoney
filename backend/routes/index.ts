@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import checkJwt from '../lib/middleware/secured';
 import * as queries from '../queries';
 import { changeUserPassword, getManagementToken, sendResetPasswordLink, decodeIDToken } from '../lib/middleware/userInfo';
+import { promises } from 'fs';
 
 const plaidClient = new plaid.Client({
   clientID: process.env.PLAID_CLIENT_ID,
@@ -70,6 +71,7 @@ router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, n
     const businessLocationsForBusiness = await queries.getBusinessLocation(email);
     const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID; // Temporarily default to user's first business location
     let newTransactions = [];
+    let promises = [];
 
     while(actualCount < totalTransactions) {
       let transactionsResponse = await plaidClient.getTransactions(accessToken, startOfYear, today, options);
@@ -81,30 +83,45 @@ router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, n
       // 3. Save transactions to database
       const transactions = await queries.getTransactions(defaultBusinessLocationId);
 
+
       for (const transaction of transactionsResponse.transactions) {
         const foundTransaction = _.find(transactions, { 'amount': transaction.amount, 'date': transaction.date, 'name': transaction.name });
 
         if (!foundTransaction) {
-          // Find transaction category
-          let categoryId = await queries.getCategoryForTransaction(transaction.name, defaultBusinessLocationId, businessLocationsForBusiness.vertical, Number(transaction.category_id));
-
-          if (transaction.amount < 0) {
-            // Negative transactions are income: https://support.plaid.com/hc/en-us/articles/360008413653-Negative-transaction-amount
-            categoryId = 43;
-          }
-          newTransactions.push({
-            businessLocationID: defaultBusinessLocationId,
-            transactionName: transaction.name,
-            categoryID: categoryId,
-            amount: transaction.amount,
-            date: transaction.date
-          })
+          let promise = new Promise( resolve => {
+            let categoryId;
+            if (transaction.amount < 0) {
+              categoryId = 43;
+              newTransactions.push({
+                businessLocationID: defaultBusinessLocationId,
+                transactionName: transaction.name,
+                categoryID: categoryId,
+                amount: transaction.amount,
+                date: transaction.date
+              });
+              resolve();
+            } else {
+              queries.getCategoryForTransaction(transaction.name, defaultBusinessLocationId, businessLocationsForBusiness.vertical, Number(transaction.category_id))
+              .then(categoryId => {
+                newTransactions.push({
+                  businessLocationID: defaultBusinessLocationId,
+                  transactionName: transaction.name,
+                  categoryID: categoryId,
+                  amount: transaction.amount,
+                  date: transaction.date
+                });
+                resolve();
+              });
+            }
+          });
+          promises.push(promise);
         }
       }
     }
 
     // Insert transaction into database
     if (newTransactions.length) {
+      await Promise.all(promises);
       await queries.saveTransactions(newTransactions);
     }
 
