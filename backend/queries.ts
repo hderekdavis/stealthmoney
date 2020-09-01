@@ -149,6 +149,22 @@ export const saveTransaction = async function(businessLocationID: number, name: 
     );
 }
 
+export const saveTransactions = async function(transactions: any): Promise<any> {
+    let query = '';
+    transactions.forEach((item, index) => {
+        query += '(' + item.businessLocationID + ', "' + item.transactionName + '", ' + item.categoryID  + ', ' + item.amount + ', "' + item.date + '")';
+        if (index < (transactions.length - 1)) {
+            query += ',';
+        } else {
+            query += ';';
+        }
+    });
+    return db.queryAsync<any>(`
+        INSERT INTO transaction
+        (businessLocationID, name, categoryID, amount, date)
+        VALUES ` + query);
+}
+
 export const updateBusiness = async function(businessID: number, email: string, businessName: string, phoneNumber: string, legalEntity: string): Promise<any> {
     return db.queryAsync<any>(`
         UPDATE business

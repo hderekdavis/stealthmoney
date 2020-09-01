@@ -9,7 +9,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class TaxComponent implements OnInit {
   public context: string;
-  public netIncome: string;
+  public income: string;
   public taxValue: number;
   public taxRate: number;
 
@@ -23,21 +23,21 @@ export class TaxComponent implements OnInit {
       switch(this.context) {
         case 'local':
           this.backendService.getLocalTax().subscribe( result => {
-            this.netIncome = result.netIncome;
+            this.income = result.salesIncome;
             this.taxValue = result.tax;
             this.taxRate = Math.round(result.rate * 100 * 100) / 100;
           });
           break;
         case 'federal':
           this.backendService.getFederalTax().subscribe( result => {
-            this.netIncome = result.netIncome;
+            this.income = result.netIncome;
             this.taxValue = result.tax;
             this.taxRate = Math.round(result.rate * 100 * 100) / 100;
           });
           break;
         case 'state':
           this.backendService.getStateTax().subscribe( result => {
-            this.netIncome = result.netIncome;
+            this.income = result.netIncome;
             this.taxValue = result.tax;
             this.taxRate = Math.round(result.rate * 100 * 100) / 100;
           });
