@@ -10,14 +10,16 @@
         <div style="clear:both"></div>
     </div>
     <ng-container *ngFor="let expense of expenses">
-        <div class="striped-row" [routerLink]="['/transaction', expense.transactionId]" style="cursor:pointer">
-            <div style="float:left">
+        <div [routerLink]="['/transaction', expense.transactionId]" class="striped-row pointer d-flex">
+            <div class="mr-auto">
+                {{ expense.date | date }}
+            </div>
+            <div class="mx-auto">
                 {{ expense.name }}
             </div>
-            <div style="float:right">
+            <div class="ml-auto">
                 {{ expense.amount | currency }}
             </div>
-            <div style="clear:both"></div>
         </div>
     </ng-container>
 </div>

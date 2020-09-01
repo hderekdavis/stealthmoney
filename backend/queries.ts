@@ -107,6 +107,7 @@ export const getTransactions = async function(businessLocationID: number): Promi
         ON transaction.categoryID = chartOfAccounts.categoryID
         WHERE
             businessLocationID = :businessLocationID
+        ORDER BY date DESC;
         `,
         { businessLocationID }
     );
