@@ -1,5 +1,6 @@
 import db from './database';
 import { firstOrDefault } from './functions';
+import { escape } from 'mysql';
 
 export const getBusiness = async function(businessId: number): Promise<{businessId: number}> {
     return db.queryAsync<{businessId: number}[]>(`
@@ -153,7 +154,7 @@ export const saveTransaction = async function(businessLocationID: number, name: 
 export const saveTransactions = async function(transactions: any): Promise<any> {
     let query = '';
     transactions.forEach((item, index) => {
-        query += '(' + item.businessLocationID + ', "' + item.transactionName + '", ' + item.categoryID  + ', ' + item.amount + ', "' + item.date + '")';
+        query += '(' + item.businessLocationID + ', "' + item.transactionName + '", ' + item.categoryID  + ', ' + item.amount + ', "' + item.date + '", ' + (item.address ? escape(item.address) : null) + ', ' + (item.city ? escape(item.city) : null) + ', ' + (item.region ? escape(item.region) : null) + ', ' + escape(item.rawData) + ')';
         if (index < (transactions.length - 1)) {
             query += ',';
         } else {
@@ -162,7 +163,7 @@ export const saveTransactions = async function(transactions: any): Promise<any> 
     });
     return db.queryAsync<any>(`
         INSERT INTO transaction
-        (businessLocationID, name, categoryID, amount, date)
+        (businessLocationID, name, categoryID, amount, date, address, city, region, rawData)
         VALUES ` + query);
 }
 

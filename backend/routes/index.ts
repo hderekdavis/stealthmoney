@@ -10,12 +10,11 @@ import * as _ from 'lodash';
 import checkJwt from '../lib/middleware/secured';
 import * as queries from '../queries';
 import { changeUserPassword, getManagementToken, sendResetPasswordLink, decodeIDToken } from '../lib/middleware/userInfo';
-import { promises } from 'fs';
 
 const plaidClient = new plaid.Client({
   clientID: process.env.PLAID_CLIENT_ID,
   secret: process.env.PLAID_SECRET,
-  env: process.env.NODE_ENV.toUpperCase() === 'PRODUCTION' ? plaid.environments.development : plaid.environments.development
+  env: process.env.NODE_ENV.toUpperCase() === 'PRODUCTION' ? plaid.environments.development : plaid.environments.sandbox
 });
 
 let managementToken = '';
@@ -97,7 +96,11 @@ router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, n
                 transactionName: transaction.name,
                 categoryID: categoryId,
                 amount: transaction.amount,
-                date: transaction.date
+                date: transaction.date,
+                address: transaction.location.address,
+                city: transaction.location.city,
+                region:  transaction.location.region,
+                rawData: JSON.stringify(transaction)
               });
               resolve();
             } else {
@@ -108,7 +111,11 @@ router.get('/transactions', decodeIDToken, checkJwt, async function (req, res, n
                   transactionName: transaction.name,
                   categoryID: categoryId,
                   amount: transaction.amount,
-                  date: transaction.date
+                  date: transaction.date,
+                  address: transaction.location.address,
+                  city: transaction.location.city,
+                  region:  transaction.location.region,
+                  rawData: JSON.stringify(transaction)
                 });
                 resolve();
               });
