@@ -16,15 +16,18 @@ export const getBusiness = async function(businessId: number): Promise<{business
 
 export const updateAccessToken = async function(email: string, accessToken: string): Promise<any> {
     let emailString = email + '%';
+    let plaidValue = '1000-01-01 00:00:00.000000';
     return db.queryAsync<any>(`
         UPDATE business
-        SET plaidAccessToken = :accessToken
+        SET plaidAccessToken = :accessToken,
+        plaidLastPull = :plaidValue
         WHERE email LIKE :emailString
         LIMIT 1
         `,
         {
             emailString,
-            accessToken
+            accessToken,
+            plaidValue
          }
     );
 }

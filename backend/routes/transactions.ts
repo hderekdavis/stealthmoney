@@ -39,9 +39,8 @@ router.get('/all', decodeIDToken, checkJwt, async function (req, res, next) {
       let hours = 0;
       if (getBusinessResponse.plaidLastPull) {
         hours = moment().diff(getBusinessResponse.plaidLastPull, 'hours');
-      } else {
-        queries.setPlaidLastPull(getBusinessResponse.businessID);
       }
+      queries.setPlaidLastPull(getBusinessResponse.businessID);
   
       const businessLocationsForBusiness = await queries.getBusinessLocation(email);
       const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID; // Temporarily default to user's first business location
