@@ -47,13 +47,13 @@ export class TransactionComponent implements OnInit {
         if (this.transaction.address) {
           this.transactionLocation = this.transaction.address;
         }
-        if (this.transactionLocation !== '') {
+        if (this.transactionLocation !== '' && this.transaction.city) {
           this.transactionLocation += ', '
         }
         if (this.transaction.city) {
           this.transactionLocation += this.transaction.city;
         }
-        if (this.transactionLocation !== '') {
+        if (this.transactionLocation !== '' && this.transaction.region) {
           this.transactionLocation += ', '
         }
         if (this.transaction.region) {
