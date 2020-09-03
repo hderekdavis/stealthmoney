@@ -32,7 +32,7 @@ export class BackendService {
 
   getTransactionCategories(vertical: string): Observable<any> {
     let httpParams = new HttpParams().append('vertical', vertical);
-    return this.api.get('/transaction-categories', httpParams);
+    return this.api.get('/transactions/categories', httpParams);
   }
 
   getBusinessLocation(): Observable<any> {
