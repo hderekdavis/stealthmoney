@@ -45,7 +45,7 @@ router.post('/access-token', decodeIDToken, checkJwt, async function (req, res, 
   await queries.updateAccessToken(email, accessToken);
 
   const business: any = await queries.getBusinessLocation(email);
-  let result = await queries.dropBusinessTransactions(business.businessLocationID);
+  await queries.dropBusinessTransactions(business.businessLocationID);
   res.json({});
 });
 
@@ -162,7 +162,8 @@ router.get('/expense-category', decodeIDToken, checkJwt, async function (req, re
         name: transaction.name,
         category: transaction.account,
         categoryId: transaction.categoryID,
-        transactionId: transaction.transactionID
+        transactionId: transaction.transactionID,
+        date: transaction.date
       };
     });
 
@@ -219,7 +220,8 @@ router.get('/income', decodeIDToken, checkJwt, async function (req, res, next) {
         name: transaction.name,
         category: transaction.account,
         categoryId: transaction.categoryID,
-        transactionId: transaction.transactionID
+        transactionId: transaction.transactionID,
+        date: transaction.date
       };
     });
 

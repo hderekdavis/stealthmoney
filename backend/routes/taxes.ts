@@ -19,7 +19,7 @@ router.get('/federal', decodeIDToken, checkJwt, async function (req, res, next) 
           netIncome: netIncome
         });
       } else if (businessLocationsForBusiness.legalEntity === 'C Corporation') {
-        res.json({ tax: netIncome * 0.21, rate: 0.21 });
+        res.json({ tax: netIncome * 0.21, rate: 0.21, netIncome: netIncome });
       } else {
         let taxes = await queries.getIndividualTaxes();
 

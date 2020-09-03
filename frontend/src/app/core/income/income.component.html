@@ -4,19 +4,22 @@
             <i class="fa fa-arrow-left mr-3"></i>Back to Dashboard
         </button>
     </div>
-    <div class="row" style="margin-top:40px;padding:20px 40px;background:#141E28;border-top-left-radius:10px;border-top-right-radius:10px">
+    <div class="row" class="income-header px-4 pt-4 d-flex">
         <h4 class="col-sm-6" style="display:block;color:#fff">Income</h4>
         <h4 class="col-sm-6" style="display:block;color:#fff;text-align:right">{{ totalIncome| currency }}</h4>
     </div>
     <ng-container *ngFor="let transaction of income">
-        <div class="row striped-row" [routerLink]="['/transaction', transaction.transactionId]" style="cursor:pointer">
-            <div class="col-sm-4">
+        <div class="striped-row pointer d-flex" [routerLink]="['/transaction', transaction.transactionId]">
+            <div class="col-sm-3">
+                {{ transaction.date | date }}
+            </div>
+            <div class="col-sm-3">
                 {{ transaction.name }}
             </div>
-            <div class="col-sm-4" style="text-align:center">
+            <div class="col-sm-3" style="text-align:center">
                 {{ transaction.category }}
             </div>
-            <div class="col-sm-4" style="text-align:right">
+            <div class="col-sm-3" style="text-align:right">
                 {{ transaction.amount | currency }}
             </div>
         </div>

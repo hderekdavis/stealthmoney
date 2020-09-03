@@ -93,9 +93,10 @@ input[type="radio"]:checked {
     background-color: $income-header;
     color: white;
     height: 90px;
-    border-top-left-radius: 9px;
-    border-top-right-radius: 9px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
     font-size: 20px;
+    margin-top: 40px;
 }
 
 .income-item {
@@ -116,5 +117,9 @@ input[type="radio"]:checked {
 
 .red-color {
     color: $red-color
+}
+
+.pointer {
+    cursor: pointer;
 }
 
