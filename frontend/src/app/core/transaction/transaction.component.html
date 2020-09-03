@@ -11,6 +11,14 @@
     </div>
     <div class="row striped-row" style="cursor:pointer">
         <div class="col-sm-6">
+            Date
+        </div>
+        <div class="col-sm-6" style="text-align:right">
+            {{ transaction?.date | date }}
+        </div>
+    </div>
+    <div class="row striped-row" style="cursor:pointer">
+        <div class="col-sm-6">
             {{ transaction?.name }}
         </div>
         <div class="col-sm-6" style="text-align:right">
@@ -26,6 +34,22 @@
                 (ngModelChange)="updateTransaction($event)">
                 <option *ngFor="let category of transactionCategories;" value="{{ category.categoryID }}">{{ category.name }}</option>
             </select>
+        </div>
+    </div>
+    <!-- <div class="row striped-row" style="cursor:pointer">
+        <div class="col-sm-6">
+            Business/Location
+        </div>
+        <div class="col-sm-6" style="text-align:right">
+            <label *ngIf="addressData">{{ addressData.addressLine1 + ', ' + addressData.city + ', ' + addressData.state }}</label>
+        </div>
+    </div> -->
+    <div class="row striped-row" style="cursor:pointer">
+        <div class="col-sm-6">
+            Business/Location
+        </div>
+        <div class="col-sm-6" style="text-align:right">
+            {{ transactionLocation }}
         </div>
     </div>
 </div>

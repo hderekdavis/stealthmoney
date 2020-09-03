@@ -16,6 +16,7 @@ import { HttpParams } from '@angular/common/http';
 export class TransactionComponent implements OnInit {
   transaction: any;
   addressData: any;
+  transactionLocation: any;
   transactionCategories:[];
   formerCategoryId: any;
 
@@ -43,7 +44,11 @@ export class TransactionComponent implements OnInit {
         this.transaction = result[0];
         this.formerCategoryId = result[0].categoryId;
         this.transaction.amount = Math.abs(this.transaction.amount);
-
+        if (this.transaction.address && this.transaction.city && this.transaction.region) {
+          this.transactionLocation = this.transaction.address + ', ' + this.transaction.city + ', ' + this.transaction.region;
+        } else {
+          this.transactionLocation = 'N/A';
+        }
         return this.backendService.getTransactionCategories(this.addressData.vertical);
       })
     ).subscribe(result => {
