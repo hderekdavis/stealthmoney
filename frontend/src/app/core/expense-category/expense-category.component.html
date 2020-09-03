@@ -11,13 +11,13 @@
     </div>
     <ng-container *ngFor="let expense of expenses">
         <div [routerLink]="['/transaction', expense.transactionId]" class="striped-row pointer d-flex">
-            <div class="mr-auto">
+            <div class="col-3 text-left">
                 {{ expense.date | date }}
             </div>
-            <div class="mx-auto">
+            <div class="col-6 mr-auto">
                 {{ expense.name }}
             </div>
-            <div class="ml-auto">
+            <div class="col-3 text-right">
                 {{ expense.amount | currency }}
             </div>
         </div>
