@@ -199,7 +199,11 @@ router.get('/transaction', decodeIDToken, checkJwt, async function (req, res, ne
         name: transaction.name,
         category: transaction.account,
         categoryId: transaction.categoryID,
-        transactionId: transaction.transactionID
+        transactionId: transaction.transactionID,
+        address: transaction.address,
+        city: transaction.city,
+        region:  transaction.region,
+        date: transaction.date
       };
     });
 
