@@ -1,6 +1,7 @@
 import db from './database';
 import { firstOrDefault } from './functions';
 import { escape } from 'mysql';
+var moment = require('moment');
 
 export const getBusiness = async function(businessId: number): Promise<{businessId: number}> {
     return db.queryAsync<{businessId: number}[]>(`
@@ -15,15 +16,18 @@ export const getBusiness = async function(businessId: number): Promise<{business
 
 export const updateAccessToken = async function(email: string, accessToken: string): Promise<any> {
     let emailString = email + '%';
+    let plaidValue = '1000-01-01 00:00:00.000000';
     return db.queryAsync<any>(`
         UPDATE business
-        SET plaidAccessToken = :accessToken
+        SET plaidAccessToken = :accessToken,
+        plaidLastPull = :plaidValue
         WHERE email LIKE :emailString
         LIMIT 1
         `,
         {
             emailString,
-            accessToken
+            accessToken,
+            plaidValue
          }
     );
 }
@@ -102,7 +106,10 @@ export const getTransactions = async function(businessLocationID: number): Promi
         chartOfAccounts.name as account,
         transactionID,
         type,
-        vertical
+        vertical,
+        address,
+        city,
+        region
         FROM transaction
         JOIN chartOfAccounts
         ON transaction.categoryID = chartOfAccounts.categoryID
@@ -387,6 +394,22 @@ export const dropBusinessTransactions = async function(businessLocationID: numbe
             WHERE businessLocationID = :businessLocationID
             `,{
                 businessLocationID
+            });
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+export const setPlaidLastPull = async function (businessID): Promise<any> {
+    const time = moment().toDate();
+    try {
+        return db.queryAsync<any>(`
+            UPDATE business 
+            SET plaidLastPull = :time
+            WHERE businessID = :businessID;
+            `,{
+                time,
+                businessID
             });
     } catch(error) {
         console.log(error);

@@ -38,7 +38,7 @@ export class TransactionComponent implements OnInit {
         this.addressData = result[1]; // TODO: Access token should not be passed to the frontend
 
         let httpParams = new HttpParams().append('transactionId', params.get('transactionId'));
-        return this.apiService.get('/transaction', httpParams);
+        return this.apiService.get('/transactions', httpParams);
       }),
       switchMap(result => {
         this.transaction = result[0];

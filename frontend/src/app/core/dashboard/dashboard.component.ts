@@ -37,7 +37,7 @@ export class DashboardComponent implements OnInit {
         startWith(0),
         switchMap(() => {
           this.retry = false;
-          return this.apiService.get('/transactions');
+          return this.apiService.get('/transactions/all');
         })
       ).subscribe((response: any) => {
         if (response.error_code === 'PRODUCT_NOT_READY') {
