@@ -72,20 +72,18 @@ router.get('/all', decodeIDToken, checkJwt, async function (req, res, next) {
   
           // 3. Save transactions to database
           const transactions = await queries.getTransactions(defaultBusinessLocationId);
-  
+          const verticalCategoryId = await queries.getIncomeCategory(businessLocationsForBusiness.vertical);
   
           for (const transaction of transactionsResponse.transactions) {
             const foundTransaction = _.find(transactions, { 'amount': transaction.amount, 'date': transaction.date, 'name': transaction.name });
   
             if (!foundTransaction) {
               let promise = new Promise( resolve => {
-                let categoryId;
                 if (transaction.amount < 0) {
-                  categoryId = 43;
                   newTransactions.push({
                     businessLocationID: defaultBusinessLocationId,
                     transactionName: transaction.name,
-                    categoryID: categoryId,
+                    categoryID: verticalCategoryId,
                     amount: transaction.amount,
                     date: transaction.date,
                     address: transaction.location.address,

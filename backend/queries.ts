@@ -415,3 +415,17 @@ export const setPlaidLastPull = async function (businessID): Promise<any> {
         console.log(error);
     }
 }
+
+export const getIncomeCategory = async function (vertical: string): Promise<any> {
+    try {
+        return db.queryAsync<any>(`
+            SELECT categoryID
+            FROM chartOfAccounts
+            WHERE vertical = :vertical AND name = "Other Income";
+            `,{
+                vertical
+            }).then(firstOrDefault).then(result => { return result['categoryID'] });
+    } catch(error) {
+        console.log(error);
+    }
+}
