@@ -12,6 +12,7 @@ import { TransactionComponent } from './transaction/transaction.component';
 import { PlaidGuardService } from '../services/plaid-guard.service';
 import { AlreadyLoggedInGuardService } from '../services/already-logged-in-guard.service';
 import { TaxComponent } from './tax/tax.component';
+import { EstimatedTaxesComponent } from './estimated-taxes/estimated-taxes.component';
 
 const routes: Routes = [
   {
@@ -64,6 +65,11 @@ const routes: Routes = [
     component: TaxComponent,
     canActivate: [AuthGuardService, PlaidGuardService]
   },
+  {
+    path: 'estimated-taxes',
+    component: EstimatedTaxesComponent,
+    canActivate: [AuthGuardService, PlaidGuardService]
+  }
 ];
 
 @NgModule({
