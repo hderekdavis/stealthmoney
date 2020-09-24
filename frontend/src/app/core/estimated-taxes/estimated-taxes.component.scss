@@ -22,3 +22,13 @@
     background-color: $light-grey;
     height: 256px;
 }
+
+.taxes-header {
+    background-color: $income-header;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-size: 20px;
+    margin-top: 40px;
+    padding: 20px 40px;
+}

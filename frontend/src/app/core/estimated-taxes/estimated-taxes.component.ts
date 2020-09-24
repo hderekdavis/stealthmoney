@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-estimated-taxes',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EstimatedTaxesComponent implements OnInit {
 
-  constructor() { }
+  public dueDates = [];
+
+  constructor(private backendService: BackendService) { }
 
   ngOnInit(): void {
+    this.backendService.getDueDates()
+      .subscribe(result => this.dueDates = result.results);
   }
 
 }

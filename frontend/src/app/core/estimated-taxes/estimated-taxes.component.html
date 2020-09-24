@@ -1,6 +1,6 @@
 <div class="mx-auto taxes-container container d-flex">
     <div class="contact-information mr-5">
-        <div class="income-header px-4 pt-4 d-flex">
+        <div class="taxes-header d-flex">
             <label class="col-sm-6 block-header">Contact Information</label>
         </div>
         <div class="contact-information-block">
@@ -21,55 +21,15 @@
         </div>
     </div>
     <div class="due-dates">
-        <div class="income-header px-4 pt-4 d-flex">
+        <div class="taxes-header d-flex">
             <label class="col-sm-6 block-header">Due Dates ( Oklahoma C Corporation)</label>
         </div>
-        <div class="striped-row pointer d-flex">
+        <div class="striped-row pointer d-flex" *ngFor="let result of dueDates">
             <div class="col-sm-8">
-                Federal Tax C Corp Return (Form 1120)
+                {{ result.formID != '' ? (result.formName + ' (' + result.formID + ')') : ( result.formName ) }}
             </div>
             <div class="col-sm-4 text-right">
-                May 15, 2021
-            </div>
-        </div>
-        <div class="striped-row pointer d-flex">
-            <div class="col-sm-8">
-                Federal C Corp Estimated Payments Q1 (Form 1120W)
-            </div>
-            <div class="col-sm-4 text-right">
-                May 15, 2020
-            </div>
-        </div>
-        <div class="striped-row pointer d-flex">
-            <div class="col-sm-8">
-                Federal C Corp Estimated Payments Q2 (Form 1120W)
-            </div>
-            <div class="col-sm-4 text-right">
-                June 15, 2020
-            </div>
-        </div>
-        <div class="striped-row pointer d-flex">
-            <div class="col-sm-8">
-                Federal C Corp Estimated Payments Q3 (Form 1120W)
-            </div>
-            <div class="col-sm-4 text-right">
-                September 15, 2020
-            </div>
-        </div>
-        <div class="striped-row pointer d-flex">
-            <div class="col-sm-8">
-                Federal C Corp Estimated Payments Q4 (Form 1120W)
-            </div>
-            <div class="col-sm-4 text-right">
-                December 15, 2020
-            </div>
-        </div>
-        <div class="striped-row pointer d-flex">
-            <div class="col-sm-8">
-                Oklahoma C Corp Return (Form 520)
-            </div>
-            <div class="col-sm-4 text-right">
-                March 15, 2020
+                {{ result.dueDate | date }}
             </div>
         </div>
     </div>
