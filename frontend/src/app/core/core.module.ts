@@ -19,6 +19,7 @@ import { ExpenseCategoryComponent } from './expense-category/expense-category.co
 import { TransactionComponent } from './transaction/transaction.component';
 import { NgxPlaidLinkModule } from 'ngx-plaid-link';
 import { TaxComponent } from './tax/tax.component';
+import { EstimatedTaxesComponent } from './estimated-taxes/estimated-taxes.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { TaxComponent } from './tax/tax.component';
     IncomeComponent,
     ExpenseCategoryComponent,
     TransactionComponent,
-    TaxComponent
+    TaxComponent,
+    EstimatedTaxesComponent
   ],
   imports: [
     CommonModule,

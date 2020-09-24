@@ -1,18 +1,23 @@
 <div style="height:90px;background:#141E28;color:#fff">
-    <div style="margin:auto;width:80%">
-        <div class="float-left header-container">
+    <div class="header-main-container">
+        <div class="float-left header-logo ml-5">
             <a routerLink="/dashboard">
-                <label class="header-title">ClearviewMoney</label>
+                <label class="header-title">MyGreenGrowth</label>
             </a>
         </div>
-        <div style="float:right;line-height:90px">
+        <div *ngIf="auth.isLoggedIn()" class="header-links w-100">
+            <a routerLink="/dashboard" class="header-link mr-5">Dashboard</a>
+            <a routerLink="/settings" class="header-link mr-5">Tax Files</a>
+            <a routerLink="/estimated-taxes" class="header-link mr-5">Estimated Taxes</a>
+            <a routerLink="/settings" class="header-link">Settings</a>
+        </div>
+        <div class="float-right mr-5 ml-auto">
             <ng-container *ngIf="!auth.isLoggedIn()">
-                <a routerLink="/login" style="display:inlin-block;margin-right:20px;color:inherit;text-decoration:none">Login</a>
-                <a routerLink="/signup" style="display:inlin-block;color:inherit;text-decoration:none">Sign Up</a>
+                <a routerLink="/login" class="header-link mr-5">Login</a>
+                <a routerLink="/signup" class="header-link">Sign Up</a>
             </ng-container>
             <ng-container *ngIf="auth.isLoggedIn()">
-                <a routerLink="/settings" style="display:inlin-block;margin-right:20px;color:inherit;text-decoration:none">Settings</a>
-                <a (click)="logout()" style="cursor:pointer;display:inlin-block;color:inherit;text-decoration:none">Logout</a>
+                <a (click)="logout()" class="header-link">Logout</a>
             </ng-container>
         </div>
     </div>

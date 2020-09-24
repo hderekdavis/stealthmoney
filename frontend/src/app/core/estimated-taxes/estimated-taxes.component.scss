@@ -1,0 +1,24 @@
+@import '../../../assets/styles/global/variables.scss';
+
+.contact-information {
+    width: 30%;
+}
+
+.due-dates {
+    width:70%;
+}
+
+.block-header {
+    color: white;
+    display: contents;
+}
+
+.taxes-container {
+    width: 1300px;
+    padding-bottom: 100px;
+}
+
+.contact-information-block {
+    background-color: $light-grey;
+    height: 256px;
+}

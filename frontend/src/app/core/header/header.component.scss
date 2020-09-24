@@ -4,6 +4,20 @@
     cursor: pointer;
 }
 
-.header-container {
+.header-logo {
     margin-top: 20px;
+}
+
+.header-link {
+    color:inherit;
+    text-decoration:none;
+    line-height: 90px;
+}
+
+.header-links {
+    margin-left: 250px;
+}
+
+.header-main-container {
+    display: flex;
 }
