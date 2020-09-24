@@ -141,4 +141,23 @@ const getIncome = async function(transactions: any): Promise<any> {
   return totalIncome - totalExpenses;
 }
 
+router.get('/duedates', decodeIDToken, checkJwt, async function (req, res, next) {
+  try {
+
+    const email = req.body.user_email;
+    const businessLocationsForBusiness = await queries.getBusinessLocation(email);
+
+    let results = await queries.getDueDatesForUser(businessLocationsForBusiness.state);
+
+    res.json({ 
+      results: results
+    });
+    
+  } catch(error) {
+    console.log(error);
+
+    res.json(error);
+  }
+});
+
 module.exports = router;
