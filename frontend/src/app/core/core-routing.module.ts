@@ -32,7 +32,7 @@ const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: DashboardComponent,
+    component: EstimatedTaxesComponent,
     canActivate: [AuthGuardService, PlaidGuardService]
   },
   {
@@ -67,7 +67,7 @@ const routes: Routes = [
   },
   {
     path: 'estimated-taxes',
-    component: EstimatedTaxesComponent,
+    component: DashboardComponent,
     canActivate: [AuthGuardService, PlaidGuardService]
   }
 ];

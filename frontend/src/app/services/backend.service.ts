@@ -58,4 +58,8 @@ export class BackendService {
   getFederalTax(): Observable<any> {
     return this.api.get('/taxes/federal');
   }
+
+  getDueDates(): Observable<any> {
+    return this.api.get('/taxes/duedates');
+  }
 }
