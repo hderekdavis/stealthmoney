@@ -9,12 +9,16 @@ import { BackendService } from 'src/app/services/backend.service';
 export class EstimatedTaxesComponent implements OnInit {
 
   public dueDates = [];
+  public companyInfo = '';
 
   constructor(private backendService: BackendService) { }
 
   ngOnInit(): void {
     this.backendService.getDueDates()
       .subscribe(result => this.dueDates = result.results);
+
+    this.backendService.getBusinessSettings()
+      .subscribe(result => this.companyInfo = result.addresses[0].state + ' ' + result.business.legalEntity );
   }
 
 }
