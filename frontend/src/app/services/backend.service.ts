@@ -60,6 +60,6 @@ export class BackendService {
   }
 
   getDueDates(): Observable<any> {
-    return this.api.get('/taxes/duedates');
+    return this.api.get('/taxes/due-dates');
   }
 }

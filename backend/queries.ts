@@ -443,3 +443,15 @@ export const getDueDatesForUser = async function (state: string): Promise<any> {
         console.log(error);
     }
 }
+
+export const getFederalDueDates = async function (): Promise<any> {
+    try {
+        return db.queryAsync<any>(`
+            SELECT *
+            FROM taxesDueDates
+            WHERE isFederalTax = 1 AND STR_TO_DATE(dueDate, '%m/%d/%y') >= curdate();
+            `);
+    } catch(error) {
+        console.log(error);
+    }
+}
