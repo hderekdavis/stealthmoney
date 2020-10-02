@@ -74,6 +74,7 @@ export class AddressFormComponent implements OnInit {
       addressSecondLine: [{ value: null, disabled: disabled }],
       city: [{ value: null, disabled: disabled }, Validators.required],
       state: [{ value: null, disabled: disabled }, Validators.required],
+      county: [{ value: null, disabled: disabled }, Validators.required],
       zipcode: [{ value: null, disabled: disabled }, Validators.required],
       businessVertical: [{ value: null, disabled }, Validators.required],
     });
