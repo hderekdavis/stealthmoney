@@ -56,17 +56,18 @@ export const saveBusiness = async function(email: string, businessName: string, 
     );
 }
 
-export const saveBusinessLocation = async function(businessID: number, addressFirstLine: string, addressSecondLine: string, city: string, state: string, zipcode: string, vertical: string): Promise<any> {
+export const saveBusinessLocation = async function(businessID: number, addressFirstLine: string, addressSecondLine: string, city: string, state: string, county: string, zipcode: string, vertical: string): Promise<any> {
     return db.queryAsync<string>(`
         INSERT INTO businessLocation
-        (businessID, addressLine1, addressLine2, city, state, zip, vertical)
-        VALUES (:businessID, :addressFirstLine, :addressSecondLine, :city, :state, :zipcode, :vertical)`,
+        (businessID, addressLine1, addressLine2, city, state, county, zip, vertical)
+        VALUES (:businessID, :addressFirstLine, :addressSecondLine, :city, :state, :county, :zipcode, :vertical)`,
         {
             businessID,
             addressFirstLine,
             addressSecondLine,
             city,
             state,
+            county,
             zipcode,
             vertical
          }

@@ -117,7 +117,7 @@ router.post('/business', async function (req, res, next) {
 
     for (const address of addresses) {
       await queries.saveBusinessLocation(response.insertId, address.addressFirstLine, address.addressSecondLine,
-        address.city, address.state, address.zipcode, address.businessVertical);
+        address.city, address.state, address.county, address.zipcode, address.businessVertical);
     }
 
     res.json({businessId: response.insertId});

@@ -58,6 +58,7 @@ export class SettingsComponent implements OnInit {
         form.controls['addressSecondLine'].setValue(address.addressLine2);
         form.controls['city'].setValue(address.city);
         form.controls['state'].setValue(address.state);
+        form.controls['county'].setValue(address.county);
         form.controls['zipcode'].setValue(address.zip);
         form.controls['businessVertical'].setValue(address.vertical);
       });
@@ -100,6 +101,7 @@ export class SettingsComponent implements OnInit {
           addressSecondLine: form.controls['addressSecondLine'].value,
           city: form.controls['city'].value,
           state: form.controls['state'].value,
+          county: form.controls['county'].value,
           zipcode: form.controls['zipcode'].value,
           businessVertical: form.controls['businessVertical'].value,
         })
