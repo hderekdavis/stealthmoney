@@ -16,16 +16,24 @@
         </div>
         <div class="col-5">
           <div class="form-group mb-0">
-            <label for="{{ 'state' + addessNumber }}" class="layout-input-label required">State</label>
-            <select id="{{ 'state' + addessNumber }}" class="form-control layout-input ml-auto" formControlName="state">
-                <option *ngFor="let state of states;" value="{{ state }}">{{ state }}</option>
-            </select>
+            <label for="{{ 'county' + addessNumber }}" class="layout-input-label required">County</label>
+            <input id="{{ 'county' + addessNumber }}" class="form-control layout-input" formControlName="county">
           </div>
         </div>
         <div class="col-3">
           <div class="form-group mb-0">
             <label for="{{ 'zipcode' + addessNumber }}" class="layout-input-label required">Zipcode</label>
             <input id="{{ 'zipcode' + addessNumber }}" class="form-control layout-input" formControlName="zipcode">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group mb-0">
+            <label for="{{ 'state' + addessNumber }}" class="layout-input-label required">State</label>
+            <select id="{{ 'state' + addessNumber }}" class="form-control layout-input ml-auto" formControlName="state">
+                <option *ngFor="let state of states;" value="{{ state }}">{{ state }}</option>
+            </select>
           </div>
         </div>
       </div>

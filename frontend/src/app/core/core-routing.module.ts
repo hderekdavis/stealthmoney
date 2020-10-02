@@ -33,12 +33,12 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: EstimatedTaxesComponent,
-    canActivate: [AuthGuardService, PlaidGuardService]
+    canActivate: [AuthGuardService]
   },
   {
     path: 'settings',
     component: SettingsComponent,
-    canActivate: [AuthGuardService, PlaidGuardService]
+    canActivate: [AuthGuardService]
   },
   {
     path: 'plaid',

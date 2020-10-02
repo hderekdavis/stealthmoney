@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { Subject } from 'rxjs';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { AddressFormComponent } from '../address-form/address-form.component';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
@@ -51,6 +51,7 @@ export class SignupComponent implements OnInit {
           addressSecondLine: form.controls['addressSecondLine'].value,
           city: form.controls['city'].value,
           state: form.controls['state'].value,
+          county: form.controls['county'].value,
           zipcode: form.controls['zipcode'].value,
           businessVertical: form.controls['businessVertical'].value,
         })
