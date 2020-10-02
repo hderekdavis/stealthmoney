@@ -1,37 +1,37 @@
 <div [formGroup]="addressForm">
     <div class="form-group mb-0">
-        <label for="{{ 'addressFirstLine' + addessNumber }}" class="layout-input-label required">Business Address Line 1</label>
-        <input id="{{ 'addressFirstLine' + addessNumber }}" class="form-control layout-input" formControlName="addressFirstLine">
+        <label for="{{ 'addressFirstLine' + addressNumber }}" class="layout-input-label required">Business Address Line 1</label>
+        <input id="{{ 'addressFirstLine' + addressNumber }}" class="form-control layout-input" formControlName="addressFirstLine">
       </div>
       <div class="form-group mb-2">
-        <label for="{{ 'addressSecondLine' + addessNumber }}" class="layout-input-label">Business Address Line 2</label>
-        <input id="{{ 'addressSecondLine' + addessNumber }}" class="form-control layout-input" formControlName="addressSecondLine">
+        <label for="{{ 'addressSecondLine' + addressNumber }}" class="layout-input-label">Business Address Line 2</label>
+        <input id="{{ 'addressSecondLine' + addressNumber }}" class="form-control layout-input" formControlName="addressSecondLine">
       </div>
       <div class="row">
         <div class="col-4">
           <div class="form-group mb-0">
-            <label for="{{ 'city' + addessNumber }}" class="layout-input-label required">City</label>
-            <input id="{{ 'city' + addessNumber }}" class="form-control layout-input" formControlName="city">
+            <label for="{{ 'city' + addressNumber }}" class="layout-input-label required">City</label>
+            <input id="{{ 'city' + addressNumber }}" class="form-control layout-input" formControlName="city">
           </div>
         </div>
         <div class="col-5">
           <div class="form-group mb-0">
-            <label for="{{ 'county' + addessNumber }}" class="layout-input-label required">County</label>
-            <input id="{{ 'county' + addessNumber }}" class="form-control layout-input" formControlName="county">
+            <label for="{{ 'county' + addressNumber }}" class="layout-input-label required">County</label>
+            <input id="{{ 'county' + addressNumber }}" class="form-control layout-input" formControlName="county">
           </div>
         </div>
         <div class="col-3">
           <div class="form-group mb-0">
-            <label for="{{ 'zipcode' + addessNumber }}" class="layout-input-label required">Zipcode</label>
-            <input id="{{ 'zipcode' + addessNumber }}" class="form-control layout-input" formControlName="zipcode">
+            <label for="{{ 'zipcode' + addressNumber }}" class="layout-input-label required">Zipcode</label>
+            <input id="{{ 'zipcode' + addressNumber }}" class="form-control layout-input" formControlName="zipcode">
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-12">
           <div class="form-group mb-0">
-            <label for="{{ 'state' + addessNumber }}" class="layout-input-label required">State</label>
-            <select id="{{ 'state' + addessNumber }}" class="form-control layout-input ml-auto" formControlName="state">
+            <label for="{{ 'state' + addressNumber }}" class="layout-input-label required">State</label>
+            <select id="{{ 'state' + addressNumber }}" class="form-control layout-input ml-auto" formControlName="state">
                 <option *ngFor="let state of states;" value="{{ state }}">{{ state }}</option>
             </select>
           </div>
@@ -40,24 +40,24 @@
       <div class="mt-3">
         <label class="layout-input-label required">Business Vertical</label>
         <div class="form-check">
-          <input class="form-check-input layout-check-input" type="radio" id="{{ 'cultivation' + addessNumber }} " value="Cultivation" formControlName="businessVertical">
-          <label class="form-check-label" for="{{ 'cultivation' + addessNumber }}">Cultivation</label>
+          <input class="form-check-input layout-check-input" type="radio" id="{{ 'cultivation' + addressNumber }} " value="Cultivation" formControlName="businessVertical">
+          <label class="form-check-label" for="{{ 'cultivation' + addressNumber }}">Cultivation</label>
         </div>
         <div class="form-check">
-          <input class="form-check-input layout-check-input" type="radio" id="{{ 'manufacture' + addessNumber }}" value="Manufacture" formControlName="businessVertical">
-          <label class="form-check-label" for="{{ 'manufacture' + addessNumber }}">Manufacture</label>
+          <input class="form-check-input layout-check-input" type="radio" id="{{ 'manufacture' + addressNumber }}" value="Manufacture" formControlName="businessVertical">
+          <label class="form-check-label" for="{{ 'manufacture' + addressNumber }}">Manufacture</label>
         </div>
         <div class="form-check">
-          <input class="form-check-input layout-check-input" type="radio" id="{{ 'distribution' + addessNumber }}" value="Distribution" formControlName="businessVertical">
-          <label class="form-check-label" for="{{ 'distribution' + addessNumber }}">Distribution</label>
+          <input class="form-check-input layout-check-input" type="radio" id="{{ 'distribution' + addressNumber }}" value="Distribution" formControlName="businessVertical">
+          <label class="form-check-label" for="{{ 'distribution' + addressNumber }}">Distribution</label>
         </div>
         <div class="form-check">
-          <input class="form-check-input layout-check-input" type="radio" id="{{ 'retail' + addessNumber }}" value="Retail" formControlName="businessVertical">
-          <label class="form-check-label" for="{{ 'retail' + addessNumber }}">Retail</label>
+          <input class="form-check-input layout-check-input" type="radio" id="{{ 'retail' + addressNumber }}" value="Retail" formControlName="businessVertical">
+          <label class="form-check-label" for="{{ 'retail' + addressNumber }}">Retail</label>
         </div>
         <div class="form-check">
-          <input class="form-check-input layout-check-input" type="radio" id="{{ 'delivery' + addessNumber }}" value="Delivery" formControlName="businessVertical">
-          <label class="form-check-label" for="{{ 'delivery' + addessNumber }}">Delivery</label>
+          <input class="form-check-input layout-check-input" type="radio" id="{{ 'delivery' + addressNumber }}" value="Delivery" formControlName="businessVertical">
+          <label class="form-check-label" for="{{ 'delivery' + addressNumber }}">Delivery</label>
         </div>
       </div>
 </div>

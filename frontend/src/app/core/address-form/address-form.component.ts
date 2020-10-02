@@ -7,7 +7,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
   styleUrls: ['./address-form.component.scss']
 })
 export class AddressFormComponent implements OnInit {
-  @Input() addessNumber: string;
+  @Input() addressNumber: string;
   @Input() isDisabled: string;
   addressForm: FormGroup;
   states = [
