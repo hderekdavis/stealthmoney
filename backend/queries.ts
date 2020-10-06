@@ -431,14 +431,16 @@ export const getIncomeCategory = async function (vertical: string): Promise<any>
     }
 }
 
-export const getDueDatesForUser = async function (state: string): Promise<any> {
+export const getDueDatesForUser = async function (state: string, county: string): Promise<any> {
     try {
         return db.queryAsync<any>(`
             SELECT *
             FROM taxesDueDates
-            WHERE state = :state AND STR_TO_DATE(dueDate, '%m/%d/%y') >= curdate();
+            WHERE (county =:county AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
+            OR (county IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate());
             `,{
-                state
+                state,
+                county
             });
     } catch(error) {
         console.log(error);
@@ -450,7 +452,7 @@ export const getFederalDueDates = async function (): Promise<any> {
         return db.queryAsync<any>(`
             SELECT *
             FROM taxesDueDates
-            WHERE isFederalTax = 1 AND STR_TO_DATE(dueDate, '%m/%d/%y') >= curdate();
+            WHERE isFederalTax = 1 AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate();
             `);
     } catch(error) {
         console.log(error);
