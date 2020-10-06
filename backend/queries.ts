@@ -431,16 +431,19 @@ export const getIncomeCategory = async function (vertical: string): Promise<any>
     }
 }
 
-export const getDueDatesForUser = async function (state: string, county: string): Promise<any> {
+export const getDueDatesForUser = async function (state: string, county: string, city: string): Promise<any> {
     try {
         return db.queryAsync<any>(`
             SELECT *
             FROM taxesDueDates
-            WHERE (county =:county AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
-            OR (county IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate());
+            WHERE (county =:county AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
+            OR (county IS NULL AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
+            OR (county =:county AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
+            OR (county IS NULL AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate());
             `,{
                 state,
-                county
+                county,
+                city
             });
     } catch(error) {
         console.log(error);
