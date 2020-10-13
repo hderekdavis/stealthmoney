@@ -133,10 +133,12 @@ router.get('/business/settings', decodeIDToken, checkJwt, async function (req, r
     const businessEmail = req.body.user_email;
     const business = await queries.getBusinessByEmail(businessEmail);
     const addresses = await queries.getBusinessLocationsForBusiness(business.businessID);
+    const accountant = await queries.getBusinessAccountant(business.businessID);
     
     res.json({
       business: business,
-      addresses: addresses
+      addresses: addresses,
+      accountant: accountant
     });
   } catch(error) {
     console.log(error);

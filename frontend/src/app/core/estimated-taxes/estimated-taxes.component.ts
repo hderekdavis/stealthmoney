@@ -10,6 +10,7 @@ export class EstimatedTaxesComponent implements OnInit {
 
   public dueDates = [];
   public companyInfo = '';
+  public accountant: any;
 
   constructor(private backendService: BackendService) { }
 
@@ -18,7 +19,10 @@ export class EstimatedTaxesComponent implements OnInit {
       .subscribe(result => this.dueDates = result.results);
 
     this.backendService.getBusinessSettings()
-      .subscribe(result => this.companyInfo = result.addresses[0].state + ' ' + result.business.legalEntity );
+      .subscribe(result => {
+        this.companyInfo = result.addresses[0].state + ' ' + result.business.legalEntity;
+        this.accountant = result.accountant;
+      });
   }
 
 }
