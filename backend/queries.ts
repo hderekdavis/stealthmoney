@@ -461,3 +461,13 @@ export const getFederalDueDates = async function (): Promise<any> {
         console.log(error);
     }
 }
+
+export const unsuscribe = async function (email: string): Promise<any> {
+    console.log(email);
+    try {
+        return db.queryAsync<any>(`
+            UPDATE business SET unsuscribeEmails = 1 WHERE email = :email;`, { email });
+    } catch(error) {
+        console.log(error);
+    }
+}

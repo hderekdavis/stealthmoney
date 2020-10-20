@@ -202,6 +202,20 @@ router.get('/has-plaid-token', decodeIDToken, checkJwt, async function (req, res
   }
 });
 
+router.post('/unsuscribe', async function (req, res, next) {
+  try {
+    const email = req.body.email;
+
+    await queries.unsuscribe(email);
+
+    res.json();
+  } catch(error) {
+    console.log(error);
+
+    res.json(error);
+  }
+});
+
 router.use('/taxes', require('./taxes'));
 router.use('/transactions', require('./transactions'));
 
