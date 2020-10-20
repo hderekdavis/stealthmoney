@@ -13,6 +13,7 @@ import { PlaidGuardService } from '../services/plaid-guard.service';
 import { AlreadyLoggedInGuardService } from '../services/already-logged-in-guard.service';
 import { TaxComponent } from './tax/tax.component';
 import { EstimatedTaxesComponent } from './estimated-taxes/estimated-taxes.component';
+import { UnregisterFormComponent } from './unregister-form/unregister-form.component';
 
 const routes: Routes = [
   {
@@ -69,7 +70,11 @@ const routes: Routes = [
     path: 'estimated-taxes',
     component: DashboardComponent,
     canActivate: [AuthGuardService, PlaidGuardService]
-  }
+  },
+  {
+    path: 'unregister',
+    component: UnregisterFormComponent
+  },
 ];
 
 @NgModule({

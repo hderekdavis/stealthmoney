@@ -1,0 +1,15 @@
+<app-layout-container width="500px" height="350px" marginTop="7rem" marginBottom="12rem">
+    <div class="w-100 text-center mt-5 mb-4">
+        <label class="container-title">
+          Email Reminders
+        </label>
+    </div>
+    <div class="mx-4">
+        <div class="form-group mb-0 text-center">
+          <p>Are you sure you want to stop receiving tax email reminders for the email {{ email }}?</p>
+        </div>
+    </div>
+    <div class="mt-4 text-center">
+        <button class="btn login-button mx-auto pointer" (click)="unsuscribe()">Confirm</button>
+    </div>
+</app-layout-container>
