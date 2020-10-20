@@ -85,6 +85,24 @@ export const getBusinessLocationsForBusiness = async function(businessID: number
     );
 }
 
+export const getBusinessAccountant = async function(businessID: number): Promise<any> {
+    return db.queryAsync<any>(`
+        SELECT
+        accountants.firstName,
+        accountants.lastName,
+        accountants.phoneNumber,
+        accountants.email
+        FROM businessAccountants
+        JOIN accountants
+        ON businessAccountants.accountantID = accountants.accountantID
+        WHERE
+            businessID = :businessID
+        `,
+        { businessID }
+    ).then(firstOrDefault);
+}
+
+
 export const getBusinessByEmail = async function(email: string): Promise<any> {
     return db.queryAsync<any>(`
         SELECT * 
