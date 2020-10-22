@@ -147,7 +147,7 @@ router.get('/due-dates', decodeIDToken, checkJwt, async function (req, res, next
     const email = req.body.user_email;
     const businessLocationsForBusiness = await queries.getBusinessLocation(email);
 
-    let userDueDates = await queries.getDueDatesForUser(businessLocationsForBusiness.state, businessLocationsForBusiness.county, businessLocationsForBusiness.city);
+    let userDueDates = await queries.getDueDatesForUser(businessLocationsForBusiness.state, businessLocationsForBusiness.county, businessLocationsForBusiness.city, businessLocationsForBusiness.vertical);
     let federalDueDates = await queries.getFederalDueDates();
 
     let resultsList = userDueDates.concat(federalDueDates);
