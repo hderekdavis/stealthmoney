@@ -449,19 +449,22 @@ export const getIncomeCategory = async function (vertical: string): Promise<any>
     }
 }
 
-export const getDueDatesForUser = async function (state: string, county: string, city: string): Promise<any> {
+export const getDueDatesForUser = async function (state: string, county: string, city: string, vertical: string): Promise<any> {
     try {
         return db.queryAsync<any>(`
             SELECT *
-            FROM taxesDueDates
-            WHERE (county =:county AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
-            OR (county IS NULL AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
-            OR (county =:county AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
-            OR (county IS NULL AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate());
+            FROM taxesDueDates t 
+            JOIN taxesVerticals v ON t.dueDateID = v.taxDueDateID 
+            JOIN taxesDueDatesVerticals s ON s.verticalID = v.verticalID
+            WHERE (county =:county AND city =:city AND state =:state AND s.vertical = :vertical AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
+            OR (county IS NULL AND city =:city AND state =:state AND s.vertical = :vertical AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
+            OR (county =:county AND city IS NULL AND state =:state AND s.vertical = :vertical AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
+            OR (county IS NULL AND city IS NULL AND state =:state AND s.vertical = :vertical AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate());
             `,{
                 state,
                 county,
-                city
+                city,
+                vertical
             });
     } catch(error) {
         console.log(error);
