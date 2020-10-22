@@ -62,4 +62,8 @@ export class BackendService {
   getDueDates(): Observable<any> {
     return this.api.get('/taxes/due-dates');
   }
+
+  unsubscribe(email: string): Observable<any> {
+    return this.api.post('/unsubscribe', { email: email });
+  }
 }

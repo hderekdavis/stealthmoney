@@ -5,7 +5,7 @@
         Login
       </label>
     </div>
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="loginForm">
       <div class="mx-4">
         <div class="form-group mb-0">
           <label for="addressLine1" class="layout-input-label">Email</label>
@@ -18,7 +18,7 @@
         <label class="light-text" (click)="showForgotPasswordForm = true" style="cursor:pointer">Forgot Password?</label>
       </div>
       <div class="mt-4 text-center">
-        <button class="btn login-button mx-auto" type="submit" [disabled]="!loginForm.valid" style="cursor:pointer">Login</button>
+        <button class="btn login-button mx-auto" [disabled]="!loginForm.valid" style="cursor:pointer" (click)="onSubmit()">Login</button>
       </div>
     </form>
     <div class="mt-4 text-center">

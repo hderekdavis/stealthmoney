@@ -20,6 +20,7 @@ import { TransactionComponent } from './transaction/transaction.component';
 import { NgxPlaidLinkModule } from 'ngx-plaid-link';
 import { TaxComponent } from './tax/tax.component';
 import { EstimatedTaxesComponent } from './estimated-taxes/estimated-taxes.component';
+import { UnregisterFormComponent } from './unregister-form/unregister-form.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { EstimatedTaxesComponent } from './estimated-taxes/estimated-taxes.compo
     ExpenseCategoryComponent,
     TransactionComponent,
     TaxComponent,
-    EstimatedTaxesComponent
+    EstimatedTaxesComponent,
+    UnregisterFormComponent
   ],
   imports: [
     CommonModule,
