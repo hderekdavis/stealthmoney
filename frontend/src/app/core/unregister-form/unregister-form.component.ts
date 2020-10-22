@@ -23,9 +23,9 @@ export class UnregisterFormComponent implements OnInit {
     })
   }
 
-  unsuscribe() {
-    this.backendService.unsuscribe(this.email).subscribe(result => {
-      this.toastr.success('You have successfully unsuscribed from the reminders list!', 'Email Reminders');
+  unsubscribe() {
+    this.backendService.unsubscribe(this.email).subscribe(result => {
+      this.toastr.success('You have successfully unsubscribed from the reminders list!', 'Email Reminders');
       this.router.navigateByUrl('/login');
     })
   }
