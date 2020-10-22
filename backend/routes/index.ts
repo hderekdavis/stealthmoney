@@ -204,11 +204,11 @@ router.get('/has-plaid-token', decodeIDToken, checkJwt, async function (req, res
   }
 });
 
-router.post('/unsuscribe', async function (req, res, next) {
+router.post('/unsubscribe', async function (req, res, next) {
   try {
     const email = req.body.email;
 
-    await queries.unsuscribe(email);
+    await queries.unsubscribe(email);
 
     res.json();
   } catch(error) {
