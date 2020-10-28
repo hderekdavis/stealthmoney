@@ -455,7 +455,7 @@ export const getDueDatesForUser = async function (state: string, county: string,
             SELECT *
             FROM taxesDueDates t 
             JOIN taxesVerticals v ON t.dueDateID = v.taxDueDateID 
-            JOIN taxesDueDatesVerticals s ON s.verticalID = v.verticalID
+            JOIN verticals s ON s.verticalID = v.verticalID
             WHERE (county =:county AND city =:city AND state =:state AND s.vertical = :vertical AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
             OR (county IS NULL AND city =:city AND state =:state AND s.vertical = :vertical AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
             OR (county =:county AND city IS NULL AND state =:state AND s.vertical = :vertical AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
