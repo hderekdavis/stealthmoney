@@ -116,8 +116,9 @@ router.post('/business', async function (req, res, next) {
     var response: any = await queries.saveBusiness(email, businessName, phoneNumber, legalEntity);
 
     for (const address of addresses) {
-      await queries.saveBusinessLocation(response.insertId, address.addressFirstLine, address.addressSecondLine,
-        address.city, address.state, address.county, address.zipcode, address.businessVertical);
+      let result = await queries.saveBusinessLocation(response.insertId, address.addressFirstLine, address.addressSecondLine,
+        address.city, address.state, address.county, address.zipcode);
+      saveBusinessVerticals(result.insertId, address.businessVertical);
     }
 
     res.json({businessId: response.insertId});
@@ -134,6 +135,14 @@ router.get('/business/settings', decodeIDToken, checkJwt, async function (req, r
     const business = await queries.getBusinessByEmail(businessEmail);
     const addresses = await queries.getBusinessLocationsForBusiness(business.businessID);
     const accountant = await queries.getBusinessAccountant(business.businessID);
+
+    for (const address of addresses) {
+      let results = await queries.getBusinessVerticals(address.businessLocationID)
+      address.verticals = [];
+      results.forEach(element => {
+        address.verticals.push(element.verticalID);
+      });
+    }
     
     res.json({
       business: business,
@@ -217,6 +226,13 @@ router.post('/unsubscribe', async function (req, res, next) {
     res.json(error);
   }
 });
+
+const saveBusinessVerticals = async function(businessLocationID: number, verticals: []) {
+  await queries.removeBusinessVerticals(businessLocationID);
+  for (const vertical of verticals) {
+    await queries.saveBusinessVertical(businessLocationID, vertical);
+  }
+}
 
 router.use('/taxes', require('./taxes'));
 router.use('/transactions', require('./transactions'));

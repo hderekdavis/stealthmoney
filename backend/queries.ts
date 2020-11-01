@@ -56,11 +56,11 @@ export const saveBusiness = async function(email: string, businessName: string, 
     );
 }
 
-export const saveBusinessLocation = async function(businessID: number, addressFirstLine: string, addressSecondLine: string, city: string, state: string, county: string, zipcode: string, vertical: string): Promise<any> {
+export const saveBusinessLocation = async function(businessID: number, addressFirstLine: string, addressSecondLine: string, city: string, state: string, county: string, zipcode: string): Promise<any> {
     return db.queryAsync<string>(`
         INSERT INTO businessLocation
-        (businessID, addressLine1, addressLine2, city, state, county, zip, vertical)
-        VALUES (:businessID, :addressFirstLine, :addressSecondLine, :city, :state, :county, :zipcode, :vertical)`,
+        (businessID, addressLine1, addressLine2, city, state, county, zip)
+        VALUES (:businessID, :addressFirstLine, :addressSecondLine, :city, :state, :county, :zipcode)`,
         {
             businessID,
             addressFirstLine,
@@ -68,16 +68,29 @@ export const saveBusinessLocation = async function(businessID: number, addressFi
             city,
             state,
             county,
-            zipcode,
-            vertical
+            zipcode
          }
+    );
+}
+
+export const saveBusinessVertical = async function(businessLocationID: number, verticalID: number): Promise<any> {
+    return db.queryAsync<string>(`
+        INSERT INTO businessVerticals (businessLocationID, verticalID)
+        VALUES (:businessLocationID, :verticalID)`,
+        { businessLocationID, verticalID }
+    );
+}
+
+export const removeBusinessVerticals = async function(businessLocationID: number): Promise<any> {
+    return db.queryAsync<string>(`
+        DELETE FROM businessVerticals WHERE businessLocationID = :businessLocationID;`,
+        { businessLocationID }
     );
 }
 
 export const getBusinessLocationsForBusiness = async function(businessID: number): Promise<any> {
     return db.queryAsync<any>(`
-        SELECT * 
-        FROM businessLocation
+        SELECT businessLocationID, addressLine1, addressLine2, city, county, state, zip FROM businessLocation c
         WHERE
             businessID = :businessID
         `,
@@ -114,7 +127,7 @@ export const getBusinessByEmail = async function(email: string): Promise<any> {
     ).then(firstOrDefault);
 }
 
-export const getTransactions = async function(businessLocationID: number): Promise<any> {
+export const getTransactions = async function(businessLocationIDs: any): Promise<any> {
     return db.queryAsync<any>(`
         SELECT
         amount,
@@ -133,14 +146,23 @@ export const getTransactions = async function(businessLocationID: number): Promi
         JOIN chartOfAccounts
         ON transaction.categoryID = chartOfAccounts.categoryID
         WHERE
-            businessLocationID = :businessLocationID
+            businessLocationID IN (:businessLocationIDs)
         ORDER BY date DESC;
         `,
-        { businessLocationID }
+        { businessLocationIDs }
     );
 }
 
-export const getSalesTransactions = async function(businessLocationID: number): Promise<any> {
+export const getTransaction = async function(transactionID: number): Promise<any> {
+    return db.queryAsync<any>(`
+        SELECT * FROM transaction
+        WHERE transactionID = :transactionID;
+        `,
+        { transactionID }
+    ).then(firstOrDefault);
+}
+
+export const getSalesTransactions = async function(businessLocationIDs: number): Promise<any> {
     return db.queryAsync<any>(`
         SELECT
         amount,
@@ -156,9 +178,9 @@ export const getSalesTransactions = async function(businessLocationID: number): 
         JOIN chartOfAccounts
         ON transaction.categoryID = chartOfAccounts.categoryID
         WHERE
-            businessLocationID = :businessLocationID AND chartOfAccounts.subType = 'Sales';
+            businessLocationID IN (:businessLocationID) AND chartOfAccounts.subType = 'Sales';
         `,
-        { businessLocationID }
+        { businessLocationIDs }
     );
 }
 
@@ -213,15 +235,15 @@ export const updateBusiness = async function(businessID: number, email: string, 
     ).then(firstOrDefault);
 }
 
-export const getChartOfAccountsCategories = async function(vertical: string): Promise<any> {
+export const getChartOfAccountsCategories = async function(verticals: any): Promise<any> {
     return db.queryAsync<any>(`
         SELECT * 
         FROM chartOfAccounts
-        WHERE vertical = :vertical
+        WHERE vertical IN(:verticals) OR categoryID = 43
         ORDER BY name ASC;
         `,
         { 
-            vertical
+            verticals
         }
     );
 }
@@ -240,19 +262,35 @@ export const getBusinessLocation = async function(email: string): Promise<any> {
         }).then(firstOrDefault);
 }
 
+export const getAllBusinessLocations = async function(email: string): Promise<any> {
+    let emailString = email + '%';
+    return db.queryAsync<any>(`
+        SELECT * 
+        FROM businessLocation
+        JOIN business
+        ON businessLocation.businessID = business.businessID
+        WHERE email LIKE :emailString
+        `,
+        {
+            emailString
+        });
+}
+
 export const updateTransaction = async function(transaction: any): Promise<any> {
     let categoryID = parseInt(transaction.categoryId);
     let transactionID = parseInt(transaction.transactionId);
+    let businessLocationID = parseInt(transaction.businessLocation);
     return db.queryAsync<any>(`
         UPDATE transaction
-        SET categoryID = :categoryID,
+        SET categoryID = :categoryID, businessLocationID = :businessLocationID, 
             isManualSet = 1
         WHERE
             transactionID = :transactionID
         `,
         { 
             categoryID,
-            transactionID
+            transactionID,
+            businessLocationID
         });
 }
 
@@ -449,22 +487,22 @@ export const getIncomeCategory = async function (vertical: string): Promise<any>
     }
 }
 
-export const getDueDatesForUser = async function (state: string, county: string, city: string, vertical: string): Promise<any> {
+export const getDueDatesForUser = async function (state: string, county: string, city: string, businessVerticals: any): Promise<any> {
     try {
         return db.queryAsync<any>(`
-            SELECT *
+            SELECT DISTINCT dueDateID, taxName, formID, city, county, state, taxingAgency, dueDate, frequency
             FROM taxesDueDates t 
             JOIN taxesVerticals v ON t.dueDateID = v.taxDueDateID 
             JOIN verticals s ON s.verticalID = v.verticalID
-            WHERE (county =:county AND city =:city AND state =:state AND s.vertical = :vertical AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
-            OR (county IS NULL AND city =:city AND state =:state AND s.vertical = :vertical AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
-            OR (county =:county AND city IS NULL AND state =:state AND s.vertical = :vertical AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate())
-            OR (county IS NULL AND city IS NULL AND state =:state AND s.vertical = :vertical AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate());
+            WHERE (county =:county AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals))
+            OR (county IS NULL AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals))
+            OR (county =:county AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals))
+            OR (county IS NULL AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals));
             `,{
                 state,
                 county,
                 city,
-                vertical
+                businessVerticals
             });
     } catch(error) {
         console.log(error);
@@ -488,6 +526,17 @@ export const unsubscribe = async function (email: string): Promise<any> {
     try {
         return db.queryAsync<any>(`
             UPDATE business SET unsubscribeEmails = 1 WHERE email = :email;`, { email });
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+export const getBusinessVerticals = async function (businessLocationID: string): Promise<any> {
+    try {
+        return db.queryAsync<any>(`
+            SELECT v.verticalID
+            FROM verticals v JOIN businessVerticals b ON v.verticalID = b.verticalID
+            WHERE b.businessLocationID = :businessLocationID`, { businessLocationID });
     } catch(error) {
         console.log(error);
     }

@@ -42,8 +42,13 @@ router.get('/all', decodeIDToken, checkJwt, async function (req, res, next) {
       }
       queries.setPlaidLastPull(getBusinessResponse.businessID);
   
-      const businessLocationsForBusiness = await queries.getBusinessLocation(email);
-      const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID; // Temporarily default to user's first business location
+      const allBusinessLocations = await queries.getAllBusinessLocations(email);
+      let businessLocationIDs = [];
+      const defaultBusinessLocationId = allBusinessLocations[0].businessLocationID;
+
+      allBusinessLocations.forEach(location => {
+        businessLocationIDs.push(location.businessLocationID)
+      })
   
       if (hours >= 24) {
         const accessToken = getBusinessResponse.plaidAccessToken;
@@ -71,8 +76,8 @@ router.get('/all', decodeIDToken, checkJwt, async function (req, res, next) {
           options.offset = actualCount;
   
           // 3. Save transactions to database
-          const transactions = await queries.getTransactions(defaultBusinessLocationId);
-          const verticalCategoryId = await queries.getIncomeCategory(businessLocationsForBusiness.vertical);
+          const transactions = await queries.getTransactions(businessLocationIDs);
+          const verticalCategoryId = await queries.getIncomeCategory(allBusinessLocations[0].vertical);
   
           for (const transaction of transactionsResponse.transactions) {
             const foundTransaction = _.find(transactions, { 'amount': transaction.amount, 'date': transaction.date, 'name': transaction.name });
@@ -81,7 +86,7 @@ router.get('/all', decodeIDToken, checkJwt, async function (req, res, next) {
               let promise = new Promise( resolve => {
                 if (transaction.amount < 0) {
                   newTransactions.push({
-                    businessLocationID: defaultBusinessLocationId,
+                    businessLocationID: allBusinessLocations[0],
                     transactionName: transaction.name,
                     categoryID: verticalCategoryId,
                     amount: transaction.amount,
@@ -93,7 +98,7 @@ router.get('/all', decodeIDToken, checkJwt, async function (req, res, next) {
                   });
                   resolve();
                 } else {
-                  queries.getCategoryForTransaction(transaction.name, defaultBusinessLocationId, businessLocationsForBusiness.vertical, Number(transaction.category_id))
+                  queries.getCategoryForTransaction(transaction.name, defaultBusinessLocationId, allBusinessLocations[0].vertical, Number(transaction.category_id))
                   .then(categoryId => {
                     newTransactions.push({
                       businessLocationID: defaultBusinessLocationId,
@@ -146,13 +151,15 @@ router.get('/all', decodeIDToken, checkJwt, async function (req, res, next) {
 
 router.get('/', decodeIDToken, checkJwt, async function (req, res, next) {
     try {
-      const transactionId = req.query.transactionId;
       const email = req.body.user_email;
-      const businessLocationsForBusiness = await queries.getBusinessLocation(email);
-      const defaultBusinessLocationId = businessLocationsForBusiness.businessLocationID;
+      const allBusinessLocations = await queries.getAllBusinessLocations(email);
+      let businessLocationIDs = [];
+
+      allBusinessLocations.forEach(location => {
+        businessLocationIDs.push(location.businessLocationID)
+      })
   
-      let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
-      latestTransactions = latestTransactions.filter(transaction => transaction.transactionID === Number(transactionId));
+      let latestTransactions = await queries.getTransactions(businessLocationIDs);
   
       latestTransactions = latestTransactions.map(transaction => {
         return {
@@ -165,7 +172,7 @@ router.get('/', decodeIDToken, checkJwt, async function (req, res, next) {
           address: transaction.address,
           city: transaction.city,
           region:  transaction.region,
-          date: transaction.date
+          date: transaction.date,
         };
       });
   
@@ -179,10 +186,43 @@ router.get('/', decodeIDToken, checkJwt, async function (req, res, next) {
 
 router.get('/categories', decodeIDToken, checkJwt, async function (req, res, next) {
 
-    const response = await queries.getChartOfAccountsCategories(req.query.vertical);
+    let allVerticals = await queries.getBusinessVerticals(req.query.businessLocationID);
+    let businessVerticals = [];
+    allVerticals.forEach(element => {
+      businessVerticals.push(element.verticalID);
+    });
+    const response = await queries.getChartOfAccountsCategories(businessVerticals);
   
     res.json(response);
   
+});
+
+router.get('/:transactionId', decodeIDToken, checkJwt, async function (req, res, next) {
+  try {
+    let transactionId = req.params.transactionId;
+    let transaction = await queries.getTransaction(transactionId);
+    console.log(transaction);
+    const email = req.body.user_email;
+    let allBusinessLocations = await queries.getAllBusinessLocations(email);
+
+    res.json({
+      amount: transaction.amount,
+      name: transaction.name,
+      category: transaction.account,
+      categoryId: transaction.categoryID,
+      transactionId: transaction.transactionID,
+      address: transaction.address,
+      city: transaction.city,
+      region:  transaction.region,
+      date: transaction.date,
+      businessLocations: allBusinessLocations,
+      selectedLocation: transaction.businessLocationID
+    });
+  } catch(error) {
+    console.log(error);
+
+    res.json(error);
+  }
 });
 
 module.exports = router;

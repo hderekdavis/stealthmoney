@@ -145,12 +145,21 @@ router.get('/due-dates', decodeIDToken, checkJwt, async function (req, res, next
   try {
 
     const email = req.body.user_email;
-    const businessLocationsForBusiness = await queries.getBusinessLocation(email);
+    const businessLocationsForBusiness = await queries.getAllBusinessLocations(email);
 
-    let userDueDates = await queries.getDueDatesForUser(businessLocationsForBusiness.state, businessLocationsForBusiness.county, businessLocationsForBusiness.city, businessLocationsForBusiness.vertical);
+    let resultsList = [];
+    for(const location of businessLocationsForBusiness) {
+      let allVerticals = await queries.getBusinessVerticals(location.businessLocationID);
+      let businessVerticals = [];
+      allVerticals.forEach(element => {
+        businessVerticals.push(element.verticalID);
+      });
+      let userDueDates = await queries.getDueDatesForUser(location.state, location.county, location.city, businessVerticals);
+      resultsList = userDueDates.concat(resultsList);
+    }
+
     let federalDueDates = await queries.getFederalDueDates();
-
-    let resultsList = userDueDates.concat(federalDueDates);
+    resultsList = resultsList.concat(federalDueDates);
 
     res.json({ 
       results: _.sortBy(resultsList, function(dateObj) {
