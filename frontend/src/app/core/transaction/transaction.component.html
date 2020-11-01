@@ -36,20 +36,25 @@
             </select>
         </div>
     </div>
-    <!-- <div class="row striped-row" style="cursor:pointer">
-        <div class="col-sm-6">
-            Business/Location
-        </div>
-        <div class="col-sm-6" style="text-align:right">
-            <label *ngIf="addressData">{{ addressData.addressLine1 + ', ' + addressData.city + ', ' + addressData.state }}</label>
-        </div>
-    </div> -->
     <div class="row striped-row" style="cursor:pointer">
         <div class="col-sm-6">
-            Business/Location
+            Transaction Business/Location
         </div>
         <div class="col-sm-6" style="text-align:right">
             {{ transactionLocation }}
+        </div>
+    </div>
+    <div class="row striped-row" style="cursor:pointer">
+        <div class="col-sm-6">
+            Selected Location
+        </div>
+        <div class="col-sm-6" style="text-align:right">
+            <select class="form-control ml-auto" *ngIf="transactionCategories && transaction" [ngModel]="transaction.businessLocation"
+                (ngModelChange)="updateBusinessLocation($event)">
+                <option *ngFor="let location of transaction.businessLocations;" value="{{ location.businessLocationID }}">
+                    {{ location.addressLine1 + ' ' + (location.city ? location.city + ', ' : '') + (location.county ? location.county + ', ' : '') + (location.state ? location.state : '') }}
+                </option>
+            </select>
         </div>
     </div>
 </div>

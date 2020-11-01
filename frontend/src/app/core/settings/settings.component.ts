@@ -60,7 +60,7 @@ export class SettingsComponent implements OnInit {
         form.controls['state'].setValue(address.state);
         form.controls['county'].setValue(address.county);
         form.controls['zipcode'].setValue(address.zip);
-        form.controls['businessVertical'].setValue(address.vertical);
+        form.controls['businessVertical'].setValue(address.verticals);
       });
     })
   }

@@ -7,7 +7,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
   styleUrls: ['./address-form.component.scss']
 })
 export class AddressFormComponent implements OnInit {
-  @Input() addessNumber: string;
+  @Input() addressNumber: string;
   @Input() isDisabled: string;
   addressForm: FormGroup;
   states = [
@@ -76,8 +76,19 @@ export class AddressFormComponent implements OnInit {
       state: [{ value: null, disabled: disabled }, Validators.required],
       county: [{ value: null, disabled: disabled }, Validators.required],
       zipcode: [{ value: null, disabled: disabled }, Validators.required],
-      businessVertical: [{ value: null, disabled }, Validators.required],
+      businessVertical: [{ value: [], disabled }, Validators.required],
     });
+  }
+
+  onCheckChange(event) {
+    let verticals = this.addressForm.controls['businessVertical'].value;
+    if (event.target.checked) {
+      verticals.push(parseInt(event.target.value));
+    } else {
+      verticals = verticals.filter( element => element != parseInt(event.target.value));
+    }
+    this.addressForm.controls['businessVertical'].setValue(verticals);
+    console.log(verticals);
   }
 
 }

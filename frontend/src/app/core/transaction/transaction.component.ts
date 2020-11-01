@@ -29,43 +29,35 @@ export class TransactionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    combineLatest(
-      this.route.paramMap,
-      this.backendService.getBusinessLocation()
-    ).pipe(
-      switchMap(result => {
-        const params = result[0];
-        this.addressData = result[1]; // TODO: Access token should not be passed to the frontend
-
-        let httpParams = new HttpParams().append('transactionId', params.get('transactionId'));
-        return this.apiService.get('/transactions', httpParams);
-      }),
-      switchMap(result => {
-        this.transaction = result[0];
-        this.formerCategoryId = result[0].categoryId;
-        this.transaction.amount = Math.abs(this.transaction.amount);
-        if (this.transaction.address) {
-          this.transactionLocation = this.transaction.address;
-        }
-        if (this.transactionLocation !== '' && this.transaction.city) {
-          this.transactionLocation += ', '
-        }
-        if (this.transaction.city) {
-          this.transactionLocation += this.transaction.city;
-        }
-        if (this.transactionLocation !== '' && this.transaction.region) {
-          this.transactionLocation += ', '
-        }
-        if (this.transaction.region) {
-          this.transactionLocation += this.transaction.region;
-        }
-        if (this.transactionLocation === '') {
-          this.transactionLocation = 'N/A';
-        }
-        return this.backendService.getTransactionCategories(this.addressData.vertical);
+    this.route.paramMap.subscribe(params => {
+      this.backendService.getTransaction(params.get('transactionId'))
+        .subscribe(transaction => {
+          this.transaction = transaction;
+          this.transaction.businessLocation = this.transaction.selectedLocation;
+          this.formerCategoryId = transaction.categoryId;
+          this.transaction.amount = Math.abs(this.transaction.amount);
+          if (this.transaction.address) {
+            this.transactionLocation = this.transaction.address;
+          }
+          if (this.transactionLocation !== '' && this.transaction.city) {
+            this.transactionLocation += ', '
+          }
+          if (this.transaction.city) {
+            this.transactionLocation += this.transaction.city;
+          }
+          if (this.transactionLocation !== '' && this.transaction.region) {
+            this.transactionLocation += ', '
+          }
+          if (this.transaction.region) {
+            this.transactionLocation += this.transaction.region;
+          }
+          if (this.transactionLocation === '') {
+            this.transactionLocation = 'N/A';
+          }
+          this.backendService.getTransactionCategories(this.transaction.selectedLocation).subscribe(result => {
+            this.transactionCategories = result;
+          });
       })
-    ).subscribe(result => {
-      this.transactionCategories = result;
     });
   }
 
@@ -79,6 +71,12 @@ export class TransactionComponent implements OnInit {
 
   updateTransaction(value) {
     this.transaction.categoryId = value;
+    this.backendService.updateTransaction(this.transaction)
+      .subscribe( result => this.toastr.success('Transaction updated!', 'Transaction Update'));
+  }
+
+  updateBusinessLocation(value) {
+    this.transaction.businessLocation = value;
     this.backendService.updateTransaction(this.transaction)
       .subscribe( result => this.toastr.success('Transaction updated!', 'Transaction Update'));
   }
