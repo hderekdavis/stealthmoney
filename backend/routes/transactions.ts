@@ -86,7 +86,7 @@ router.get('/all', decodeIDToken, checkJwt, async function (req, res, next) {
               let promise = new Promise( resolve => {
                 if (transaction.amount < 0) {
                   newTransactions.push({
-                    businessLocationID: allBusinessLocations[0],
+                    businessLocationID: defaultBusinessLocationId,
                     transactionName: transaction.name,
                     categoryID: verticalCategoryId,
                     amount: transaction.amount,
@@ -130,7 +130,7 @@ router.get('/all', decodeIDToken, checkJwt, async function (req, res, next) {
       
   
       // 4. Return transactions in response
-      let latestTransactions = await queries.getTransactions(defaultBusinessLocationId);
+      let latestTransactions = await queries.getTransactions(businessLocationIDs);
       latestTransactions = latestTransactions.map(transaction => {
         return {
           type: transaction.type.toLowerCase(),
