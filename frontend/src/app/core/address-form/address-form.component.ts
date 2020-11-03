@@ -88,7 +88,6 @@ export class AddressFormComponent implements OnInit {
       verticals = verticals.filter( element => element != parseInt(event.target.value));
     }
     this.addressForm.controls['businessVertical'].setValue(verticals);
-    console.log(verticals);
   }
 
 }

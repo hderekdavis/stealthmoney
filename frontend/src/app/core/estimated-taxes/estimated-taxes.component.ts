@@ -20,7 +20,12 @@ export class EstimatedTaxesComponent implements OnInit {
 
     this.backendService.getBusinessSettings()
       .subscribe(result => {
-        this.companyInfo = result.addresses[0].state + ' ' + result.business.legalEntity;
+        let states = '';
+        result.addresses.forEach(address => {
+          states += address.state;
+          states += ', ';
+        })
+        this.companyInfo = states + result.business.legalEntity;
         this.accountant = result.accountant;
       });
   }
