@@ -30,8 +30,8 @@ export class BackendService {
     return this.api.post('/reset-password',{ email });
   }
 
-  getTransactionCategories(vertical: string): Observable<any> {
-    let httpParams = new HttpParams().append('vertical', vertical);
+  getTransactionCategories(businessLocationID: string): Observable<any> {
+    let httpParams = new HttpParams().append('businessLocationID', businessLocationID);
     return this.api.get('/transactions/categories', httpParams);
   }
 
@@ -65,5 +65,9 @@ export class BackendService {
 
   unsubscribe(email: string): Observable<any> {
     return this.api.post('/unsubscribe', { email: email });
+  }
+
+  getTransaction(transactionID: string): Observable<any> {
+    return this.api.get('/transactions/' + transactionID);
   }
 }
