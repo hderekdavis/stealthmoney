@@ -487,35 +487,36 @@ export const getIncomeCategory = async function (vertical: string): Promise<any>
     }
 }
 
-export const getDueDatesForUser = async function (state: string, county: string, city: string, businessVerticals: any): Promise<any> {
+export const getDueDatesForUser = async function (state: string, county: string, city: string, businessVerticals: any, legalEntity: string): Promise<any> {
     try {
         return db.queryAsync<any>(`
             SELECT DISTINCT dueDateID, taxName, formID, city, county, state, taxingAgency, dueDate, frequency
             FROM taxesDueDates t 
             JOIN taxesVerticals v ON t.dueDateID = v.taxDueDateID 
             JOIN verticals s ON s.verticalID = v.verticalID
-            WHERE (county =:county AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals))
-            OR (county IS NULL AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals))
-            OR (county =:county AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals))
-            OR (county IS NULL AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals));
+            WHERE (county =:county AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (t.entity IS NULL OR t.entity = :legalEntity))
+            OR (county IS NULL AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (t.entity IS NULL OR t.entity = :legalEntity))
+            OR (county =:county AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (t.entity IS NULL OR t.entity = :legalEntity))
+            OR (county IS NULL AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (t.entity IS NULL OR t.entity = :legalEntity));
             `,{
                 state,
                 county,
                 city,
-                businessVerticals
+                businessVerticals,
+                legalEntity
             });
     } catch(error) {
         console.log(error);
     }
 }
 
-export const getFederalDueDates = async function (): Promise<any> {
+export const getFederalDueDates = async function (entity: string): Promise<any> {
     try {
         return db.queryAsync<any>(`
             SELECT *
             FROM taxesDueDates
-            WHERE isFederalTax = 1 AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate();
-            `);
+            WHERE isFederalTax = 1 AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND (entity IS NULL OR entity = :entity);
+            `, { entity });
     } catch(error) {
         console.log(error);
     }
