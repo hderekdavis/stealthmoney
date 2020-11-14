@@ -45,6 +45,7 @@ router.get('/all', decodeIDToken, checkJwt, async function (req, res, next) {
       const allBusinessLocations = await queries.getAllBusinessLocations(email);
       let businessLocationIDs = [];
       const defaultBusinessLocationId = allBusinessLocations[0].businessLocationID;
+      console.log(defaultBusinessLocationId);
 
       allBusinessLocations.forEach(location => {
         businessLocationIDs.push(location.businessLocationID)
