@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { tap, finalize } from 'rxjs/operators';
+import { tap, finalize, catchError } from 'rxjs/operators';
 import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { NgxSpinnerService } from "ngx-spinner";
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,8 @@ export class ApiService {
 
   constructor(
     private httpClient: HttpClient,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private router: Router
   ) {}
 
   get<T>(path: string, params?: any): Observable<T> {
@@ -46,6 +48,15 @@ export class ApiService {
 
   handleResponse(call) {
     return call.pipe(
+      catchError(error => {
+        if (error.status === 403) {
+          this.router.navigate(['/login']);
+          localStorage.removeItem("id_token");
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("expires_at");
+        }
+        return throwError(error);
+      }),
       finalize(() => this.spinner.hide())
     );
   }
