@@ -70,4 +70,8 @@ export class BackendService {
   getTransaction(transactionID: string): Observable<any> {
     return this.api.get('/transactions/' + transactionID);
   }
+
+  getLegalEntities(): Observable<any> {
+    return this.api.get('/entities');
+  }
 }
