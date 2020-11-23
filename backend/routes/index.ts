@@ -135,6 +135,8 @@ router.get('/business/settings', decodeIDToken, checkJwt, async function (req, r
     const business = await queries.getBusinessByEmail(businessEmail);
     const addresses = await queries.getBusinessLocationsForBusiness(business.businessID);
     const accountant = await queries.getBusinessAccountant(business.businessID);
+    const entities = await queries.getLegalEntities();
+    let legalEntity = entities.find( entity => entity.entityID === business.legalEntity);
 
     for (const address of addresses) {
       let results = await queries.getBusinessVerticals(address.businessLocationID)
@@ -147,7 +149,8 @@ router.get('/business/settings', decodeIDToken, checkJwt, async function (req, r
     res.json({
       business: business,
       addresses: addresses,
-      accountant: accountant
+      accountant: accountant,
+      legalEntity: legalEntity
     });
   } catch(error) {
     console.log(error);
@@ -220,6 +223,18 @@ router.post('/unsubscribe', async function (req, res, next) {
     await queries.unsubscribe(email);
 
     res.json();
+  } catch(error) {
+    console.log(error);
+
+    res.json(error);
+  }
+});
+
+router.get('/entities', async function (req, res, next) {
+  try {
+    let result = await queries.getLegalEntities();
+
+    res.json(result);
   } catch(error) {
     console.log(error);
 
