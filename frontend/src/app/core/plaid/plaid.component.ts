@@ -13,7 +13,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
   templateUrl: './plaid.component.html',
   styleUrls: ['./plaid.component.scss']
 })
-export class PlaidComponent implements AfterViewInit {
+export class PlaidComponent {
 
   private plaidLinkHandler: PlaidLinkHandler;
 
@@ -31,8 +31,7 @@ export class PlaidComponent implements AfterViewInit {
     private spinner: NgxSpinnerService
   ) {}
 
-  ngAfterViewInit() {
-    this.spinner.show();
+  showPlaidModal() {
     this.plaidLinkService
       .createPlaid(
         Object.assign({}, this.config, {
@@ -43,12 +42,8 @@ export class PlaidComponent implements AfterViewInit {
       )
       .then((handler: PlaidLinkHandler) => {
         this.plaidLinkHandler = handler;
-        this.open();
+        this.plaidLinkHandler.open();
       });
-  }
-
-  open() {
-    this.plaidLinkHandler.open();
   }
 
   onSuccess(token, metadata) {
