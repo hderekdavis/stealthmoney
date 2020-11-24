@@ -494,10 +494,12 @@ export const getDueDatesForUser = async function (state: string, county: string,
             FROM taxesDueDates t 
             JOIN taxesVerticals v ON t.dueDateID = v.taxDueDateID 
             JOIN verticals s ON s.verticalID = v.verticalID
-            WHERE (county =:county AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (t.entity IS NULL OR t.entity = :legalEntity))
-            OR (county IS NULL AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (t.entity IS NULL OR t.entity = :legalEntity))
-            OR (county =:county AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (t.entity IS NULL OR t.entity = :legalEntity))
-            OR (county IS NULL AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (t.entity IS NULL OR t.entity = :legalEntity));
+            JOIN taxesEntities te ON te.taxDueDateID = t.dueDateID
+            JOIN entities e ON e.entityID = te.entityID
+            WHERE (county =:county AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (e.entity = 7 OR te.entityID = :legalEntity))
+            OR (county IS NULL AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (e.entity = 7 OR te.entityID = :legalEntity))
+            OR (county =:county AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (e.entity = 7 OR te.entityID = :legalEntity))
+            OR (county IS NULL AND city IS NULL AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (e.entity = 7 OR te.entityID = :legalEntity));
             `,{
                 state,
                 county,
@@ -538,6 +540,15 @@ export const getBusinessVerticals = async function (businessLocationID: string):
             SELECT v.verticalID
             FROM verticals v JOIN businessVerticals b ON v.verticalID = b.verticalID
             WHERE b.businessLocationID = :businessLocationID`, { businessLocationID });
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+export const getLegalEntities = async function (): Promise<any> {
+    try {
+        return db.queryAsync<any>(`
+            SELECT * FROM entities`);
     } catch(error) {
         console.log(error);
     }

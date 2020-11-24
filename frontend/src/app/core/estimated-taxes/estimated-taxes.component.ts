@@ -28,7 +28,7 @@ export class EstimatedTaxesComponent implements OnInit {
             statesString += address.state + ', ' 
           }
         })
-        this.companyInfo = statesString + result.business.legalEntity;
+        this.companyInfo = statesString + result.legalEntity.entity;
         this.accountant = result.accountant;
       });
   }

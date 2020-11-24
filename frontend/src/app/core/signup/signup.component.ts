@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AddressFormComponent } from '../address-form/address-form.component';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-signup',
@@ -17,12 +18,14 @@ export class SignupComponent implements OnInit {
   private ngUnsubscribe = new Subject();
   signupForm: FormGroup;
   addressForms = [];
+  legalEntities;
 
   constructor(
     public fb: FormBuilder,
     public router: Router,
     private toastr: ToastrService,
-    private authService: AuthService
+    private authService: AuthService,
+    private backendService: BackendService
   ) { }
 
   ngOnInit() {
@@ -34,6 +37,7 @@ export class SignupComponent implements OnInit {
       legalEntity: [null, Validators.required],
     });
     this.addressForms.push(1);
+    this.backendService.getLegalEntities().subscribe(result => this.legalEntities = result);
   }
 
   onSubmit() {

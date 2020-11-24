@@ -36,21 +36,9 @@
       </div>
       <div class="mt-3">
         <label class="layout-input-label required">Legal Entity</label>
-        <div class="form-check">
-          <input class="form-check-input layout-check-input" type="radio" id="noEntity" value="No Entity" formControlName="legalEntity">
-          <label class="form-check-label" for="noEntity">No Entity</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input layout-check-input" type="radio" id="cCorporation" value="C Corporation" formControlName="legalEntity">
-          <label class="form-check-label" for="cCorporation">C Corporation</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input layout-check-input" type="radio" id="sCorporation" value="S Corporation" formControlName="legalEntity">
-          <label class="form-check-label" for="sCorporation">S Corporation</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input layout-check-input" type="radio" id="llc" value="LLC" formControlName="legalEntity">
-          <label class="form-check-label" for="llc">LLC</label>
+        <div class="form-check" *ngFor="let entity of legalEntities">
+          <input class="form-check-input layout-check-input" type="radio" id="entity{{entity.entityID}}" value="{{entity.entityID}}" formControlName="legalEntity">
+          <label class="form-check-label" for="entity{{entity.entityID}}">{{entity.entity}}</label>
         </div>
       </div>
       <div class="mt-3 mb-5 text-center">
