@@ -489,7 +489,6 @@ export const getIncomeCategory = async function (vertical: string): Promise<any>
 
 export const getDueDatesForUser = async function (state: string, county: string, city: string, businessVerticals: any, legalEntity: string): Promise<any> {
     try {
-        console.log(city, county, state);
         return db.queryAsync<any>(`
             SELECT DISTINCT dueDateID, taxName, formID, city, county, state, taxingAgency, dueDate, frequency
             FROM taxesDueDates t 
@@ -497,10 +496,10 @@ export const getDueDatesForUser = async function (state: string, county: string,
             JOIN verticals s ON s.verticalID = v.verticalID
             JOIN taxesEntities te ON te.taxDueDateID = t.dueDateID
             JOIN entities e ON e.entityID = te.entityID
-            WHERE (county =:county AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (e.entity = 7 OR te.entityID = :legalEntity))
-            OR ((county IS NULL OR county = '') AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (e.entity = 7 OR te.entityID = :legalEntity))
-            OR (county =:county AND (city IS NULL OR city = '') AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (e.entity = 7 OR te.entityID = :legalEntity))
-            OR ((county IS NULL OR county = '') AND (city IS NULL OR city = '') AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (e.entity = 7 OR te.entityID = :legalEntity));
+            WHERE (county =:county AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (:legalEntity = 7 OR te.entityID = :legalEntity))
+            OR ((county IS NULL OR county = '') AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (:legalEntity = 7 OR te.entityID = :legalEntity))
+            OR (county =:county AND (city IS NULL OR city = '') AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (:legalEntity = 7 OR te.entityID = :legalEntity))
+            OR ((county IS NULL OR county = '') AND (city IS NULL OR city = '') AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (:legalEntity = 7 OR te.entityID = :legalEntity));
             `,{
                 state,
                 county,
