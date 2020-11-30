@@ -512,13 +512,14 @@ export const getDueDatesForUser = async function (state: string, county: string,
     }
 }
 
-export const getFederalDueDates = async function (entity: string): Promise<any> {
+export const getFederalDueDates = async function (entity: string, businessVerticals: any): Promise<any> {
     try {
         return db.queryAsync<any>(`
             SELECT *
             FROM taxesDueDates
-            WHERE isFederalTax = 1 AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND (entity IS NULL OR entity = :entity);
-            `, { entity });
+            JOIN taxesVerticals v ON taxesDueDates.dueDateID = v.taxDueDateID 
+            WHERE isFederalTax = 1 AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND (:entity = 7 OR entity = :entity) AND v.verticalID IN (:businessVerticals);
+            `, { entity, businessVerticals });
     } catch(error) {
         console.log(error);
     }
