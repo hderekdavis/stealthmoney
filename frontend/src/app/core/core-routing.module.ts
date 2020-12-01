@@ -72,7 +72,7 @@ const routes: Routes = [
     canActivate: [AuthGuardService, PlaidGuardService]
   },
   {
-    path: 'unregister',
+    path: 'unsubscribe',
     component: UnregisterFormComponent
   },
 ];
