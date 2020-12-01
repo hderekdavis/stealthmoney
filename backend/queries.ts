@@ -515,7 +515,7 @@ export const getDueDatesForUser = async function (state: string, county: string,
 export const getFederalDueDates = async function (entity: string, businessVerticals: any): Promise<any> {
     try {
         return db.queryAsync<any>(`
-            SELECT *
+            SELECT DISTINCT dueDateID, taxName, formID, city, county, state, taxingAgency, dueDate, frequency
             FROM taxesDueDates
             JOIN taxesVerticals v ON taxesDueDates.dueDateID = v.taxDueDateID 
             WHERE isFederalTax = 1 AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND (:entity = 7 OR entity = :entity) AND v.verticalID IN (:businessVerticals);
