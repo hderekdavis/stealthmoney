@@ -1,12 +1,12 @@
 const xlsx = require('node-xlsx');
 const sgMail = require('@sendgrid/mail');
-const SENDGRID_KEY = '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';
+require('dotenv').config()
 
 async function main () {
     
     const workSheetsFromFile = xlsx.parse(`${__dirname}/newLeads.xlsx`);
 
-    sgMail.setApiKey(SENDGRID_KEY);
+    sgMail.setApiKey(process.env.SENDGRID_KEY);
 
     for (const lead of workSheetsFromFile[0].data) {
 
@@ -31,7 +31,6 @@ async function main () {
         // await sgMail.send(email); THIS WILL SEND THE EMAILS, UNCOMMENT ONLY TO SEND THEM
         console.log('Email sent to ' + email);
     }
-
 }
 
 main();
