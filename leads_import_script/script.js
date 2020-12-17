@@ -10,10 +10,10 @@ async function main () {
     for (const lead of workSheetsFromFile[0].data) {
         count++;
 
-        let email = lead[2];
-        let businessName = lead[0] + ' ' + lead[1];
-        let password = lead[9];
-        let phoneNumber = lead[3];
+        let email = lead[1];
+        let businessName = lead[0];
+        let password = lead[11];
+        let phoneNumber = lead[2];
         let addresses = [];
         addresses.push({
             addressFirstLine: '',
@@ -24,6 +24,7 @@ async function main () {
             zipcode: '',
             businessVertical: getVerticals(lead[5]),
         })
+
 
         await saveToAuth0(email, password);
         await createBusiness(email, businessName, phoneNumber, addresses);
