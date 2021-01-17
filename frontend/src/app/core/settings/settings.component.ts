@@ -43,7 +43,7 @@ export class SettingsComponent implements OnInit {
         password: [null],
         businessName: [response.business.businessName, Validators.required],
         phoneNumber: [response.business.phoneNumber, Validators.required],
-        legalEntity: [response.business.legalEntity, Validators.required],
+        legalEntity: [response.legalEntity.entity, Validators.required],
       });
       let amount = response.addresses.length;
       for (let i = 1; i < amount; i++) {

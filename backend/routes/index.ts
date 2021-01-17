@@ -173,9 +173,11 @@ router.post('/business/settings', decodeIDToken, checkJwt, async function (req, 
   const businessName = req.body.businessName;
   const phoneNumber = req.body.phoneNumber;
   const legalEntity = req.body.legalEntity;
+  const legalEntityID = await queries.getLegalEntityID(legalEntity);
+  console.log(legalEntityID);
   const addresses = req.body.addresses;
   const password = req.body.password;
-  const response = await queries.updateBusiness(businessID, email, businessName, phoneNumber, legalEntity);
+  const response = await queries.updateBusiness(businessID, email, businessName, phoneNumber, legalEntityID);
 
   if (password) {
      await changeUserPassword(managementToken, req.body.auth0_user_id, password)

@@ -565,3 +565,13 @@ export const registerUserLoggedIn = async function (email: string): Promise<any>
         console.log(error);
     }
 }
+
+export const getLegalEntityID = async function (legalEntity: string): Promise<any> {
+    try {
+        return db.queryAsync<any>(`
+            SELECT entityID FROM entities WHERE entity = :legalEntity;`, 
+            { legalEntity }).then(firstOrDefault).then(result => { return result['entityID'] });
+    } catch (error) {
+        console.log(error);
+    }
+} 
