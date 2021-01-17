@@ -74,4 +74,8 @@ export class BackendService {
   getLegalEntities(): Observable<any> {
     return this.api.get('/entities');
   }
+
+  registerUserLoggedIn(): Observable<any> {
+    return this.api.post('/login', {});
+  }
 }

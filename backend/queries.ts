@@ -490,7 +490,7 @@ export const getIncomeCategory = async function (vertical: string): Promise<any>
 export const getDueDatesForUser = async function (state: string, county: string, city: string, businessVerticals: any, legalEntity: string): Promise<any> {
     try {
         return db.queryAsync<any>(`
-            SELECT DISTINCT dueDateID, taxName, formID, city, county, state, taxingAgency, dueDate, frequency
+            SELECT DISTINCT dueDateID, taxName, formID, city, county, state, taxingAgency, dueDate, frequency, s.vertical
             FROM taxesDueDates t 
             JOIN taxesVerticals v ON t.dueDateID = v.taxDueDateID 
             JOIN verticals s ON s.verticalID = v.verticalID
@@ -515,9 +515,10 @@ export const getDueDatesForUser = async function (state: string, county: string,
 export const getFederalDueDates = async function (entity: string, businessVerticals: any): Promise<any> {
     try {
         return db.queryAsync<any>(`
-            SELECT DISTINCT dueDateID, taxName, formID, city, county, state, taxingAgency, dueDate, frequency
+            SELECT DISTINCT dueDateID, taxName, formID, city, county, state, taxingAgency, dueDate, frequency, s.vertical
             FROM taxesDueDates
             JOIN taxesVerticals v ON taxesDueDates.dueDateID = v.taxDueDateID 
+            JOIN verticals s ON s.verticalID = v.verticalID
             WHERE isFederalTax = 1 AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND (:entity = 7 OR entity = :entity) AND v.verticalID IN (:businessVerticals);
             `, { entity, businessVerticals });
     } catch(error) {
@@ -526,7 +527,6 @@ export const getFederalDueDates = async function (entity: string, businessVertic
 }
 
 export const unsubscribe = async function (email: string): Promise<any> {
-    console.log(email);
     try {
         return db.queryAsync<any>(`
             UPDATE business SET unsubscribeEmails = 1 WHERE email = :email;`, { email });
@@ -551,6 +551,17 @@ export const getLegalEntities = async function (): Promise<any> {
         return db.queryAsync<any>(`
             SELECT * FROM entities`);
     } catch(error) {
+        console.log(error);
+    }
+}
+
+export const registerUserLoggedIn = async function (email: string): Promise<any> {
+    const time = moment().toDate();
+    try {
+        return db.queryAsync<any>(`
+            UPDATE business SET lastLogin = :time WHERE email = :email;
+        `, { time, email })
+    } catch (error) {
         console.log(error);
     }
 }

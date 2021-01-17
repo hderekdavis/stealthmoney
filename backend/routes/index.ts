@@ -242,6 +242,16 @@ router.get('/entities', async function (req, res, next) {
   }
 });
 
+router.post('/login', decodeIDToken, checkJwt, async function (req, res, next) {
+
+  const email = req.body.user_email;
+
+  const response = await queries.registerUserLoggedIn(email);
+
+  res.json(response);
+
+});
+
 const saveBusinessVerticals = async function(businessLocationID: number, verticals: []) {
   await queries.removeBusinessVerticals(businessLocationID);
   for (const vertical of verticals) {
