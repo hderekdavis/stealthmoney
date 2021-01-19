@@ -43,7 +43,8 @@
         </div>
         <div class="striped-row pointer d-flex" *ngFor="let result of dueDates">
             <div class="col-sm-8">
-                {{ result.formID != '' ? (result.taxName + ' (' + result.formID + ')') : ( result.taxName ) }}
+                {{ result.formID != '' ? (result.taxName + ' (' + result.formID + ')') : ( result.taxName ) }} <br>
+                {{ result.vertical }}
             </div>
             <div class="col-sm-4 text-right">
                 {{ result.dueDate | date }}

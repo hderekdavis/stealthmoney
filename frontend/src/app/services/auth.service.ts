@@ -54,6 +54,7 @@ export class AuthService {
             })
         ).toPromise()
             .then(response => this.setSession(response))
+            .then(() => this.backendService.registerUserLoggedIn().subscribe())
             .then(() => this.fetchUserInfo())
             .then(() => this.router.navigate(['/dashboard']))
             .then(() => this.toastr.success('Logged in successfully!', 'Log In'))
