@@ -51,9 +51,10 @@ async function main () {
     //     "password": "B+,,'P11)H85"
     //   },
     //   hideWarnings: true
-  // };
+    // };
 
-  // await sgMail.send(email);
+    // await sgMail.send(email);
+  }
+
+  main();
 }
-
-main();
