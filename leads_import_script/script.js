@@ -12,7 +12,7 @@ async function main () {
 
         let email = lead[2];
         let businessName = lead[0] + ' ' + lead[1];
-        let password = lead[9];
+        let password = lead[10];
         let phoneNumber = lead[3];
         let addresses = [];
         addresses.push({

@@ -8,30 +8,53 @@ async function main () {
 
     sgMail.setApiKey(process.env.SENDGRID_KEY);
 
+    let count = 0;
+
     for (const lead of workSheetsFromFile[0].data) {
+      count++
+      const leadName = lead[0] + ' ' + lead[1];
+      const address = lead[2];
+      const password = lead[10];
 
-        const leadName = lead[0] + ' ' + lead[1];
-        const email = lead[2];
-        const password = lead[9];
-
-        const email = {
-            to: email,
-            from: {
-              email: 'admin@greengrowthcpas.com',
-              name: 'GreenGrowth CPAs'
-            },
-            templateId: 'd-d4c8a62466bd4decba50e59ce9096f3f',
-            dynamicTemplateData: {
-              "leadName": leadName,
-              "email": email,
-              "password": password
-            }
-        };
-        
-        // await sgMail.send(email); THIS WILL SEND THE EMAILS, UNCOMMENT ONLY TO SEND THEM
-        console.log('Email sent to ' + email);
+      const email = {
+          to: address,
+          from: {
+            email: 'admin@greengrowthcpas.com',
+            name: 'GreenGrowth CPAs'
+          },
+          templateId: 'd-d4c8a62466bd4decba50e59ce9096f3f',
+          dynamicTemplateData: {
+            "leadName": leadName,
+            "email": address,
+            "password": password
+          },
+              hideWarnings: true
+      };
+      
+      await sgMail.send(email);
+      console.log('Email sent to ' + address);
     }
+
+    // const email = {
+    //   to: [
+    //     { email: 'ashmeadmichael@gmail.com'},
+    //     { email: 'edubeghe@gmail.com'},
+    //   ],
+    //   from: {
+    //     email: 'admin@greengrowthcpas.com',
+    //     name: 'GreenGrowth CPAs'
+    //   },
+    //   templateId: 'd-d4c8a62466bd4decba50e59ce9096f3f',
+    //   dynamicTemplateData: {
+    //     "leadName": 'TEST',
+    //     "email": 'ashmeadmichael@gmail.com',
+    //     "password": "B+,,'P11)H85"
+    //   },
+    //   hideWarnings: true
+    // };
+
+    // await sgMail.send(email);
+  }
+
+  main();
 }
-
-main();
-
