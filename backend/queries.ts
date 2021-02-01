@@ -496,10 +496,12 @@ export const getDueDatesForUser = async function (state: string, county: string,
             JOIN verticals s ON s.verticalID = v.verticalID
             JOIN taxesEntities te ON te.taxDueDateID = t.dueDateID
             JOIN entities e ON e.entityID = te.entityID
-            WHERE (county =:county AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (:legalEntity = 7 OR te.entityID = :legalEntity))
-            OR ((county IS NULL OR county = '') AND city =:city AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (:legalEntity = 7 OR te.entityID = :legalEntity))
-            OR (county =:county AND (city IS NULL OR city = '') AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (:legalEntity = 7 OR te.entityID = :legalEntity))
-            OR ((county IS NULL OR county = '') AND (city IS NULL OR city = '') AND state =:state AND STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() AND v.verticalID IN (:businessVerticals) AND (:legalEntity = 7 OR te.entityID = :legalEntity));
+            WHERE STR_TO_DATE(dueDate, '%m/%d/%Y') >= curdate() 
+            AND v.verticalID IN (:businessVerticals) AND (:legalEntity = 7 OR te.entityID = :legalEntity)
+            AND ((county =:county AND city =:city AND state =:state)
+            OR ((county IS NULL OR county = '') AND city =:city AND state =:state)
+            OR (county =:county AND (city IS NULL OR city = '') AND state =:state )
+            OR ((county IS NULL OR county = '') AND (city IS NULL OR city = '') AND state =:state));
             `,{
                 state,
                 county,

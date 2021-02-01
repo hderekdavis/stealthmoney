@@ -11,6 +11,10 @@ export class EstimatedTaxesComponent implements OnInit {
   public dueDates = [];
   public companyInfo = '';
   public accountant: any;
+  public businessName;
+  public state;
+  public entity;
+  public addresses;
 
   constructor(private backendService: BackendService) { }
 
@@ -21,15 +25,12 @@ export class EstimatedTaxesComponent implements OnInit {
     this.backendService.getBusinessSettings()
       .subscribe(result => {
         let states = [];
-        let statesString = '';
-        result.addresses.forEach(address => {
-          if (states.indexOf(address.state) < 0) {
-            states.push(address.state);
-            statesString += address.state + ', ' 
-          }
-        })
-        this.companyInfo = statesString + result.legalEntity.entity;
+        this.companyInfo = result.legalEntity.entity;
         this.accountant = result.accountant;
+        this.businessName = result.business.businessName;
+        this.state = states[0];
+        this.entity = result.legalEntity.entity;
+        this.addresses = result.addresses;
       });
   }
 
